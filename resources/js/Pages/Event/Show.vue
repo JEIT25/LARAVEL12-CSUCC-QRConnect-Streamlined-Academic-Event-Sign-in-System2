@@ -74,11 +74,6 @@
                                 class="btn-primary" as="button" method="get">
                             Show MasterList
                             </Link>
-                            <Link v-if="master_list"
-                                :href="`/events/${event.event_id}/master-lists/${master_list.master_list_id}`"
-                                class="btn-primary" as="button" method="get">
-                            Show MasterList
-                            </Link>
                             <button v-else @click="createMasterList" class="btn-primary">
                                 Create MasterList
                             </button>

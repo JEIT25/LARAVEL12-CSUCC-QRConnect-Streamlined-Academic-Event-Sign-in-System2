@@ -14,13 +14,14 @@ class AttendeeRecordController extends Controller
      */
     public function index(Event $event,Request $request)
     {
+
+         if ($request->user()->cannot('viewAny', [AttendeeRecord::class, $event])) { //use policy to check if user can viewa attendance records,
+             //also passed the event so that only owner of event can see all attendance records of this event
+             abort(403);
+         }
+
         // Fetch the attendees of the event
         $attendee_records = $event->attendee_records()->get();
-
-        if ($request->user()->cannot('viewAny',[AttendeeRecord::class,$event])) { //use policy to check if user can viewa attendance records,
-        //also passed the event so that only owner of event can see all attendance records of this event
-            abort(403);
-        }
 
         return inertia('AttendeeRecord/Index', [
             'event' => $event,

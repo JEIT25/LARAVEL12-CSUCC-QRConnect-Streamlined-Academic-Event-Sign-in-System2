@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class MasterListMember extends Model
 {
@@ -18,9 +18,9 @@ class MasterListMember extends Model
         return $this->belongsTo(MasterList::class, 'master_list_id');
     }
 
-    public function attendee_records(): HasMany
+    public function attendee_record(): HasOne
     {
-        return $this->hasMany(AttendeeRecord::class, "master_list_member_id");
+        return $this->hasOne(AttendeeRecord::class, "master_list_member_id");
     }
 
 }

@@ -13,7 +13,7 @@ class ExportAttendeeRecordController extends Controller
     public function exportAttendeeRecords(Event $event, $template, Request $request)
     {
         // Retrieve the selected date from the query parameters
-        $selectedDate = $request->query('date');
+        $selectedDate = $request->query('date'); //test
 
         // Export as PDF for class orientation
         if ($template === "general-template") {
@@ -24,10 +24,15 @@ class ExportAttendeeRecordController extends Controller
         if ($template === "class-orientation") {
             return $this->exportClassOrientationToPDF($event, $selectedDate);
         }
-
         // Export as Excel for class attendance
         if ($template === "class-attendance") {
             return $this->exportClassAttendanceToExcel($event, $selectedDate);
+        }
+        if($template === "midterm-exam"){
+            return  $this->exportMidtermExamTemplate($event, $selectedDate);
+        }
+        if ($template === "final-exam"){
+            return  $this->exportFinalExamTemplate($event, $selectedDate);
         }
 
         // Redirect back if the template is invalid
@@ -111,11 +116,14 @@ class ExportAttendeeRecordController extends Controller
     {
         // Fetch all members from the master list
         $members = $event->master_list->master_list_members()
-        ->orderBy('full_name') //alphabetical
-        ->get();
+            ->orderBy('full_name') // Alphabetical order
+            ->get();
 
         // Prepare the data for Excel export
         $data = [];
+
+        // Flag to check if any attendance records are found
+        $hasAttendanceRecords = false;
 
         // If 'all' is selected, prepare attendance for all dates
         if ($selectedDate === 'all') {
@@ -127,68 +135,92 @@ class ExportAttendeeRecordController extends Controller
             $currentDate = \Carbon\Carbon::now();
             $dateRange = [];
 
-            // Loop through each date and add headers for check-in/check-out
+            // Loop through each date and check for attendance records
             for ($date = $startDate; $date->lte($currentDate); $date->addDay()) {
-                $dateRange[] = $date->format('Y-m-d');
-                $data[0][] = "{$date->format('Y-m-d')} (Check-In)";
-                $data[0][] = "{$date->format('Y-m-d')} (Check-Out)";
+                // Attempt to find at least one attendance record for any member on this date
+                $attendanceExists = false;
+
+                foreach ($members as $member) {
+                    $attendanceRecord = $member->attendee_record()
+                        ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
+                        ->whereDate('single_signin', $date)
+                        ->first();
+
+                    if ($attendanceRecord) {
+                        $attendanceExists = true; // At least one attendance record exists for this date
+                        break; // No need to check other members for this date
+                    }
+                }
+
+                // If attendance exists, add the date to headers
+                if ($attendanceExists) {
+                    $dateRange[] = $date->format('Y-m-d');
+                    $data[0][] = $date->format('Y-m-d'); // Add date to the header
+                }
             }
 
-            // Populate attendance data for each member
+            // Populate attendance data for each member if there are valid dates
             foreach ($members as $member) {
                 $row = [
                     'Name' => $member->full_name,
                     'Student ID Number' => $member->unique_id,
                 ];
 
-                // Check attendance for each date
                 foreach ($dateRange as $date) {
                     // Attempt to find the attendance record for this date and member
-                    $attendanceRecord = $member->attendee_records()
+                    $attendanceRecord = $member->attendee_record()
                         ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
-                        ->whereDate('created_at', $date)
+                        ->whereDate('single_signin', $date)
                         ->first();
 
-                    // Ensure the check-in and check-out cells are always filled, defaulting to 0
-                    $row[] = $attendanceRecord && $attendanceRecord->check_in ? '1' : '0'; // Check-In
-                    $row[] = $attendanceRecord && $attendanceRecord->check_out ? '1' : '0'; // Check-Out
+                    // Determine single_signin value (1 if present, 0 if absent)
+                    $row[] = $attendanceRecord && $attendanceRecord->single_signin ? '1' : '0';
                 }
 
-                // Append the row to the data array
-                $data[] = $row;
+                // Append the row to the data array only if there's at least one attendance record for this member
+                if (count($row) > 2) { // The row must have more than just name and ID
+                    $data[] = $row;
+                    $hasAttendanceRecords = true; // Mark that we found at least one attendance record
+                }
             }
         } else {
             // Create headers for a specific selected date
             $data[] = [
                 'Name',
                 'Student ID Number',
-                'Check-In (' . $selectedDate . ')',
-                'Check-Out (' . $selectedDate . ')'
+                'Single Sign-in (' . $selectedDate . ')',
             ];
 
             // Loop through each member to add their attendance records
             foreach ($members as $member) {
-                $attendeeRecord = $member->attendee_records()
+                $attendeeRecord = $member->attendee_record()
                     ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
                     ->whereDate('created_at', $selectedDate)
                     ->first();
 
                 // Determine attendance values (1 or 0)
-                $checkInValue = $attendeeRecord && $attendeeRecord->check_in ? '1' : '0';
-                $checkOutValue = $attendeeRecord && $attendeeRecord->check_out ? '1' : '0';
+                $singleSigninValue = $attendeeRecord && $attendeeRecord->single_signin ? '1' : '0';
 
-                // Add a new row with the member's name and attendance values
+                // Add a new row with the member's name and attendance value
+                if ($singleSigninValue === '1') {
+                    $hasAttendanceRecords = true; // At least one attendance record exists
+                }
+
                 $data[] = [
                     'Name' => $member->full_name,
                     'Student ID Number' => $member->unique_id,
-                    'Check-In (' . $selectedDate . ')' => $checkInValue,
-                    'Check-Out (' . $selectedDate . ')' => $checkOutValue,
+                    'Single Sign-in (' . $selectedDate . ')' => $singleSigninValue,
                 ];
+            }
+
+            // Check if there are no attendance records for the specific date
+            if (!$hasAttendanceRecords) {
+                return redirect()->back()->with('failed', "No Attendees found for the selected date");
             }
         }
 
         // Check if there are any records to export
-        if (count($data) <= 1) {
+        if (!$hasAttendanceRecords || count($data) < 2) { // Ensure at least the header and one record
             return redirect()->back()->with('failed', "No Attendees found for the selected date");
         }
 
@@ -206,5 +238,57 @@ class ExportAttendeeRecordController extends Controller
                 return $this->data; // Return the data array
             }
         }, $event->name . "_class_attendance.xlsx");
+    }
+
+
+
+    public function exportMidtermExamTemplate(Event $event, $selectedDate){
+
+        $attendeeRecords = $event->attendee_records();
+
+        if ($selectedDate && $selectedDate !==   'all'){
+            $attendeeRecords = $attendeeRecords-> whereDate('created_at',$selectedDate);
+        }
+        $attendeeRecords = $attendeeRecords
+            ->with('master_list_member')
+            ->orderBy('created_at','asc')
+            ->get();
+
+        if ($attendeeRecords->isEmpty()){
+            return redirect()->back()->with('field',"No exam attendees found for the selected date");
+        }
+
+        $pdf = Pdf:: loadView('pdf_templates/midterm_exam_templates',[
+            'event' =>  $event,
+            'attendee_records' => $attendeeRecords,
+            'facilitator' => $event->owner,
+            'itemsPerPage' => 20,
+        ]);
+        return  $pdf ->stream(filename: $event->name .  "_exam_attendees.pdf");
+    }
+
+    public function exportFinalExamTemplate(Event $event, $selectedDate){
+
+        $attendeeRecords = $event->attendee_records();
+
+        if ($selectedDate && $selectedDate !==   'all'){
+            $attendeeRecords = $attendeeRecords-> whereDate('created_at',$selectedDate);
+        }
+        $attendeeRecords = $attendeeRecords
+            ->with('master_list_member')
+            ->orderBy('created_at','asc')
+            ->get();
+
+        if ($attendeeRecords->isEmpty()){
+            return redirect()->back()->with('field',"No exam attendees found for the selected date");
+        }
+
+        $pdf = Pdf:: loadView('pdf_templates/final_exam_templates',[
+            'event' =>  $event,
+            'attendee_records' => $attendeeRecords,
+            'facilitator' => $event->owner,
+            'itemsPerPage' => 20,
+        ]);
+        return  $pdf ->stream(filename: $event->name .  "_exam_attendees.pdf");
     }
 }
