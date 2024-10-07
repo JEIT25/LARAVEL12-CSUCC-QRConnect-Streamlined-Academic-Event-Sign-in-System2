@@ -21,7 +21,7 @@
         }
 
         .header img {
-            width: 111%;
+            width: 100%;
             max-height: 70px;
             object-fit: contain;
         }
@@ -105,8 +105,8 @@
         }
 
         .footer {
-            position: absolute;
-            bottom: -35px;
+            position: fixed;
+            bottom: 0;
             width: 100%;
             font-size: 10px;
             text-align: left;
@@ -129,58 +129,58 @@
 </head>
 
 <body>
+    <!-- Static Information -->
+    <header class="header">
+        <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+    </header>
+
+    <div class="info1">
+        <p>ATTENDANCE SHEET</p>
+        <p>FINAL EXAM</p>
+    </div>
+
+    <div class="info2">
+        <div class="info2-left">
+            <p>Course: {{$event->subject ?? '______________'}}</p>
+            <p>Code: {{$event->subject_code ?? '_____'}}</p>
+            <p>Instructor: {{ $facilitator->fname . " " . $facilitator->lname ?? '______________' }}</p>
+        </div>
+        <div class="info2-right">
+            <p class="sem">Sem: {{$event->semester ?? '_____'}} semester</p>
+            <p id="year">S.Y.: {{$event->school_year ?? '_____'}}</p>
+        </div>
+        <p id="certify">We certify that the following was discussed with us at the start of the semester.</p>
+    </div>
+
     @foreach ($attendee_records->chunk($itemsPerPage) as $chunk)
         @if (!$loop->first)
-            <div class="page-break"></div> <!-- Add a page break between chunks -->
+            <div class="page-break"></div>
         @endif
 
-        <!-- Header on every page -->
-        <header class="header">
-            <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
-        </header>
-
-        @if ($loop->first)
-            <div class="info1">
-                <p>ATTENDANCE SHEET</p>
-                <p>{{ $event->name }} Event</p>
-            </div>
-
-            <div class="info2">
-                <div class="info2-left">
-                    <p>Start Date: {{ $event->start_date ?? '_____' }}</p>
-                    <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
-                </div>
-                <p id="certify">We certify that the following attendance was recorded for this event.</p>
-            </div>
-        @endif
-
-        <table class="table">
+        <table class="table" style="margin-top: 20px; font-size: 8px;">
             <thead>
                 <tr>
-                    <th style="width: 30%;">NAME OF STUDENTS</th>
-                    <th style="width: 15%;">Check-In</th>
-                    <th style="width: 15%;">Check-Out</th>
-                    <th style="width: 15%;">Date</th>
+                    <th style="width: 70%; padding: 2px;">NAME OF STUDENTS</th>
+                    <th style="width: 30%; padding: 2px;">ATTENDANCE</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($chunk as $attendee_record)
                     <tr>
-                        <td>{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
-                        <td>
-                            {{ $attendee_record->check_in ? \Carbon\Carbon::parse($attendee_record->check_in)->format('h:i A') : '-' }}
-                        </td>
-                        <td>
-                            {{ $attendee_record->check_out ? \Carbon\Carbon::parse($attendee_record->check_out)->format('h:i A') : '-' }}
-                        </td>
-                        <td>
-                            {{ $attendee_record->created_at->format('Y-m-d') }}
+                        <td style="padding: 2px;">{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
+                        <td style="padding: 2px;">
+                            @if ($attendee_record->check_in)
+                                {{ \Carbon\Carbon::parse($attendee_record->check_in)->format('Y-m-d H:i:s') }}
+                            @else
+                                <!-- Leave blank if not checked in -->
+                            @endif
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
+        <!-- Repeated footer -->
         <div class="footer">
             <table style="width: 100%; margin-top: 40px;">
                 <tr>
@@ -195,11 +195,11 @@
             </table>
         </div>
     @endforeach
+
     <div id="submitAndDate">
         <p id="submittedBy">Submitted By: _________________________</p>
         <p>Date of Submission: _________________________</p>
     </div>
-
 
     <script type="text/php">
         if (isset($pdf)) {
