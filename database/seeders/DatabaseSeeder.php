@@ -19,8 +19,13 @@ class DatabaseSeeder extends Seeder
 
 
         // User::factory()->create([
+        //     'type' => 'facilitator',
+        //     'email' => 'facilitator@example.com',
+        // ]);
+
+        // User::factory()->create([
         //     'type' => 'admin',
-        //     'email' => 'test2@example.com',
+        //     'email' => 'admin@example.com',
         // ]);
 
 
