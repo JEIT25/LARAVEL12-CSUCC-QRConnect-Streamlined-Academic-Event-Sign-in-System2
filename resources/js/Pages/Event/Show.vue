@@ -202,8 +202,7 @@ const generateDateRange = (startDate) => {
         dates.push(start.toISOString().split('T')[0]); // Add the date to the array
         start.setDate(start.getDate() + 1); // Increment by 1 day
     }
-
-    alert(dates); // Optional: Alert to show the dates
+    
     return dates;
 };
 
