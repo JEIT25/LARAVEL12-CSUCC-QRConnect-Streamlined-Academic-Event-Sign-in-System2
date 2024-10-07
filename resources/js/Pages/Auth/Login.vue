@@ -10,6 +10,7 @@
             v-model.trim="form.email"
             class="border border-gray-300 rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-100"
           />
+
           <p v-if="form.errors.email" class="text-red-500 mt-1">{{ form.errors.email }}</p>
         </div>
         <div class="mb-6">

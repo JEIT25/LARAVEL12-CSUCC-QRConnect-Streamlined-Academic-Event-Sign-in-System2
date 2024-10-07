@@ -120,6 +120,7 @@ class EventController extends BaseController
         return inertia(
             'Event/Show',
             [
+                'default_image' => asset('assets/images/backgrounds/defaultIMG.jpg'),
                 'event' => $event,
                 'master_list' => $master_list
             ]

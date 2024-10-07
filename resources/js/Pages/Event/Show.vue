@@ -4,7 +4,7 @@
         <div class="p-10 w-full max-w-6xl"> <!-- Wrapper for padding and width -->
             <!-- Event Image -->
             <div class="flex justify-center mb-6">
-                <img :src="event.profile_image" alt="Event Profile Image"
+                <img :src="event.profile_image || props.default_image" alt="Event Profile Image"
                     class="w-full h-60 rounded-lg shadow-md object-cover"> <!-- Change w-md to w-full -->
             </div>
 
@@ -94,8 +94,7 @@
                             <!-- Title for this section -->
                             <Link
                                 v-if="!event.type.includes('exam') && !event.type.includes('class attendance') && !event.type.includes('class orientation')"
-                                :href="`/events/${event.event_id}/qrscanner/checkin`" class="btn-primary"
-                                as="button">
+                                :href="`/events/${event.event_id}/qrscanner/checkin`" class="btn-primary" as="button">
                             Check-In
                             </Link>
                             <Link
@@ -105,8 +104,8 @@
                             </Link>
                             <Link
                                 v-if="event.type.includes('exam') || event.type.includes('class attendance') || event.type.includes('class orientation')"
-                                :href="`/events/${event.event_id}/qrscanner/single-signin`" class="btn-primary" as="button"
-                                method="get">
+                                :href="`/events/${event.event_id}/qrscanner/single-signin`" class="btn-primary"
+                                as="button" method="get">
                             Single Sign-in
                             </Link>
                             <button @click="showExportModal = true" class="btn-primary">
@@ -177,7 +176,8 @@ import { ref } from 'vue';
 const props = defineProps({
     event: Object,
     master_list: Object,
-    user: Object
+    user: Object,
+    default_image: String
 });
 
 // Reactive state
