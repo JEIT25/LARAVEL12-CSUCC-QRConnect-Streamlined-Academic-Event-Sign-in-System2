@@ -46,13 +46,13 @@ class ExportAttendeeRecordController extends Controller
 
         // Filter by selected date if provided and not 'all'
         if ($selectedDate && $selectedDate !== 'all') {
-            $attendeeRecords = $attendeeRecords->whereDate('created_at', $selectedDate);
+            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
         }
 
         // Load records with related master list member
         $attendeeRecords = $attendeeRecords
             ->with('master_list_member')
-            ->orderBy('created_at', 'asc') // Sort by created_at in ascending order
+            ->orderBy('single_signin', 'asc') // Sort by single_signin in ascending order
             ->get();
 
         // Check if any records were found
@@ -83,7 +83,7 @@ class ExportAttendeeRecordController extends Controller
 
         // Filter by selected date if provided and not 'all'
         if ($selectedDate && $selectedDate !== 'all') {
-            $attendeeRecords = $attendeeRecords->whereDate('created_at', $selectedDate);
+            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
         }
 
         // Load records with related master list member
@@ -132,7 +132,7 @@ class ExportAttendeeRecordController extends Controller
 
             // Create date range from event's start date to the current date
             $startDate = \Carbon\Carbon::parse($event->start_date);
-            $currentDate = \Carbon\Carbon::now();
+            $currentDate = \Carbon\Carbon::now('Asia/Manila');
             $dateRange = [];
 
             // Loop through each date and check for attendance records
@@ -188,14 +188,14 @@ class ExportAttendeeRecordController extends Controller
             $data[] = [
                 'Name',
                 'Student ID Number',
-                'Single Sign-in (' . $selectedDate . ')',
+                $selectedDate,
             ];
 
             // Loop through each member to add their attendance records
             foreach ($members as $member) {
                 $attendeeRecord = $member->attendee_record()
                     ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
-                    ->whereDate('created_at', $selectedDate)
+                    ->whereDate('single_signin', $selectedDate)
                     ->first();
 
                 // Determine attendance values (1 or 0)
@@ -209,7 +209,7 @@ class ExportAttendeeRecordController extends Controller
                 $data[] = [
                     'Name' => $member->full_name,
                     'Student ID Number' => $member->unique_id,
-                    'Single Sign-in (' . $selectedDate . ')' => $singleSigninValue,
+                    $selectedDate=> $singleSigninValue,
                 ];
             }
 
@@ -242,53 +242,69 @@ class ExportAttendeeRecordController extends Controller
 
 
 
-    public function exportMidtermExamTemplate(Event $event, $selectedDate){
-
+    public function exportMidtermExamTemplate(Event $event, $selectedDate)
+    {
         $attendeeRecords = $event->attendee_records();
 
-        if ($selectedDate && $selectedDate !==   'all'){
-            $attendeeRecords = $attendeeRecords-> whereDate('created_at',$selectedDate);
+        // Filter by selected date if not 'all'
+        if ($selectedDate && $selectedDate !== 'all') {
+            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
         }
+
+        // Load the related master_list_member and filter by single_signin
         $attendeeRecords = $attendeeRecords
             ->with('master_list_member')
-            ->orderBy('created_at','asc')
+            ->whereNotNull('single_signin')  // Ensure records with single_signin are selected
+            ->orderBy('single_signin', 'asc')
             ->get();
 
-        if ($attendeeRecords->isEmpty()){
-            return redirect()->back()->with('field',"No exam attendees found for the selected date");
+        // Return failure message if no attendees found
+        if ($attendeeRecords->isEmpty()) {
+            return redirect()->back()->with('failed', "No exam attendees found for the selected date");
         }
 
-        $pdf = Pdf:: loadView('pdf_templates/midterm_exam_templates',[
-            'event' =>  $event,
+        // Generate the PDF
+        $pdf = Pdf::loadView('pdf_templates/midterm_exam_templates', [
+            'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
             'itemsPerPage' => 20,
         ]);
-        return  $pdf ->stream(filename: $event->name .  "_exam_attendees.pdf");
+
+        return $pdf->stream($event->name . "_exam_attendees.pdf");
     }
 
-    public function exportFinalExamTemplate(Event $event, $selectedDate){
 
+    public function exportFinalExamTemplate(Event $event, $selectedDate)
+    {
         $attendeeRecords = $event->attendee_records();
 
-        if ($selectedDate && $selectedDate !==   'all'){
-            $attendeeRecords = $attendeeRecords-> whereDate('created_at',$selectedDate);
+        // Filter by selected date if not 'all'
+        if ($selectedDate && $selectedDate !== 'all') {
+            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
         }
+
+        // Load the related master_list_member and filter by single_signin
         $attendeeRecords = $attendeeRecords
             ->with('master_list_member')
-            ->orderBy('created_at','asc')
+            ->whereNotNull('single_signin')  // Ensure records with single_signin are selected
+            ->orderBy('single_signin', 'asc')
             ->get();
 
-        if ($attendeeRecords->isEmpty()){
-            return redirect()->back()->with('field',"No exam attendees found for the selected date");
+        // Return failure message if no attendees found
+        if ($attendeeRecords->isEmpty()) {
+            return redirect()->back()->with('failed', "No exam attendees found for the selected date");
         }
 
-        $pdf = Pdf:: loadView('pdf_templates/final_exam_templates',[
-            'event' =>  $event,
+        // Generate the PDF
+        $pdf = Pdf::loadView('pdf_templates/final_exam_templates', [
+            'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
             'itemsPerPage' => 20,
         ]);
-        return  $pdf ->stream(filename: $event->name .  "_exam_attendees.pdf");
+
+        return $pdf->stream($event->name . "_exam_attendees.pdf");
     }
+
 }
