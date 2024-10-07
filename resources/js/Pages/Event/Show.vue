@@ -193,13 +193,20 @@ const generateDateRange = (startDate) => {
     const start = new Date(startDate);
     const today = new Date();
 
+    // Set the time of both dates to midnight to only compare the date part
+    start.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    // Loop until the start date exceeds today's date
     while (start <= today) {
-        dates.push(start.toISOString().split('T')[0]);
+        dates.push(start.toISOString().split('T')[0]); // Add the date to the array
         start.setDate(start.getDate() + 1); // Increment by 1 day
     }
 
+    alert(dates); // Optional: Alert to show the dates
     return dates;
 };
+
 
 // Function to format dates for display
 const formatDate = (date) => {
