@@ -171,9 +171,6 @@ const page = usePage()
 const menuOpen = ref(false);
 const successMess = computed(() => page.props.messages.success)
 const failedMess = computed(() => page.props.messages.failed)
-const toggleMenu = () => {
-    menuOpen.value = !menuOpen.value;
-};
 
 // Reactive state for toggling sidebar
 const isSidebarOpen = ref(true);
