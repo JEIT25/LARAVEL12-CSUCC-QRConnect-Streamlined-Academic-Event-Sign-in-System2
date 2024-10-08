@@ -1,7 +1,7 @@
 <template>
-    <div class="max-w-2xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <div class="min-h-screen max-w-4xl  mx-auto  px-9  mt-9 bg-white  rounded-lg z-0">
         <h1 class="text-2xl font-bold mb-6 text-center">Create Facilitator Account</h1>
-        <form @submit.prevent="submit" class="space-y-4">
+        <form @submit.prevent="submit" class="grid grid-cols-2 gap-4 z-0">
             <div class="flex flex-col">
                 <label for="fname" class="text-sm font-medium text-gray-700">First Name</label>
                 <input id="fname" v-model.trim="form.fname" placeholder="First Name" required
@@ -48,16 +48,17 @@
                     placeholder="Confirm Password" required
                     class="mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
             </div>
-            <button type="submit"
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Create Account
-            </button>
+        
+        <button type="submit"
+            class="absolute right-4 bottom-4 bg-gray-700 text-white py-2 px-4 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Create Account
+        </button>
         </form>
     </div>
 </template>
 
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3'
+import { useForm } from '@inertiajs/vue3'
 
 const form = useForm({
     lname: '',

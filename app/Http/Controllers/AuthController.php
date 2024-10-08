@@ -38,9 +38,9 @@ class AuthController extends Controller
 
         // Redirect based on user type
         if (Auth::user()->type === 'admin') {
-            return redirect()->route('admins.index')->with('success', "Log In Success!");
+            return redirect()->route('admins.index')->with('success', "Welcome Administrator!");
         } elseif (Auth::user()->type === 'facilitator') {
-            return redirect()->route('facilitators.index')->with('success', "Log In Success!");
+            return redirect()->route('facilitators.index')->with('success', "Welcome Facilitator!");
         }
 
         // Fallback to homepage if no user type matches

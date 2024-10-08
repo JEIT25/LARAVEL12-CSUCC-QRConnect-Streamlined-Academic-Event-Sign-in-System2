@@ -4,9 +4,9 @@
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold">Facilitator Accounts</h1>
             <!-- Inertia Link to Create Facilitator Account -->
-            <Link class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            <Link class="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
                 href="/users/create">
-            Create Facilitator Account
+            Add Facilitator Account
             </Link>
         </div>
 
@@ -14,7 +14,7 @@
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                 <thead>
-                    <tr class="bg-gray-100 text-center">
+                    <tr class="bg-gray-200 text-center">
                         <th class="py-2 px-4">Full Name</th>
                         <th class="py-2 px-4">Account Status</th>
                         <th class="py-2 px-4">Actions</th>
@@ -43,7 +43,7 @@
                             </Link>
 
                             <Link v-else :href="`/users/${facilitator.user_id}/disabled`"
-                                class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded mr-2"
+                                class="bg-yellow-300 hover:bg-blue-700 text-blue py-1 px-3 rounded mr-2"
                                 as="button"
                                 method="post">
                             Disable

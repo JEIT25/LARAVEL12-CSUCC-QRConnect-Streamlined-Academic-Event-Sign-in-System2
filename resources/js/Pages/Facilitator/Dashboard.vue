@@ -1,40 +1,29 @@
 <template>
-    <div class="h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center  md:px-12 lg:px-24"
-        :style="{ backgroundImage: `url(${coloredBackgroundImage})` }">
-        <div class="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl mb-10">
+    <div class="h-screen bg-cover bg-center flex items-center justify-center" 
+         :style="{ backgroundImage: `url(${coloredBackgroundImage})` }">
+        <div class="bg-white bg-opacity-80 p-8 rounded-lg">
             <!-- Image Section -->
-            <div class="flex justify-center md:justify-start w-full md:w-1/2 mb-8 md:mb-0">
-                <img :src="qrBackground" alt="QR Code Animation" class="max-w-full w-64 md:w-96" />
+            <div class="mb-6">
+                <img :src="qrBackground" alt="QR Code Animation" class="w-48 mx-auto" />
             </div>
 
             <!-- Text Section -->
-            <div class="text-center md:text-left w-full md:w-1/2">
-                <h2 class="text-yellow-500 text-3xl md:text-5xl font-normal">
-                    WELCOME facilitator
-                </h2>
-                <h2 class="text-yellow-500 text-3xl md:text-5xl font-normal">
-                    Streamlined Student
-                </h2>
-                <h1 class="text-blue-900 text-4xl md:text-6xl lg:text-7xl font-bold mt-4 md:mt-2">
-                    Sign-in System
-                </h1>
-                <p class="mt-4 text-sm md:text-base text-gray-700">
-                    A cutting-edge solution designed to simplify and optimize the process
-                    of attendance for various academic activities. With a focus on
-                    efficiency and user-friendliness, our system offers a seamless
-                    experience for facilitators ,guest and attendeees alike.
-                </p>
-            </div>
+            <h2 class="text-yellow-500 text-3xl font-normal">WELCOME TO THE FACILITATORS PANEL!</h2>
+            <h1 class="text-blue-900 text-5xl font-bold mt-2">QRConnect</h1>
+            <p class="mt-4 text-sm text-gray-700">
+                A cutting-edge solution designed to simplify and optimize attendance for various academic activities. <br> This panel is subject to further improvements.
+            </p>
         </div>
     </div>
 </template>
 
 <script setup>
-
-
 const props = defineProps({
     qrBackground: String,
-    qrGif: String,
     coloredBackgroundImage: String,
 });
 </script>
+
+<style scoped>
+/* Add any additional styles you want here */
+</style>
