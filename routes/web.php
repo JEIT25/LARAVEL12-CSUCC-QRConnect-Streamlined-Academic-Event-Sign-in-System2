@@ -32,6 +32,14 @@ Route::get('login', fn () => inertia('Auth/Login'))//redirect to homepage wtoh a
 Route::post('login',[AuthController::class,'store'])
 ->name('login.store');
 
+Route::get('my-account', fn() => inertia('Auth/Show'))//redirect to homepage wtoh anauthorized message
+    ->name('my-account') //sign in form
+    ->middleware('auth');
+
+Route::post('change-password', [AuthController::class, 'updatePassword'] )//redirect to homepage wtoh anauthorized message
+    ->name('change-password') //sign in form
+    ->middleware('auth');
+
 Route::get('logout', fn() => (abort(404)));
 
 Route::delete('logout', [AuthController::class, 'destroy'])

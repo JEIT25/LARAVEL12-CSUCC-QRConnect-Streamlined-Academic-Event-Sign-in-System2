@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash; // Import for password hashing
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -54,5 +55,32 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('homepage');
+    }
+
+    // Add the updatePassword function
+    public function updatePassword(Request $request)
+    {
+        // Validate the form inputs
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed', // new_password_confirmation required by 'confirmed'
+        ]);
+
+        // Check if the current password matches
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'The current password is incorrect.',
+            ]);
+        }
+
+        // Update the user's password
+        Auth::user()->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        // Regenerate session after password change for security
+        $request->session()->regenerate();
+
+        return redirect()->back()->with('success', 'Your password has been successfully updated!');
     }
 }
