@@ -125,8 +125,10 @@
                                 <option value="" disabled>Select a template</option>
                                 <option v-if="event.type.includes('class orientation')" value="class-orientation">Class
                                     Orientation</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance">Class
-                                    Attendance</option>
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-excel">Class
+                                    Attendance Excel</option>
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-pdf">Class
+                                    Attendance PDF</option>
                                 <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
                                 <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
                                 <option
@@ -193,13 +195,19 @@ const generateDateRange = (startDate) => {
     const start = new Date(startDate);
     const today = new Date();
 
+    // Set the time of both dates to midnight to only compare the date part
+    start.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    // Loop until the start date exceeds today's date
     while (start <= today) {
-        dates.push(start.toISOString().split('T')[0]);
+        dates.push(start.toISOString().split('T')[0]); // Add the date to the array
         start.setDate(start.getDate() + 1); // Increment by 1 day
     }
 
     return dates;
 };
+
 
 // Function to format dates for display
 const formatDate = (date) => {

@@ -25,8 +25,12 @@ class ExportAttendeeRecordController extends Controller
             return $this->exportClassOrientationToPDF($event, $selectedDate);
         }
         // Export as Excel for class attendance
-        if ($template === "class-attendance") {
+        if ($template === "class-attendance-excel") {
             return $this->exportClassAttendanceToExcel($event, $selectedDate);
+        }
+        // Export as Excel for class attendance
+        if ($template === "class-attendance-pdf") {
+            return $this->exportClassAttendanceToPdf($event, $selectedDate);
         }
         if($template === "midterm-exam"){
             return  $this->exportMidtermExamTemplate($event, $selectedDate);
@@ -46,13 +50,13 @@ class ExportAttendeeRecordController extends Controller
 
         // Filter by selected date if provided and not 'all'
         if ($selectedDate && $selectedDate !== 'all') {
-            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
+            $attendeeRecords = $attendeeRecords->whereDate('check_in', $selectedDate);
         }
 
         // Load records with related master list member
         $attendeeRecords = $attendeeRecords
             ->with('master_list_member')
-            ->orderBy('single_signin', 'asc') // Sort by single_signin in ascending order
+            ->orderBy('check_in', 'asc') // Sort by check_in in ascending order
             ->get();
 
         // Check if any records were found
@@ -110,6 +114,88 @@ class ExportAttendeeRecordController extends Controller
         // Stream the generated PDF for download
         return $pdf->stream(filename: $event->name . "_class_orientation_attendance_list.pdf");
     }
+
+    public function exportClassAttendanceToPdf(Event $event, $selectedDate)
+    {
+        // Fetch all members from the master list
+        $members = $event->master_list->master_list_members()
+            ->orderBy('full_name')
+            ->get();
+
+        // Prepare the data for the PDF export
+        $data = [];
+        $hasAttendanceRecords = false;
+
+        // Initialize Carbon instances for date handling
+        $startDate = \Carbon\Carbon::parse($event->start_date);
+        $currentDate = \Carbon\Carbon::now('Asia/Manila');
+
+        // Determine the date range
+        $monthsData = [];
+
+        // If specific date is selected, limit range to that month
+        if ($selectedDate !== 'all') {
+            $selectedMonthStart = \Carbon\Carbon::parse($selectedDate)->startOfMonth();
+            $selectedMonthEnd = \Carbon\Carbon::parse($selectedDate)->endOfMonth();
+            $dateRange = [$selectedMonthStart, $selectedMonthEnd];
+        } else {
+            // All dates: Start from event start to the current date
+            $dateRange = [$startDate, $currentDate];
+        }
+
+        // Loop through each month in the date range
+        for ($date = $dateRange[0]; $date->lte($dateRange[1]); $date->addMonth()) {
+            $currentMonth = $date->format('F Y'); // Month and Year
+            $monthlyData = [];
+
+            // Check if any attendance record exists for this month
+            $attendanceExistsForMonth = false;
+
+            foreach ($members as $member) {
+                $attendanceRecord = $member->attendee_record()
+                    ->where('event_id', $event->event_id)
+                    ->whereMonth('single_signin', $date->month)
+                    ->whereYear('single_signin', $date->year)
+                    ->get();
+
+                if ($attendanceRecord->count() > 0) {
+                    $attendanceExistsForMonth = true; // Found at least one record for this month
+
+                    foreach ($attendanceRecord as $record) {
+                        // Convert single_signin to a Carbon instance if it's a string
+                        $signinDate = \Carbon\Carbon::parse($record->single_signin); // Ensure it's a Carbon instance
+
+                        $monthlyData[] = [
+                            'Name' => $member->full_name,
+                            'Single_signin' => $signinDate->format('Y-m-d h:i A'), // Now this works correctly
+                        ];
+                    }
+                }
+            }
+
+            // If attendance exists for the current month, add it to the monthsData array
+            if ($attendanceExistsForMonth) {
+                $monthsData[$currentMonth] = $monthlyData;
+                $hasAttendanceRecords = true;
+            }
+        }
+
+        // If no attendance records were found, return failure
+        if (!$hasAttendanceRecords) {
+            return redirect()->back()->with('failed', 'No attendance records found for the selected date range.');
+        }
+
+        // Generate the PDF using Dompdf in long bond paper (legal size) landscape mode
+        $pdf = PDF::loadView('pdf_templates.class_attendance', [
+            'event' => $event,
+            'monthsData' => $monthsData,
+            'facilitator' => $event->owner()->first()
+        ])->setPaper([0, 0, 612, 1008], 'landscape');
+
+        // Return the generated PDF file for download
+        return $pdf->download($event->name . 'class_attendance.pdf');
+    }
+
 
     // Function to handle Excel export for class attendance
     public function exportClassAttendanceToExcel(Event $event, $selectedDate)
