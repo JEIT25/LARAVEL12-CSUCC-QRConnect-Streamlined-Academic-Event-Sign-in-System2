@@ -168,7 +168,6 @@ import { ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
-const menuOpen = ref(false);
 const successMess = computed(() => page.props.messages.success)
 const failedMess = computed(() => page.props.messages.failed)
 
