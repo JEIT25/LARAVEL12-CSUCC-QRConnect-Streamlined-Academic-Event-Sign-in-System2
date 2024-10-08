@@ -125,8 +125,10 @@
                                 <option value="" disabled>Select a template</option>
                                 <option v-if="event.type.includes('class orientation')" value="class-orientation">Class
                                     Orientation</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance">Class
-                                    Attendance</option>
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-excel">Class
+                                    Attendance Excel</option>
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-pdf">Class
+                                    Attendance PDF</option>
                                 <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
                                 <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
                                 <option
@@ -202,7 +204,7 @@ const generateDateRange = (startDate) => {
         dates.push(start.toISOString().split('T')[0]); // Add the date to the array
         start.setDate(start.getDate() + 1); // Increment by 1 day
     }
-    
+
     return dates;
 };
 

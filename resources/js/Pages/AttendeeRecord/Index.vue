@@ -1,4 +1,3 @@
-
 <template>
     <div class="container mx-auto px-4 py-6 text-center">
         <h1 class="text-2xl font-bold text-gray-800 mb-6">Attendees for {{ event.name }}</h1>
@@ -17,24 +16,46 @@
                 <table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                         <tr>
-                            <th class="py-3 px-6 text-left">Name</th>
-                            <th class="py-3 px-6 text-left">Check-in</th>
-                            <th class="py-3 px-6 text-left">Check-out</th>
+                            <th class="py-3 px-6 text-center">Full Name</th>
+
+                            <!-- Conditionally display either 'Attendance' or 'Check-In', 'Check-Out' based on event type -->
+                            <template v-if="isSpecialEventType(event.type)">
+                                <th class="py-3 px-6 text-center">Attendance</th>
+                            </template>
+                            <template v-else>
+                                <th class="py-3 px-6 text-center">Check-In</th>
+                                <th class="py-3 px-6 text-center">Check-Out</th>
+                            </template>
+
                             <th class="py-3 px-6 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-sm text-start">
                         <tr v-for="attendee_record in filteredAttendeeRecords" :key="attendee_record.attendee_record_id"
                             class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6">{{ attendee_record.master_list_member.full_name }}</td>
-                            <td class="py-3 px-6">
-                                {{ attendee_record.check_in ? new Date(attendee_record.check_in).toLocaleTimeString() :
-                                'Not Checked-in' }}
+                            <td class="py-3 px-6 text-center">{{ attendee_record.master_list_member.full_name }}</td>
+
+                            <!-- Conditional for event type -->
+                            <td class="py-3 px-6 text-center">
+                                <template v-if="isSpecialEventType(event.type)">
+                                    {{ attendee_record.single_signin ? new
+                                    Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
+                                </template>
+
+                                <template v-else>
+                                    {{ attendee_record.check_in ? new
+                                    Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
+                                </template>
                             </td>
-                            <td class="py-3 px-6">
-                                {{ attendee_record.check_out ? new Date(attendee_record.check_out).toLocaleTimeString()
-                                : 'Not Checked-out' }}
-                            </td>
+
+                            <!-- Only display the 'Check-Out' column if it's not a special event type -->
+                            <template v-if="!isSpecialEventType(event.type)">
+                                <td class="py-3 px-6 text-center">
+                                    {{ attendee_record.check_out ? new
+                                    Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
+                                </td>
+                            </template>
+
                             <td class="py-3 px-6 text-center">
                                 <Link
                                     :href="`/events/${event.event_id}/attendees/${attendee_record.attendee_record_id}`"
@@ -52,6 +73,7 @@
         </div>
     </div>
 </template>
+
 <script setup>
 import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
@@ -73,6 +95,10 @@ const generateDateRange = (startDate) => {
     const dates = [];
     const start = new Date(startDate);
     const today = new Date();
+
+    // Set the time of both dates to midnight to only compare the date part
+    start.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
     while (start <= today) {
         dates.push(start.toISOString().split('T')[0]);
@@ -98,7 +124,9 @@ const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(date).toLocaleDateString(undefined, options);
 };
+
+// Function to check if the event type is one of the special types
+const isSpecialEventType = (eventType) => {
+    return /exam|class orientation|class attendance/i.test(eventType);
+};
 </script>
-
-
-

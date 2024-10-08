@@ -1,6 +1,7 @@
 <template>
     <div>
-        HI admin
+        HI adminsasdads
+        HELLO JEROLD
     </div>
 </template>
 
