@@ -35,12 +35,12 @@ class AuthController extends Controller
 
         // Regenerate session ID after successful login
         $request->session()->regenerate();
-
+        $userFullName = Auth::user()->fname . " " . Auth::user()->middle_initial . " " . Auth::user()->lname;
         // Redirect based on user type
         if (Auth::user()->type === 'admin') {
-            return redirect()->route('admins.index')->with('success', "Welcome Administrator!");
+            return redirect()->route('admins.index')->with('success', "Welcome Administrator $userFullName!");
         } elseif (Auth::user()->type === 'facilitator') {
-            return redirect()->route('facilitators.index')->with('success', "Welcome Facilitator!");
+            return redirect()->route('facilitators.index')->with('success', "Welcome Facilitator $userFullName!");
         }
 
         // Fallback to homepage if no user type matches
