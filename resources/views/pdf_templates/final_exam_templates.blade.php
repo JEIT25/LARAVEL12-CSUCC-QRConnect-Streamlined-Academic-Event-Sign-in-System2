@@ -149,7 +149,7 @@
             <p class="sem">Sem: {{$event->semester ?? '_____'}} semester</p>
             <p id="year">S.Y.: {{$event->school_year ?? '_____'}}</p>
         </div>
-        <p id="certify">We certify that the following was discussed with us at the start of the semester.</p>
+        <p id="certify">We certify that the following has taken the exam.</p>
     </div>
 
     @foreach ($attendee_records->chunk($itemsPerPage) as $chunk)
@@ -169,8 +169,8 @@
                     <tr>
                         <td style="padding: 2px;">{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
                         <td style="padding: 2px;">
-                            @if ($attendee_record->check_in)
-                                {{ \Carbon\Carbon::parse($attendee_record->check_in)->format('Y-m-d H:i:s') }}
+                            @if ($attendee_record->single_signin)
+                                {{ \Carbon\Carbon::parse($attendee_record->single_signin)->format('Y-m-d g:i A') }}
                             @else
                                 <!-- Leave blank if not checked in -->
                             @endif

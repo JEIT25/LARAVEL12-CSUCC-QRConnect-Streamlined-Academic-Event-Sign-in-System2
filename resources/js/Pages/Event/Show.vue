@@ -127,7 +127,8 @@
                                     Orientation</option>
                                 <option v-if="event.type.includes('class attendance')" value="class-attendance">Class
                                     Attendance</option>
-                                <option v-if="event.type.includes('exam')" value="exam">Exam</option>
+                                <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
+                                <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
                                 <option
                                     v-if="!event.type.includes('class attendance') && !event.type.includes('class orientation') && !event.type.includes('exam')"
                                     value="general-template">Event

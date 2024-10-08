@@ -33,14 +33,14 @@ class QrScannerController extends Controller
                         $type => $existingAttendeeRecord->$type,
                     ]);
                 } else { // If existing attendee and did not check in yet for today
-                        $existingAttendeeRecord->update([$type => now()]);
+                    $existingAttendeeRecord->update([$type => now()]);
 
-                        return response()->json([
-                            'message' => "$action successful",
-                            'attendee_record' => $member,
-                            'status' => true,
-                            $type => $existingAttendeeRecord->$type,
-                        ]);
+                    return response()->json([
+                        'message' => "$action successful",
+                        'attendee_record' => $member,
+                        'status' => true,
+                        $type => $existingAttendeeRecord->$type,
+                    ]);
                 }
             }
 
@@ -106,10 +106,10 @@ class QrScannerController extends Controller
             }
 
             // Create a new attendee entry for the event with current date/time as sign-in
-        $newAttendeeRecord = $event->attendee_records()->create([
-            "master_list_member_id" => $member->master_list_member_id,
-            "single_signin" => now(),
-        ]);
+            $newAttendeeRecord = $event->attendee_records()->create([
+                "master_list_member_id" => $member->master_list_member_id,
+                "single_signin" => now(),
+            ]);
 
             return response()->json([
                 'attendee_record' => MasterListMember::find($newAttendeeRecord->master_list_member_id),
@@ -125,7 +125,8 @@ class QrScannerController extends Controller
         }
     }
 
-    public function singleSignin(Event $event,Request $request) {
+    public function singleSignin(Event $event, Request $request)
+    {
         if (
             $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
             //This will match the words "exam," "class orientation," and "class attendance" regardless of whether they appear alone or as part of a longer string.
@@ -134,16 +135,17 @@ class QrScannerController extends Controller
             abort(403);
         }
 
-        // Get the current date
-        $currentDate = Carbon::now();
+        // Get the current date (formatted to 'Y-m-d' to ignore time)
+        $currentDate = Carbon::now('Asia/Manila')->toDateString();
+        $startDate = Carbon::parse($event->start_date)->toDateString();
+        $endDate = Carbon::parse($event->end_date)->toDateString();
 
         // Check if the current date is outside the event's date range
-        // lt and gt methods are used to check if the current date is less than the event's start date or greater than the event's end date.
-        if ($currentDate->lt($event->start_date) || $currentDate->gt($event->end_date)) {
-            return redirect()->back()->with('failed', 'This event is not available for check-in at this time.');
+        if ($currentDate < $startDate || $currentDate > $endDate) {
+            return redirect()->back()->with('failed', 'This event is not available for sign-in at this time.');
         }
 
-        return inertia('QrScanner/SingleSignin',[
+        return inertia('QrScanner/SingleSignin', [
             "event" => $event
         ]);
     }
@@ -159,13 +161,15 @@ class QrScannerController extends Controller
             abort(403);
         }
 
-        // Get the current date
-        $currentDate = Carbon::now();
+
+        // Get the current date (formatted to 'Y-m-d' to ignore time)
+        $currentDate = Carbon::now('Asia/Manila')->toDateString();
+        $startDate = Carbon::parse($event->start_date)->toDateString();
+        $endDate = Carbon::parse($event->end_date)->toDateString();
 
         // Check if the current date is outside the event's date range
-        // lt and gt methods are used to check if the current date is less than the event's start date or greater than the event's end date.
-        if ($currentDate->lt($event->start_date) || $currentDate->gt($event->end_date)) {
-            return redirect()->back()->with('failed', 'This event is not available for check-in at this time.');
+        if ($currentDate < $startDate || $currentDate > $endDate) {
+            return redirect()->back()->with('failed', 'This event is not available for sign-in at this time.');
         }
 
         return inertia('QrScanner/Checkin', [
@@ -207,14 +211,18 @@ class QrScannerController extends Controller
         if ($request->user()->cannot('create', [AttendeeRecord::class, $event])) {
             abort(403);
         }
-        // Get the current date
-        $currentDate = Carbon::now();
+
+
+        // Get the current date (formatted to 'Y-m-d' to ignore time)
+        $currentDate = Carbon::now('Asia/Manila')->toDateString();
+        $startDate = Carbon::parse($event->start_date)->toDateString();
+        $endDate = Carbon::parse($event->end_date)->toDateString();
 
         // Check if the current date is outside the event's date range
-        // lt and gt methods are used to check if the current date is less than the event's start date or greater than the event's end date.
-        if ($currentDate->lt($event->start_date) || $currentDate->gt($event->end_date)) {
-            return redirect()->back()->with('failed', 'This event is not available for check-out at this time.');
+        if ($currentDate < $startDate || $currentDate > $endDate) {
+            return redirect()->back()->with('failed', 'This event is not available for sign-in at this time.');
         }
+
         return inertia('QrScanner/Checkout', [
             "event" => $event,
         ]);
