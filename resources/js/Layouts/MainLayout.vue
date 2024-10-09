@@ -72,7 +72,7 @@
                     </Link>
 
                 </li>
-                <li
+                <li v-if="page.props.user.type == 'facilitator'"
                     class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452.986 452.986" fill="#bc7634" width="24"
                         height="24">
@@ -92,7 +92,7 @@
                     </svg>
                     <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/events">My Events</Link>
                 </li>
-                <li v-if="page.props.user.type=='admin'"
+                <li v-if="page.props.user.type == 'admin'"
                     class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
                     <svg viewBox="0 0 24 24" fill="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"

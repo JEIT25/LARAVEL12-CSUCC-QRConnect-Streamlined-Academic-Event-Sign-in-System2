@@ -115,6 +115,7 @@ import { useForm, Link } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import QrcodeVue from 'qrcode.vue';
 import jsPDF from 'jspdf';
+import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
 
 const props = defineProps({
