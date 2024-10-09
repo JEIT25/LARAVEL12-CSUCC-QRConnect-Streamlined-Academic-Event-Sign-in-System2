@@ -199,10 +199,10 @@ const generateDateRange = (startDate) => {
     start.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
-    // Loop until the start date exceeds today's date
+    // Generate the date range including the end date
     while (start <= today) {
-        dates.push(start.toISOString().split('T')[0]); // Add the date to the array
-        start.setDate(start.getDate() + 1); // Increment by 1 day
+        dates.push(new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0]);
+        start.setDate(start.getDate() + 1); // Increment date by 1 day
     }
 
     return dates;
