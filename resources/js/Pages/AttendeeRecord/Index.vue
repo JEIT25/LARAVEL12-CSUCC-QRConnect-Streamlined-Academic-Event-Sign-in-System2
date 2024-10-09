@@ -39,12 +39,12 @@
                             <td class="py-3 px-6 text-center">
                                 <template v-if="isSpecialEventType(event.type)">
                                     {{ attendee_record.single_signin ? new
-                                    Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
+                                        Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
                                 </template>
 
                                 <template v-else>
                                     {{ attendee_record.check_in ? new
-                                    Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
+                                        Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
                                 </template>
                             </td>
 
@@ -52,7 +52,7 @@
                             <template v-if="!isSpecialEventType(event.type)">
                                 <td class="py-3 px-6 text-center">
                                     {{ attendee_record.check_out ? new
-                                    Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
+                                        Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
                                 </td>
                             </template>
 
@@ -87,29 +87,30 @@ const props = defineProps({
 // State for selected date, default to event start date
 const selectedDate = ref(props.event.start_date);
 
-// Generate a date range from the start date to the current date
+// Generate a date range from the start date to the end date
 const dateRange = ref([]);
 
-// Function to generate date range between event start date and today
-const generateDateRange = (startDate) => {
+const generateDateRange = (startDate, endDate) => {
     const dates = [];
     const start = new Date(startDate);
-    const today = new Date();
+    const end = new Date(endDate);
 
-    // Set the time of both dates to midnight to only compare the date part
+    // Adjust to Manila time zone (UTC+8)
     start.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
-    while (start <= today) {
-        dates.push(start.toISOString().split('T')[0]);
+    // Generate the date range including the end date
+    while (start <= end) {
+        dates.push(new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0]);
         start.setDate(start.getDate() + 1); // Increment date by 1 day
     }
 
     return dates;
 };
 
-// Initialize the date range
-dateRange.value = generateDateRange(props.event.start_date);
+// Initialize the date range with event start and end date
+dateRange.value = generateDateRange(props.event.start_date, props.event.end_date);
+
 
 // Filter attendee records by the selected date
 const filteredAttendeeRecords = computed(() => {
