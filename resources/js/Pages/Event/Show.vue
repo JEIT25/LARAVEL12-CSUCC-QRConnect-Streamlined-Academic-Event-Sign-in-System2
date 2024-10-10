@@ -219,7 +219,7 @@ const formatDate = (date) => {
 const exportAttendance = () => {
     if (selectedTemplate.value && selectedDate.value) {
         // Redirect to the export route, passing the selected template and date
-        window.location.href = `/export-attendee-records/${props.event.event_id}/${selectedTemplate.value}?date=${selectedDate.value}`;
+        window.open(`/export-attendee-records/${props.event.event_id}/${selectedTemplate.value}?date=${selectedDate.value}`,'_blank');
         showExportModal.value = false; // Close the modal after submission
     }
 };

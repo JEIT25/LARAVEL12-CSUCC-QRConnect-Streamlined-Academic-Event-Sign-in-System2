@@ -82,8 +82,7 @@ class ExportAttendeeRecordController extends Controller
     {
         // Fetch attendee records with check-in and check-out not null
         $attendeeRecords = $event->attendee_records()
-            ->whereNotNull('check_in')
-            ->whereNotNull('check_out');
+            ->whereNotNull('single_signin');
 
         // Filter by selected date if provided and not 'all'
         if ($selectedDate && $selectedDate !== 'all') {
@@ -347,7 +346,7 @@ class ExportAttendeeRecordController extends Controller
             'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
-            'itemsPerPage' => 20,
+            'itemsPerPage' => 25,
         ]);
 
         return $pdf->stream($event->name . "_exam_attendees.pdf");
@@ -380,7 +379,7 @@ class ExportAttendeeRecordController extends Controller
             'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
-            'itemsPerPage' => 20,
+            'itemsPerPage' => 25,
         ]);
 
         return $pdf->stream($event->name . "_exam_attendees.pdf");

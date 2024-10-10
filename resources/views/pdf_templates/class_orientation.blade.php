@@ -50,7 +50,8 @@
         }
 
         .info2-right {
-            margin-left: 80px;
+            margin-left: 200px;
+            margin-top: 10px;
             width: 40%;
             text-align: right;
         }
@@ -59,9 +60,11 @@
             display: inline-block;
         }
 
-        #year {
+        #year,#id {
             margin-left: 50px;
         }
+
+
 
         .info2 p {
             margin: 0;
@@ -135,19 +138,19 @@
     </header>
 
     <div class="info1">
-        <p>ATTENDANCE SHEET</p>
-        <p>MIDTERM EXAM</p>
+        <p>MONITORING SHEET</p>
+        <p>CLASS ORIENTATION</p>
     </div>
 
     <div class="info2">
         <div class="info2-left">
-            <p>Course: {{$event->subject ?? '______________'}}</p>
-            <p>Code: {{$event->subject_code ?? '_____'}}</p>
-            <p>Instructor: {{ $facilitator->fname . " " . $facilitator->lname ?? '______________' }}</p>
+            <p>Course: {{ $event->subject ?? '______________' }}</p>
+            <p>Code: {{ $event->subject_code ?? '_____' }}</p>
+            <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
         </div>
         <div class="info2-right">
-            <p class="sem">Sem: {{$event->semester ?? '_____'}} semester</p>
-            <p id="year">S.Y.: {{$event->school_year ?? '_____'}}</p>
+            <p id="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
+            <p id="year">S.Y.: {{ $event->school_year ?? '_____' }}</p>
         </div>
         <p id="certify">We certify that the following was discussed with us at the start of the semester.</p>
     </div>
@@ -161,20 +164,22 @@
             <thead>
                 <tr>
                     <th style="width: 70%; padding: 2px;">NAME OF STUDENTS</th>
-                    <th style="width: 30%; padding: 2px;">ATTENDANCE</th>
+                    <th style="width: 10%; padding: 2px;">Vision, Mission & Goals</th>
+                    <th style="width: 10%; padding: 2px;">Syllabus</th>
+                    <th style="width: 10%; padding: 2px;">Classroom Policies</th>
+                    <th style="width: 10%; padding: 2px;">Grading System</th>
+                    <th style="width: 10%; padding: 2px;">Requirements</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($chunk as $attendee_record)
                     <tr>
                         <td style="padding: 2px;">{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
-                        <td style="padding: 2px;">
-                            @if ($attendee_record->check_in)
-                                {{ \Carbon\Carbon::parse($attendee_record->check_in)->format('Y-m-d H:i:s') }}
-                            @else
-                                <!-- Leave blank if not checked in -->
-                            @endif
-                        </td>
+                        <td style="padding: 2px;">&#10003;</td>
+                        <td style="padding: 2px;">&#10003;</td>
+                        <td style="padding: 2px;">&#10003;</td>
+                        <td style="padding: 2px;">&#10003;</td>
+                        <td style="padding: 2px;">&#10003;</td>
                     </tr>
                 @endforeach
             </tbody>

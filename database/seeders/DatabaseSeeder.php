@@ -17,11 +17,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-
-        // User::factory()->create([
-        //     'type' => 'facilitator',
-        //     'email' => 'facilitator@example.com',
-        // ]);
+        User::factory()->create([
+            'type' => 'facilitator',
+            'email' => 'facilitator@example.com',
+        ]);
 
         // User::factory()->create([
         //     'type' => 'admin',

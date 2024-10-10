@@ -43,15 +43,14 @@
 
             <!-- Add Student Buttons (aligned to the right) -->
             <div class="flex justify-end space-x-4 mb-4">
-                <button @click="toggleIndividualForm"
-                    class="btn-primary text-white px-4 py-2 rounded-lg">
+                <button @click="toggleIndividualForm" class="btn-primary text-white px-4 py-2 rounded-lg">
                     Add Individually
                 </button>
                 <button @click="toggleBulkForm" class="btn-primary text-white px-4 py-2 rounded-lg">
                     Add by Bulk
                 </button>
-                <button class="btn-primary text-white px-4 py-2 rounded-lg"
-                    @click="downloadAllQRCodesAsPDF">Download All QR Codes as PDF</button>
+                <button class="btn-primary text-white px-4 py-2 rounded-lg" @click="downloadAllQRCodesAsPDF">Download
+                    All QR Codes as PDF</button>
             </div>
 
             <!-- Add New Student Form (Individual) -->
@@ -72,9 +71,9 @@
             <!-- Add Students by Bulk -->
             <div v-if="showBulkForm" class="mt-6">
                 <form @submit.prevent="addStudentsBulk">
-                    <textarea v-model="bulkInput" placeholder="Paste here one member per line
-Format: Full Name,UniqueId(student id, etc.)
-Example: Josh M. Ghad, 2022-7890
+                    <textarea v-model="bulkInput" placeholder="Enter here one member per line
+Format: UniqueId(student id, etc.), Full Name
+Example: , 2022-7890, Josh M. Ghad
                     " class="border border-gray-300 w-full h-32 p-4 rounded-lg mb-4" required></textarea>
                     <input type="file" @change="handleFileUpload" class="mb-4" />
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
@@ -152,7 +151,6 @@ const toggleBulkForm = () => {
     showBulkForm.value = !showBulkForm.value;
     showIndividualForm.value = false;
 };
-
 // Handle file upload and parse XLSX data (start reading from second row)
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -167,13 +165,23 @@ const handleFileUpload = (event) => {
 
             bulkInput.value = jsonData
                 .slice(1) // Skip the first row (header row)
-                .map(row => `${row[0]}, ${row[1]}`) // Use the first and second columns
+                .map(row => {
+                    const id = row[0] ? row[0] : ""; // Handle ID Number
+                    const firstName = row[2] ? row[2] : ""; // Handle FirstName
+                    const lastName = row[1] ? row[1] : ""; // Handle LastName
+
+                    // Only concatenate if values are valid
+                    if (id && firstName && lastName) {
+                        return `${id}, ${firstName} ${lastName}`;
+                    }
+                    return null; // Exclude if any of the fields are invalid
+                })
+                .filter(Boolean) // Remove null entries from the map
                 .join("\n");
         };
         reader.readAsArrayBuffer(file);
     }
 };
-
 
 // Watch the bulkInput and update formMany.members in real-time
 watch(bulkInput, (newValue) => {
@@ -181,16 +189,20 @@ watch(bulkInput, (newValue) => {
     formMany.members = [];
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].split(',');
-        if (line.length === 2 && line[0].trim() !== "" && line[1].trim() !== "") {
-            const full_name = line[0].trim();
-            const unique_id = line[1].trim();
+        if (line.length === 2) {
+            const unique_id = line[0].trim();
+            const full_name = line[1].trim();
             const exists = formMany.members.some(member => member.unique_id === unique_id);
-            if (!exists) {
+
+            // Check to ensure values are neither undefined nor empty
+            if (!exists && full_name !== "undefined" && unique_id !== "undefined" && full_name && unique_id) {
                 formMany.members.push({ full_name, unique_id });
             }
         }
     }
 });
+
+
 
 // Method to add a member to the master list (individual)
 const addStudent = () => {
