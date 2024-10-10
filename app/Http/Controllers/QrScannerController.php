@@ -17,7 +17,7 @@ class QrScannerController extends Controller
         try {
             $today = now()->toDateString(); // Get today's date (YYYY-MM-DD format)
 
-            $existingAttendeeRecord = AttendeeRecord::where('event_id', $event->event_id)
+            $existingAttendeeRecord = $event->attendee_records->where('event_id', $event->event_id)
                 ->where('master_list_member_id', $member->master_list_member_id)
                 ->whereRaw('DATE(created_at) = ?', [$today]) // Filter by the date of created_at
                 ->orderBy('created_at', 'desc') // Order by highest to lowest datetime

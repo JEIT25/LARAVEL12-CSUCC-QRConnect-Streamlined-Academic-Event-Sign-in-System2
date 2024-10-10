@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('unique_id');
             $table->timestamps();
 
-            $table->foreign('master_list_id')->references('master_list_id')->on('master_lists');
+            $table->foreign('master_list_id')->references('master_list_id')->on('master_lists')
+            ->onDelete('cascade');
         });
     }
 

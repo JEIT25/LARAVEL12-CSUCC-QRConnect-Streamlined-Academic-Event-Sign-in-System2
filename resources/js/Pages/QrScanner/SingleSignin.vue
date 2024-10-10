@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount, } from 'vue';
 import axios from 'axios'; // Axios for handling HTTP requests
 import { Html5QrcodeScanner } from 'html5-qrcode';
 

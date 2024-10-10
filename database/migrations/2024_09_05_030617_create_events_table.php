@@ -27,7 +27,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->timestamps();
 
-            $table->foreign('facilitator_id')->references('user_id')->on('users');
+            $table->foreign('facilitator_id')->references('user_id')->on('users')->onDelete('cascade');
         });
     }
 

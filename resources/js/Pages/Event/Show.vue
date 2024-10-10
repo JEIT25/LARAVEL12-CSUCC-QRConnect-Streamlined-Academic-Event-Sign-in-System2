@@ -4,7 +4,7 @@
         <div class="p-10 w-full max-w-6xl"> <!-- Wrapper for padding and width -->
             <!-- Event Image -->
             <div class="flex justify-center mb-6">
-                <img :src="event.profile_image || props.default_image" alt="Event Profile Image"
+                <img :src="event.profile_image" alt="Event Profile Image"
                     class="w-full h-60 rounded-lg shadow-md object-cover"> <!-- Change w-md to w-full -->
             </div>
 
