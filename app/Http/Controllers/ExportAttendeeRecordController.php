@@ -93,6 +93,8 @@ class ExportAttendeeRecordController extends Controller
         // Load records with related master list member
         $attendeeRecords = $attendeeRecords->with('master_list_member')->get();
 
+
+
         // Check if any records were found
         if ($attendeeRecords->isEmpty()) {
             return redirect()->back()->with('failed', "No Attendees found yet for the selected date");
@@ -117,11 +119,6 @@ class ExportAttendeeRecordController extends Controller
 
     public function exportClassAttendanceToPdf(Event $event, $selectedDate)
     {
-        // Fetch all members from the master list
-        $members = $event->master_list->master_list_members()
-            ->orderBy('full_name')
-            ->get();
-
         // Prepare the data for the PDF export
         $data = [];
         $hasAttendanceRecords = false;
@@ -151,25 +148,26 @@ class ExportAttendeeRecordController extends Controller
             // Check if any attendance record exists for this month
             $attendanceExistsForMonth = false;
 
-            foreach ($members as $member) {
-                $attendanceRecord = $member->attendee_record()
-                    ->where('event_id', $event->event_id)
-                    ->whereMonth('single_signin', $date->month)
-                    ->whereYear('single_signin', $date->year)
-                    ->get();
+            // Fetch all attendance records for the event within the current month
+            $attendanceRecords = $event->attendee_records()
+                ->whereMonth('single_signin', $date->month)
+                ->whereYear('single_signin', $date->year)
+                ->with('master_list_member') // Load the related master list member
+                ->get();
 
-                if ($attendanceRecord->count() > 0) {
+            foreach ($attendanceRecords as $record) {
+                // Access the member related to this attendance record
+                $member = $record->master_list_member;
+
+                if ($member) {
+                    $signinDate = \Carbon\Carbon::parse($record->single_signin); // Ensure it's a Carbon instance
+
+                    $monthlyData[] = [
+                        'Name' => $member->full_name,
+                        'Single_signin' => $signinDate->format('Y-m-d h:i A'), // Now this works correctly
+                    ];
+
                     $attendanceExistsForMonth = true; // Found at least one record for this month
-
-                    foreach ($attendanceRecord as $record) {
-                        // Convert single_signin to a Carbon instance if it's a string
-                        $signinDate = \Carbon\Carbon::parse($record->single_signin); // Ensure it's a Carbon instance
-
-                        $monthlyData[] = [
-                            'Name' => $member->full_name,
-                            'Single_signin' => $signinDate->format('Y-m-d h:i A'), // Now this works correctly
-                        ];
-                    }
                 }
             }
 
@@ -197,19 +195,18 @@ class ExportAttendeeRecordController extends Controller
     }
 
 
+
     // Function to handle Excel export for class attendance
     public function exportClassAttendanceToExcel(Event $event, $selectedDate)
     {
-        // Fetch all members from the master list
-        $members = $event->master_list->master_list_members()
-            ->orderBy('full_name') // Alphabetical order
-            ->get();
-
         // Prepare the data for Excel export
         $data = [];
-
-        // Flag to check if any attendance records are found
         $hasAttendanceRecords = false;
+
+        // Fetch all members from the master list
+        $members = $event->master_list->master_list_members()
+            ->orderBy('full_name')
+            ->get();
 
         // If 'all' is selected, prepare attendance for all dates
         if ($selectedDate === 'all') {
@@ -224,28 +221,23 @@ class ExportAttendeeRecordController extends Controller
             // Loop through each date and check for attendance records
             for ($date = $startDate; $date->lte($currentDate); $date->addDay()) {
                 // Attempt to find at least one attendance record for any member on this date
-                $attendanceExists = false;
+                $attendanceRecords = $event->attendee_records()
+                    ->whereDate('single_signin', $date)
+                    ->get();
 
-                foreach ($members as $member) {
-                    $attendanceRecord = $member->attendee_record()
-                        ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
-                        ->whereDate('single_signin', $date)
-                        ->first();
-
-                    if ($attendanceRecord) {
-                        $attendanceExists = true; // At least one attendance record exists for this date
-                        break; // No need to check other members for this date
-                    }
-                }
-
-                // If attendance exists, add the date to headers
-                if ($attendanceExists) {
+                // If any attendance exists, add the date to headers
+                if ($attendanceRecords->count() > 0) {
                     $dateRange[] = $date->format('Y-m-d');
                     $data[0][] = $date->format('Y-m-d'); // Add date to the header
                 }
             }
 
-            // Populate attendance data for each member if there are valid dates
+            // If no valid dates were found, return with a failure message
+            if (empty($dateRange)) {
+                return redirect()->back()->with('failed', 'No attendance records found for any dates.');
+            }
+
+            // Populate attendance data for each member
             foreach ($members as $member) {
                 $row = [
                     'Name' => $member->full_name,
@@ -253,21 +245,18 @@ class ExportAttendeeRecordController extends Controller
                 ];
 
                 foreach ($dateRange as $date) {
-                    // Attempt to find the attendance record for this date and member
-                    $attendanceRecord = $member->attendee_record()
-                        ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
+                    // Check if there's an attendance record for this date and member
+                    $attendanceRecord = $event->attendee_records()
+                        ->where('master_list_member_id', $member->master_list_member_id)
                         ->whereDate('single_signin', $date)
                         ->first();
 
                     // Determine single_signin value (1 if present, 0 if absent)
-                    $row[] = $attendanceRecord && $attendanceRecord->single_signin ? '1' : '0';
+                    $row[] = $attendanceRecord ? '1' : '0';
                 }
 
-                // Append the row to the data array only if there's at least one attendance record for this member
-                if (count($row) > 2) { // The row must have more than just name and ID
-                    $data[] = $row;
-                    $hasAttendanceRecords = true; // Mark that we found at least one attendance record
-                }
+                // Append the row to the data array
+                $data[] = $row; // Always include the member, even if no records are found
             }
         } else {
             // Create headers for a specific selected date
@@ -277,37 +266,41 @@ class ExportAttendeeRecordController extends Controller
                 $selectedDate,
             ];
 
+            // Flag to check if there are any attendance records for the specific date
+            $attendanceFound = false;
+
             // Loop through each member to add their attendance records
             foreach ($members as $member) {
-                $attendeeRecord = $member->attendee_record()
-                    ->where('event_id', $event->event_id) // Use $event->event_id for the correct relationship
+                $attendanceRecord = $event->attendee_records()
+                    ->where('master_list_member_id', $member->master_list_member_id)
                     ->whereDate('single_signin', $selectedDate)
                     ->first();
 
                 // Determine attendance values (1 or 0)
-                $singleSigninValue = $attendeeRecord && $attendeeRecord->single_signin ? '1' : '0';
+                $singleSigninValue = $attendanceRecord ? '1' : '0';
 
                 // Add a new row with the member's name and attendance value
-                if ($singleSigninValue === '1') {
-                    $hasAttendanceRecords = true; // At least one attendance record exists
-                }
-
                 $data[] = [
                     'Name' => $member->full_name,
                     'Student ID Number' => $member->unique_id,
-                    $selectedDate=> $singleSigninValue,
+                    $selectedDate => $singleSigninValue,
                 ];
+
+                // Set the flag if attendance record is found for any member
+                if ($attendanceRecord) {
+                    $attendanceFound = true;
+                }
             }
 
             // Check if there are no attendance records for the specific date
-            if (!$hasAttendanceRecords) {
-                return redirect()->back()->with('failed', "No Attendees found for the selected date");
+            if (!$attendanceFound) {
+                return redirect()->back()->with('failed', "No attendees found for the selected date.");
             }
         }
 
         // Check if there are any records to export
-        if (!$hasAttendanceRecords || count($data) < 2) { // Ensure at least the header and one record
-            return redirect()->back()->with('failed', "No Attendees found for the selected date");
+        if (empty($data) || count($data) < 2) { // Ensure at least the header and one record
+            return redirect()->back()->with('failed', "No attendees found for the selected date.");
         }
 
         // Create and download the Excel file with the data

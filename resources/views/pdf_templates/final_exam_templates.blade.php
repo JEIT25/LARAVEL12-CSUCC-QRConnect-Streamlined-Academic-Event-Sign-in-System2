@@ -149,7 +149,7 @@
             <p class="sem">Sem: {{$event->semester ?? '_____'}} semester</p>
             <p id="year">S.Y.: {{$event->school_year ?? '_____'}}</p>
         </div>
-        <p id="certify">We certify that the following has taken the exam.</p>
+        <p id="certify">We certify that the following have taken the exam.</p>
     </div>
 
     @foreach ($attendee_records->chunk($itemsPerPage) as $chunk)

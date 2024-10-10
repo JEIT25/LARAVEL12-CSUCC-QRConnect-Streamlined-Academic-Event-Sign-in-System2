@@ -38,21 +38,17 @@
                             <!-- Conditional for event type -->
                             <td class="py-3 px-6 text-center">
                                 <template v-if="isSpecialEventType(event.type)">
-                                    {{ attendee_record.single_signin ? new
-                                        Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
+                                    {{ attendee_record.single_signin ? new Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
                                 </template>
-
                                 <template v-else>
-                                    {{ attendee_record.check_in ? new
-                                        Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
+                                    {{ attendee_record.check_in ? new Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
                                 </template>
                             </td>
 
                             <!-- Only display the 'Check-Out' column if it's not a special event type -->
                             <template v-if="!isSpecialEventType(event.type)">
                                 <td class="py-3 px-6 text-center">
-                                    {{ attendee_record.check_out ? new
-                                        Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
+                                    {{ attendee_record.check_out ? new Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
                                 </td>
                             </template>
 
@@ -60,7 +56,7 @@
                                 <Link
                                     :href="`/events/${event.event_id}/attendees/${attendee_record.attendee_record_id}`"
                                     method="delete" as="button" class="text-red-500 hover:text-red-700">
-                                Delete
+                                    Delete
                                 </Link>
                             </td>
                         </tr>
@@ -87,7 +83,7 @@ const props = defineProps({
 // State for selected date, default to event start date
 const selectedDate = ref(props.event.start_date);
 
-// Generate a date range from the start date to the end date
+// Generate a date range from the start date to the end date, adjusting to Manila time zone
 const dateRange = ref([]);
 
 const generateDateRange = (startDate, endDate) => {
@@ -101,7 +97,9 @@ const generateDateRange = (startDate, endDate) => {
 
     // Generate the date range including the end date
     while (start <= end) {
-        dates.push(new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0]);
+        // Adjust the start date to UTC+8 (Manila time)
+        const adjustedDate = new Date(start.getTime() + (8 * 60 * 60 * 1000)); // Add 8 hours for UTC+8
+        dates.push(adjustedDate.toISOString().split('T')[0]);
         start.setDate(start.getDate() + 1); // Increment date by 1 day
     }
 
@@ -111,12 +109,17 @@ const generateDateRange = (startDate, endDate) => {
 // Initialize the date range with event start and end date
 dateRange.value = generateDateRange(props.event.start_date, props.event.end_date);
 
-
-// Filter attendee records by the selected date
+// Filter attendee records by the selected date, adjust the `created_at` to Manila timezone
 const filteredAttendeeRecords = computed(() => {
     return props.attendee_records.filter(record => {
-        const createdAtDate = record.created_at ? record.created_at.split('T')[0] : null;
-        return createdAtDate === selectedDate.value;
+        if (!record.created_at) return false;
+
+        // Adjust `created_at` to Manila time zone (UTC+8)
+        const recordDate = new Date(new Date(record.created_at).getTime() + (8 * 60 * 60 * 1000))
+            .toISOString().split('T')[0];
+
+        // Compare with selectedDate
+        return recordDate === selectedDate.value;
     });
 });
 
@@ -131,3 +134,4 @@ const isSpecialEventType = (eventType) => {
     return /exam|class orientation|class attendance/i.test(eventType);
 };
 </script>
+

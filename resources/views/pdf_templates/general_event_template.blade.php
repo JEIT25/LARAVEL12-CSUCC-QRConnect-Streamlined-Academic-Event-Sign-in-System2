@@ -150,7 +150,7 @@
                     <p>Start Date: {{ $event->start_date ?? '_____' }}</p>
                     <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
                 </div>
-                <p id="certify">We certify that the following attendance was recorded for this event.</p>
+                <p id="certify">We certify that the following have attended the event.</p>
             </div>
         @endif
 

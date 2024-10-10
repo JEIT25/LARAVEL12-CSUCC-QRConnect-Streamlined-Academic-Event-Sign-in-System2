@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('master_list_members', function (Blueprint $table) {
             $table->id("master_list_member_id");
-            $table->unsignedBigInteger('master_list_id');
+            $table->unsignedBigInteger('master_list_id')->onDelete('cascade');
             $table->string('full_name');
             $table->string('unique_id');
             $table->timestamps();
 
-            $table->foreign('master_list_id')->references('master_list_id')->on('master_lists')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('master_list_id')->references('master_list_id')->on('master_lists');
         });
     }
 

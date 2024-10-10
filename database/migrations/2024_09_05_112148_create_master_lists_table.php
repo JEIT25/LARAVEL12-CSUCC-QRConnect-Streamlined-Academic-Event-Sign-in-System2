@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id("master_list_id");
             $table->string('name');
             $table->unsignedBigInteger('facilitator_id');
-            $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('event_id')->onDelete('cascade');
             $table->timestamps();
 
 
-            $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('facilitator_id')->references('user_id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('event_id')->references('event_id')->on('events');
+            $table->foreign('facilitator_id')->references('user_id')->on('users');
         });
     }
 
