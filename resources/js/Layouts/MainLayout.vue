@@ -3,7 +3,7 @@
         <!-- Sidebar is hidden by default and shown when isSidebarOpen is true -->
 
         <!-- Toggle Button for opening the sidebar -->
-        <button v-if="!isSidebarOpen && page.props.user" @click="toggleSidebar" class="fixed top-20 left-4  z-50">
+        <button v-if="!isSidebarOpen && page.props.user" @click="toggleSidebar" class="md:hidden fixed top-20 left-4  z-50">
             <!-- Hamburger icon -->
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34">
                 <path opacity="0.5"
@@ -23,7 +23,7 @@
 
         <!-- Close button for closing the sidebar -->
         <button v-if="isSidebarOpen && page.props.user" @click="toggleSidebar"
-            class="fixed top-20 left-52 bg-gray-700 hover:bg-gray-900 text-white p-2 rounded-md z-50">
+            class="md:hidden fixed top-20 left-52 bg-gray-700 hover:bg-gray-900 text-white p-2 rounded-md z-50">
             <!-- X icon -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 class="w-4 h-4">
@@ -33,7 +33,7 @@
 
         <!-- Sidebar -->
         <aside v-if="isSidebarOpen && page.props.user"
-            class="z-10 fixed w-64 overflow-auto bg-slate-950 p-4 pt-10 min-h-screen shadow-md border-r-4 border-yellow-500 z-100">
+            class="z-100 fixed md:relative w-64 overflow-auto bg-slate-950 p-4 pt-10 min-h-screen shadow-md border-r-4 border-yellow-500">
             <!-- Administrator Info Section -->
             <div class="flex flex-col items-center ml-2 mt-9 mb-7">
                 <svg fill="#ffd333" height="100px" width="100px" xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +164,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
@@ -173,6 +173,27 @@ const failedMess = computed(() => page.props.messages.failed)
 
 // Reactive state for toggling sidebar
 const isSidebarOpen = ref(true);
+
+const screenSize = ref(window.innerWidth);
+
+const checkScreenSize = () => {
+    // Open sidebar if screen size is medium or larger
+    isSidebarOpen.value = screenSize.value >= 768 && page.props.user; // Assuming 'md' starts at 768px
+};
+
+const handleResize = () => {
+    screenSize.value = window.innerWidth; // Update screen size
+    checkScreenSize(); // Check if sidebar should be open
+};
+
+onMounted(() => {
+    window.addEventListener('resize', handleResize);
+    checkScreenSize(); // Check initial screen size
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+});
 
 // Function to toggle sidebar visibility
 const toggleSidebar = () => {

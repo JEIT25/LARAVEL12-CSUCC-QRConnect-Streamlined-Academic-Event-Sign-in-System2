@@ -76,6 +76,9 @@ Format: UniqueId(student id, etc.), Full Name
 Example: , 2022-7890, Josh M. Ghad
                     " class="border border-gray-300 w-full h-32 p-4 rounded-lg mb-4" required></textarea>
                     <input type="file" @change="handleFileUpload" class="mb-4" />
+                    <select v-model="selectedSheet" @change="handleSheetChange" class="mb-4">
+                        <option v-for="sheet in sheets" :key="sheet" :value="sheet">{{ sheet }}</option>
+                    </select>
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
                         Add Students by Bulk
                     </button>
@@ -139,6 +142,8 @@ const showBulkForm = ref(false);
 const showQRCodeModal = ref(false);
 const selectedUniqueId = ref('');
 const selectedMember = ref('');
+const sheets = ref([]); // To store sheet names
+const selectedSheet = ref(''); // To store the selected sheet
 
 // Toggle Individual Form
 const toggleIndividualForm = () => {
@@ -151,7 +156,8 @@ const toggleBulkForm = () => {
     showBulkForm.value = !showBulkForm.value;
     showIndividualForm.value = false;
 };
-// Handle file upload and parse XLSX data (start reading from second row)
+
+// Handle file upload and parse XLSX data
 const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -159,8 +165,29 @@ const handleFileUpload = (event) => {
         reader.onload = (e) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: "array" });
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
+
+            // Get the sheet names and populate the sheets array
+            sheets.value = workbook.SheetNames;
+
+            // Automatically set the first sheet as the selected sheet
+            if (sheets.value.length > 0) {
+                selectedSheet.value = sheets.value[0];
+                handleSheetChange(); // Load the first sheet data
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+};
+
+// Handle sheet change and read data from the selected sheet
+const handleSheetChange = () => {
+    const file = document.querySelector('input[type="file"]').files[0];
+    if (file && selectedSheet.value) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const worksheet = workbook.Sheets[selectedSheet.value];
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
             bulkInput.value = jsonData
@@ -170,59 +197,39 @@ const handleFileUpload = (event) => {
                     const firstName = row[2] ? row[2] : ""; // Handle FirstName
                     const lastName = row[1] ? row[1] : ""; // Handle LastName
 
-                    // Only concatenate if values are valid
-                    if (id && firstName && lastName) {
-                        return `${id}, ${firstName} ${lastName}`;
-                    }
-                    return null; // Exclude if any of the fields are invalid
+                    // Only concatenate if values exist
+                    const fullName = `${firstName} ${lastName}`.trim();
+                    return `${id}, ${fullName}`;
                 })
-                .filter(Boolean) // Remove null entries from the map
-                .join("\n");
+                .join('\n'); // Join entries into a single string with line breaks
         };
         reader.readAsArrayBuffer(file);
     }
 };
 
-// Watch the bulkInput and update formMany.members in real-time
-watch(bulkInput, (newValue) => {
-    const lines = newValue.split('\n');
-    formMany.members = [];
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].split(',');
-        if (line.length === 2) {
-            const unique_id = line[0].trim();
-            const full_name = line[1].trim();
-            const exists = formMany.members.some(member => member.unique_id === unique_id);
-
-            // Check to ensure values are neither undefined nor empty
-            if (!exists && full_name !== "undefined" && unique_id !== "undefined" && full_name && unique_id) {
-                formMany.members.push({ full_name, unique_id });
-            }
-        }
-    }
-});
-
-
-
-// Method to add a member to the master list (individual)
+// Add Student (Individual)
 const addStudent = () => {
     formOne.post(`/master-list-members/${props.master_list.master_list_id}`, {
-        full_name: formOne.full_name,
-        unique_id: formOne.unique_id,
         onSuccess: () => {
-            formOne.reset(); // Reset form fields after successful submission
-        }
+            formOne.reset();
+        },
     });
 };
 
-// Method to add members by bulk
+// Add Students (Bulk)
 const addStudentsBulk = () => {
+    const members = bulkInput.value.split('\n').map(line => {
+        const [uniqueId, fullName] = line.split(',').map(item => item.trim());
+        return { unique_id: uniqueId, full_name: fullName };
+    });
+
+    formMany.members = members;
+
     formMany.post(`/master-list-members/${props.master_list.master_list_id}`, {
-        members: formMany.members,
         onSuccess: () => {
-            bulkInput.value = ''; // Clear the bulk input field
-            formMany.reset(); // Reset form fields after successful submission
-        }
+            bulkInput.value = ''; // Clear the bulk input after submission
+            showBulkForm.value = false; // Close bulk form
+        },
     });
 };
 
@@ -238,18 +245,15 @@ const closeQRCode = () => {
     showQRCodeModal.value = false;
 };
 
-// Download QR Code
+// Download QR Code as PDF
 const downloadQRCode = () => {
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = `qrcode-${selectedUniqueId.value}.png`;
-        link.click();
-    }
+    const pdf = new jsPDF();
+    pdf.text(`QR Code for: ${selectedMember.value}`, 10, 10);
+    pdf.addImage(selectedUniqueId.value, 'PNG', 10, 20, 50, 50);
+    pdf.save(`${selectedMember.value}-QRCode.pdf`);
 };
 
-
+// Download all QR Codes as PDF
 const downloadAllQRCodesAsPDF = async () => {
     const pdf = new jsPDF();
     const members = props.master_list_members;
@@ -282,7 +286,6 @@ const downloadAllQRCodesAsPDF = async () => {
         currentY += qrCodeSpacing;
     }
 
-    pdf.save(`${props.master_list.name}-QRCodes.pdf`);
+    pdf.save(`${props.master_list.name } - QRCodes.pdf`);
 };
-
 </script>

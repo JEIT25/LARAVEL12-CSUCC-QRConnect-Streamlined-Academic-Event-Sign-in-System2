@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col md:flex-row h-screen">
+    <div class="flex flex-col-reverse md:flex-row md:h-screen">
         <!-- Left side: QR scanner -->
         <div class="md:w-1/2 flex justify-center items-center border-r-4 border-blue-500 p-4">
             <div class="flex flex-col items-center">
@@ -13,7 +13,7 @@
         <div class="md:w-1/2 p-5 flex flex-col justify-center items-center">
             <div class="w-full max-w-md">
                 <h1 class="text-2xl font-bold mb-4">SCANS RESULT</h1>
-                <div v-if="attendee_record" class="mt-4 bg-white p-4 rounded-lg shadow-md">
+                <div v-if="attendee_record" class="md:mt-4 bg-white p-4 rounded-lg shadow-md">
                     <div class="text-center">
                         <h5 class="text-lg font-semibold mb-2">Attendee Information</h5>
                         <h1 :class="status ? 'bg-green-500' : 'bg-red-500'" v-if="message">
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, } from 'vue';
+import { ref, onMounted,onBeforeUnmount, } from 'vue';
 import axios from 'axios'; // Axios for handling HTTP requests
 import { Html5QrcodeScanner } from 'html5-qrcode';
 

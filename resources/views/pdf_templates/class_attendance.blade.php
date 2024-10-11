@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Attendance List</title>
+    <title>Class Attendance</title>
     <style>
         body {
             font-family: 'DejaVu Sans', 'Arial', sans-serif;
@@ -25,7 +25,7 @@
         }
 
         .info1 {
-            margin: 10px 0 30px 0;
+            margin: 10px 0 20px 0;
             font-weight: bold;
             font-size: 12px;
             line-height: 3px;
@@ -53,34 +53,29 @@
             text-align: right;
         }
 
-        .info2-right p {
-            display: inline-block;
-        }
-
-        #year {
-            margin-left: 50px;
-        }
-
-        .subject {
-            margin-right: 15px;
-        }
-
-        .code{
-            margin-right: 25px;
-        }
-
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            font-size: 8px;
+            /* Reduce font size for compact layout */
         }
 
         .table th,
         .table td {
             border: 1px solid #000;
-            padding: 8px;
-            font-size: 10px;
-            text-align: center;
+            padding: 2px;
+            /* Minimized padding */
+            text-align: left;
+        }
+
+        .table th {
+            font-size: 8px;
+            /* Smaller font for headers */
+        }
+
+        .table td {
+            font-size: 8px;
+            /* Smaller font for attendance data */
         }
 
         .page-break {
@@ -88,13 +83,9 @@
         }
 
         #submitAndDate {
-            font-size: 10px;
+            font-size: 9px;
             margin-top: 40px;
             text-align: left;
-        }
-
-        #submitAndDate p {
-            display: inline-block;
         }
 
         #submittedBy {
@@ -122,88 +113,112 @@
             vertical-align: middle;
             line-height: 4px;
         }
+
+        /* Styles for month grouping */
+        .month-group {
+            border-top: 2px solid #000;
+            margin-top: 20px;
+        }
+
+        .month-header {
+            font-weight: bold;
+            font-size: 10px;
+            background-color: #f2f2f2;
+        }
+
+        .month-header th {
+            border: 1px solid #000;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Loop through each month -->
-    @foreach ($monthsData as $month => $attendanceData)
-        @if (!$loop->first)
-            <div class="page-break"></div> <!-- Page break between months -->
-        @endif
+    <header class="header">
+        <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+    </header>
 
-        <!-- Header -->
-        <header class="header">
-            <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
-        </header>
-
-        @if ($loop->first)
-            <div class="info2">
-                <div class="info2-left">
-                    <p class="subject">Course: {{ $event->subject ?? '______________' }}</p>
-                    <p class="code">Code: {{ $event->subject_code ?? '______________' }}</p>
-                    <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
-                </div>
-                <div class="info2-right">
-                    <p class="sem">Sem: {{ $event->semester ?? '_________' }} semester</p>
-                    <p id="year">S.Y.: {{ $event->school_year ?? '_________' }}</p>
-                </div>
+    @if (isset($monthsData) && count($monthsData) > 0)
+        <div class="info2">
+            <div class="info2-left">
+                <p class="subject">Course: {{ $event->subject ?? '______________' }}</p>
+                <p class="code">Code: {{ $event->subject_code ?? '______________' }}</p>
+                <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
             </div>
-        @endif
-        <div class="info1">
-            <p>{{ $month }}</p>
+            <div class="info2-right">
+                <p class="sem">Sem: {{ $event->semester ?? '_________' }} semester</p>
+                <p id="year">S.Y.: {{ $event->school_year ?? '_________' }}</p>
+            </div>
         </div>
+
+        <div class="info1">
+            <p>Class Attendance</p>
+
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
-                    <th style="width: 40%;">NAME OF STUDENTS</th>
-                    <th style="width: 30%;">Attendance</th>
+                    <th style="width: 8%;">NAME OF STUDENTS</th>
+                    @foreach ($monthsData as $month => $monthData)
+                        <th colspan="{{ count($monthData['dates']) }}" class="month-header">{{ $month }}</th>
+                    @endforeach
+                </tr>
+                <tr>
+                    <th></th> <!-- Empty cell for the student name column -->
+                    @foreach ($monthsData as $monthData)
+                        @foreach ($monthData['dates'] as $date)
+                            <th style="width: 2%;">{{ \Carbon\Carbon::parse($date)->format('m-d') }}</th>
+                        @endforeach
+                    @endforeach
                 </tr>
             </thead>
             <tbody>
-                @foreach ($attendanceData as $record)
-                    <tr>
-                        <td>{{ $record['Name'] }}</td>
-                        <td>{{ $record['Single_signin'] }}</td>
-                    </tr>
+                @foreach ($monthsData as $monthData)
+                    @foreach ($monthData['data'] as $studentName => $attendanceRecord)
+                        <tr>
+                            <td">{{ $studentName }}</td>
+                            @foreach ($monthsData as $monthData)
+                                @foreach ($monthData['dates'] as $date)
+                                    <td>{{ isset($attendanceRecord[$date]) ? '1' : '0' }}</td>
+                                @endforeach
+                            @endforeach
+                        </tr>
+                    @endforeach
                 @endforeach
             </tbody>
         </table>
-
-        <!-- Footer -->
-        <div class="footer">
-            <table>
-                <tr>
-                    <td style="width: 15%;">
-                        <img src="{{ public_path('assets/images/logos/ceitlogo.jpg') }}" alt="Logo">
-                    </td>
-                    <td style="width: 85%; text-align: left;">
-                        <p>Email address: ceit@csucc.edu.ph</p>
-                        <p>Contact no.: 818-0205</p>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    @endforeach
+    @endif
 
     <div id="submitAndDate">
         <p id="submittedBy">Submitted By: _________________________</p>
         <p>Date of Submission: _________________________</p>
     </div>
 
+    <div class="footer">
+        <table>
+            <tr>
+                <td style="width: 15%;">
+                    <img src="{{ public_path('assets/images/logos/ceitlogo.jpg') }}" alt="Logo">
+                </td>
+                <td style="width: 85%; text-align: left;">
+                    <p>Email address: ceit@csucc.edu.ph</p>
+                    <p>Contact no.: 818-0205</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <script type="text/php">
         if (isset($pdf)) {
             $pdf->page_script(function ($pageNumber, $pageCount, $fontMetrics) use ($pdf) {
                 $font = $fontMetrics->get_font("Arial", "normal");
-                $size = 10;
-                $x = 520; // X-coordinate for the text
-                $y = 15;  // Y-coordinate for the text
-                $text = "Page " . $pageNumber . " of " . $pageCount;
-                $pdf->text($x, $y, $text, $font, $size);
+                $size = 8; /* Smaller footer font */
+                $x = 520;
+                $y = 780;
+                $pdf->text($x, $y, "Page $pageNumber of $pageCount", $font, $size);
             });
         }
     </script>
-
 </body>
 
 </html>

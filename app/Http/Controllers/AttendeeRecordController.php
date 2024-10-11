@@ -77,6 +77,6 @@ class AttendeeRecordController extends Controller
         $attendee->delete();
 
         return redirect()->route('attendees.index',["event" => $event->event_id])
-        ->with("success","AttendeeRecord deleted successfully.");
+        ->with("success","Attendee Record deleted successfully.");
     }
 }

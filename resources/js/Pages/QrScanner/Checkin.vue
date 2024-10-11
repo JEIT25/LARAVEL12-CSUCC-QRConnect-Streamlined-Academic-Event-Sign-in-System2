@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col md:flex-row h-screen">
+    <div class="flex flex-col-reverse md:flex-row md:h-screen">
         <!-- Left side: QR scanner -->
         <div class="md:w-1/2 flex justify-center items-center border-r-4 border-blue-500 p-4">
             <div class="flex flex-col items-center">

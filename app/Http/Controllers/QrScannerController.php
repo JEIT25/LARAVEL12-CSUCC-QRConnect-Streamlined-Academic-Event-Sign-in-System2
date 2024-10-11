@@ -119,7 +119,7 @@ class QrScannerController extends Controller
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'An error occurred: ' . $e->getMessage(),
+                'message' => 'Member not found',
                 'status' => false,
             ]);
         }

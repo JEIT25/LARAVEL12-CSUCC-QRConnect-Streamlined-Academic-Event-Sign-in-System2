@@ -32,11 +32,11 @@ class ExportAttendeeRecordController extends Controller
         if ($template === "class-attendance-pdf") {
             return $this->exportClassAttendanceToPdf($event, $selectedDate);
         }
-        if($template === "midterm-exam"){
-            return  $this->exportMidtermExamTemplate($event, $selectedDate);
+        if ($template === "midterm-exam") {
+            return $this->exportMidtermExamTemplate($event, $selectedDate);
         }
-        if ($template === "final-exam"){
-            return  $this->exportFinalExamTemplate($event, $selectedDate);
+        if ($template === "final-exam") {
+            return $this->exportFinalExamTemplate($event, $selectedDate);
         }
 
         // Redirect back if the template is invalid
@@ -118,8 +118,6 @@ class ExportAttendeeRecordController extends Controller
 
     public function exportClassAttendanceToPdf(Event $event, $selectedDate)
     {
-        // Prepare the data for the PDF export
-        $data = [];
         $hasAttendanceRecords = false;
 
         // Initialize Carbon instances for date handling
@@ -129,68 +127,61 @@ class ExportAttendeeRecordController extends Controller
         // Determine the date range
         $monthsData = [];
 
-        // If specific date is selected, limit range to that month
         if ($selectedDate !== 'all') {
             $selectedMonthStart = \Carbon\Carbon::parse($selectedDate)->startOfMonth();
             $selectedMonthEnd = \Carbon\Carbon::parse($selectedDate)->endOfMonth();
             $dateRange = [$selectedMonthStart, $selectedMonthEnd];
         } else {
-            // All dates: Start from event start to the current date
             $dateRange = [$startDate, $currentDate];
         }
 
-        // Loop through each month in the date range
         for ($date = $dateRange[0]; $date->lte($dateRange[1]); $date->addMonth()) {
-            $currentMonth = $date->format('F Y'); // Month and Year
+            $currentMonth = $date->format('F Y');
             $monthlyData = [];
-
-            // Check if any attendance record exists for this month
+            $datesWithAttendance = [];
             $attendanceExistsForMonth = false;
 
-            // Fetch all attendance records for the event within the current month
+            // Fetch attendance records for the event within the current month
             $attendanceRecords = $event->attendee_records()
                 ->whereMonth('single_signin', $date->month)
                 ->whereYear('single_signin', $date->year)
-                ->with('master_list_member') // Load the related master list member
+                ->with('master_list_member')
                 ->get();
 
             foreach ($attendanceRecords as $record) {
-                // Access the member related to this attendance record
                 $member = $record->master_list_member;
-
                 if ($member) {
-                    $signinDate = \Carbon\Carbon::parse($record->single_signin); // Ensure it's a Carbon instance
-
-                    $monthlyData[] = [
-                        'Name' => $member->full_name,
-                        'Single_signin' => $signinDate->format('Y-m-d h:i A'), // Now this works correctly
-                    ];
-
-                    $attendanceExistsForMonth = true; // Found at least one record for this month
+                    $signinDate = \Carbon\Carbon::parse($record->single_signin)->format('Y-m-d');
+                    $monthlyData[$member->full_name][$signinDate] = 1; // Mark present
+                    $datesWithAttendance[$signinDate] = $signinDate; // Track the date
+                    $attendanceExistsForMonth = true;
                 }
             }
 
-            // If attendance exists for the current month, add it to the monthsData array
+            // If attendance exists for the current month, store the data
             if ($attendanceExistsForMonth) {
-                $monthsData[$currentMonth] = $monthlyData;
+                $monthsData[$currentMonth] = [
+                    'dates' => $datesWithAttendance,
+                    'data' => $monthlyData
+                ];
                 $hasAttendanceRecords = true;
             }
         }
 
-        // If no attendance records were found, return failure
         if (!$hasAttendanceRecords) {
             return redirect()->back()->with('failed', 'No attendance records found for the selected date range.');
         }
 
-        // Generate the PDF using Dompdf in long bond paper (legal size) landscape mode
+
+
+        // Generate the PDF with the new layout
         $pdf = PDF::loadView('pdf_templates.class_attendance', [
             'event' => $event,
             'monthsData' => $monthsData,
-            'facilitator' => $event->owner()->first()
+            'facilitator' => $event->owner()->first(),
         ])->setPaper([0, 0, 612, 1008], 'landscape');
 
-        // Return the generated PDF file for download
-        return $pdf->download($event->name . 'class_attendance.pdf');
+        return $pdf->download($event->name . '_class_attendance.pdf');
     }
 
 
