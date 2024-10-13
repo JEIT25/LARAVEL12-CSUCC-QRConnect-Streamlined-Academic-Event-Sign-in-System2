@@ -144,7 +144,7 @@
                             <select v-model="selectedDate" id="date" class="w-full p-2 border rounded-md">
                                 <option disabled value="">Select Date</option>
                                 <option value="all">All Dates</option>
-                                <option v-for="date in generateDateRange(event.start_date)" :key="date" :value="date">
+                                <option v-for="date in generateDateRange(event.start_date,event.end_date)" :key="date" :value="date">
                                     {{ formatDate(date) }}
                                 </option>
                             </select>
@@ -189,18 +189,18 @@ const createMasterList = () => {
     form.post(`/events/${props.event.event_id}/master-lists`);
 };
 
-// Function to generate a range of dates from the start_date to today
-const generateDateRange = (startDate) => {
+// Function to generate a range of dates from the start_date to event_date
+const generateDateRange = (startDate,endDate) => {
     const dates = [];
     const start = new Date(startDate);
-    const today = new Date();
+    const end = new Date(endDate);
 
     // Set the time of both dates to midnight to only compare the date part
     start.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
     // Generate the date range including the end date
-    while (start <= today) {
+    while (start <= end ) {
         dates.push(new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().split('T')[0]);
         start.setDate(start.getDate() + 1); // Increment date by 1 day
     }

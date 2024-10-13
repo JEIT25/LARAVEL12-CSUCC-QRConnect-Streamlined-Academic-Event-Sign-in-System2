@@ -164,7 +164,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount,watch } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
@@ -177,7 +177,7 @@ const isSidebarOpen = ref(true);
 const screenSize = ref(window.innerWidth);
 
 const checkScreenSize = () => {
-    // Open sidebar if screen size is medium or larger
+    // Open sidebar if screen size is medium or larger and user is logged in
     isSidebarOpen.value = screenSize.value >= 768 && page.props.user; // Assuming 'md' starts at 768px
 };
 
@@ -185,6 +185,11 @@ const handleResize = () => {
     screenSize.value = window.innerWidth; // Update screen size
     checkScreenSize(); // Check if sidebar should be open
 };
+
+// Watch for changes to the user prop (Inertia.js will update this after login)
+watch(() => page.props.user, () => {
+    checkScreenSize(); // Recheck sidebar state when user data changes
+});
 
 onMounted(() => {
     window.addEventListener('resize', handleResize);
@@ -195,8 +200,9 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', handleResize);
 });
 
-// Function to toggle sidebar visibility
+// Function to toggle sidebar visibility manually
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value;
 };
+
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-cover bg-center flex items-center justify-center" 
+    <div class="h-screen bg-cover bg-center flex items-center justify-center"
          :style="{ backgroundImage: `url(${coloredBackgroundImage})` }">
         <div class="bg-white bg-opacity-80 p-8 rounded-lg">
             <!-- Image Section -->
@@ -23,7 +23,3 @@ const props = defineProps({
     coloredBackgroundImage: String,
 });
 </script>
-
-<style scoped>
-/* Add any additional styles you want here */
-</style>
