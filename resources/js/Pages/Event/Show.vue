@@ -4,8 +4,9 @@
         <div class="p-10 w-full max-w-6xl"> <!-- Wrapper for padding and width -->
             <!-- Event Image -->
             <div class="flex justify-center mb-6">
-                <img :src="event.profile_image" alt="Event Profile Image"
-                    class="w-full h-60 rounded-lg shadow-md object-cover"> <!-- Change w-md to w-full -->
+                <img :src="event.profile_image || props.default_image" alt="Event Profile Image"
+                    class="w-full h-60 rounded-lg shadow-md"
+                    :class="event.profile_image ? 'object-cover' : 'object-contain'"> <!-- Change w-md to w-full -->
             </div>
 
             <!-- Event Details -->
@@ -125,9 +126,11 @@
                                 <option value="" disabled>Select a template</option>
                                 <option v-if="event.type.includes('class orientation')" value="class-orientation">Class
                                     Orientation</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance-excel">Class
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-excel">
+                                    Class
                                     Attendance Excel</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance-pdf">Class
+                                <option v-if="event.type.includes('class attendance')" value="class-attendance-pdf">
+                                    Class
                                     Attendance PDF</option>
                                 <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
                                 <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
@@ -144,7 +147,8 @@
                             <select v-model="selectedDate" id="date" class="w-full p-2 border rounded-md">
                                 <option disabled value="">Select Date</option>
                                 <option value="all">All Dates</option>
-                                <option v-for="date in generateDateRange(event.start_date,event.end_date)" :key="date" :value="date">
+                                <option v-for="date in generateDateRange(event.start_date,event.end_date)" :key="date"
+                                    :value="date">
                                     {{ formatDate(date) }}
                                 </option>
                             </select>
