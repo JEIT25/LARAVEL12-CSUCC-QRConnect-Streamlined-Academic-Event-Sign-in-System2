@@ -53,6 +53,19 @@
             text-align: right;
         }
 
+        #subject, {
+            margin-right: 25px;
+        }
+
+        #year {
+            margin-right: 8px;
+        }
+
+        #code {
+            margin-right: 22px;
+        }
+
+
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -83,9 +96,13 @@
         }
 
         #submitAndDate {
-            font-size: 9px;
-            margin-top: 40px;
+            font-size: 10px;
+            margin-top: 60px;
             text-align: left;
+        }
+
+        #submitAndDate p {
+            display: inline-block;
         }
 
         #submittedBy {
@@ -140,13 +157,13 @@
     @if (isset($monthsData) && count($monthsData) > 0)
         <div class="info2">
             <div class="info2-left">
-                <p class="subject">Course: {{ $event->subject ?? '______________' }}</p>
-                <p class="code">Code: {{ $event->subject_code ?? '______________' }}</p>
+                <p id="subject">Course: {{ $event->subject ?? '______________' }}</p>
+                <p id="code">Code: {{ $event->subject_code ?? '______________' }}</p>
                 <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
             </div>
             <div class="info2-right">
-                <p class="sem">Sem: {{ $event->semester ?? '_________' }} semester</p>
-                <p id="year">S.Y.: {{ $event->school_year ?? '_________' }}</p>
+                <p class="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
+                <p id="year">S.Y.: {{ $event->school_year ?? '______________' }}</p>
             </div>
         </div>
 

@@ -173,13 +173,24 @@ class ExportAttendeeRecordController extends Controller
         }
 
 
+        if ($selectedDate !== 'all') {
+            // Generate the PDF with the specific date layout in long bond paper size
+            $pdf = PDF::loadView('pdf_templates.one_date_class_attendance', [
+                'event' => $event,
+                'monthsData' => $monthsData,
+                'selectedDate' => $selectedDate,
+                'facilitator' => $event->owner()->first(),
+            ])->setPaper([0, 0, 612, 1008], 'portrait');  // Long bond paper in portrait mode
+        } else {
+            // Generate the PDF with the all dates layout
+            $pdf = PDF::loadView('pdf_templates.all_dates_class_attendance', [
+                'event' => $event,
+                'monthsData' => $monthsData,
+                'facilitator' => $event->owner()->first(),
+            ])->setPaper([0, 0, 612, 1008], 'landscape');
 
-        // Generate the PDF with the new layout
-        $pdf = PDF::loadView('pdf_templates.class_attendance', [
-            'event' => $event,
-            'monthsData' => $monthsData,
-            'facilitator' => $event->owner()->first(),
-        ])->setPaper([0, 0, 612, 1008], 'landscape');
+        }
+
 
         return $pdf->download($event->name . '_class_attendance.pdf');
     }
