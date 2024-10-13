@@ -3,7 +3,8 @@
         <!-- Sidebar is hidden by default and shown when isSidebarOpen is true -->
 
         <!-- Toggle Button for opening the sidebar -->
-        <button v-if="!isSidebarOpen && page.props.user" @click="toggleSidebar" class="md:hidden fixed top-20 left-4  z-50">
+        <button v-if="!isSidebarOpen && page.props.user" @click="toggleSidebar"
+            class="md:hidden fixed top-20 left-4  z-50">
             <!-- Hamburger icon -->
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34">
                 <path opacity="0.5"
@@ -56,60 +57,60 @@
             <div class="mb-[20%]"></div>
 
             <ul class="flex flex-col w-full space-y-2">
-                <li
+                <Link :href="page.props.user.type === 'facilitator' ? '/facilitators' : '/admins'"
                     class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
-                    <svg fill="#bc7634" width="24" height="24" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
-                        stroke="#bc7634">
-                        <g>
-                            <path
-                                d="M18.672 11H17v6c0 .445-.194 1-1 1h-4v-6H8v6H4c-.806 0-1-.555-1-1v-6H1.328c-.598 0-.47-.324-.06-.748L9.292 2.22c.195-.202.451-.302.708-.312.257.01.513.109.708.312l8.023 8.031c.411.425.539.749-.059.749z">
-                            </path>
-                        </g>
-                    </svg>
-                    <Link class="text-yellow-300 hover:text-white pl-4 w-full"
-                        :href="page.props.user.type === 'facilitator' ? '/facilitators' : '/admins'">
-                    Dashboard
-                    </Link>
-
-                </li>
-                <li v-if="page.props.user.type == 'facilitator'"
-                    class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452.986 452.986" fill="#bc7634" width="24"
-                        height="24">
+                <svg fill="#bc7634" width="24" height="24" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
+                    stroke="#bc7634">
+                    <g>
                         <path
-                            d="M404.344,0H48.642C21.894,0,0,21.873,0,48.664v355.681c0,26.726,21.894,48.642,48.642,48.642h355.702c26.726,0,48.642-21.916,48.642-48.642V48.664C452.986,21.873,431.07,0,404.344,0z M148.429,33.629h156.043v40.337H148.429V33.629z M410.902,406.372H42.041v-293.88h368.86V406.372z">
+                            d="M18.672 11H17v6c0 .445-.194 1-1 1h-4v-6H8v6H4c-.806 0-1-.555-1-1v-6H1.328c-.598 0-.47-.324-.06-.748L9.292 2.22c.195-.202.451-.302.708-.312.257.01.513.109.708.312l8.023 8.031c.411.425.539.749-.059.749z">
                         </path>
-                        <rect x="79.273" y="246.23" width="48.642" height="48.664"></rect>
-                        <rect x="79.273" y="323.26" width="48.642" height="48.642"></rect>
-                        <rect x="160.853" y="169.223" width="48.621" height="48.642"></rect>
-                        <rect x="160.853" y="246.23" width="48.621" height="48.664"></rect>
-                        <rect x="160.853" y="323.26" width="48.621" height="48.642"></rect>
-                        <rect x="242.369" y="169.223" width="48.664" height="48.642"></rect>
-                        <rect x="242.369" y="246.23" width="48.664" height="48.664"></rect>
-                        <rect x="242.369" y="323.26" width="48.664" height="48.642"></rect>
-                        <rect x="323.907" y="169.223" width="48.664" height="48.642"></rect>
-                        <rect x="323.907" y="246.23" width="48.664" height="48.664"></rect>
-                    </svg>
-                    <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/events">My Events</Link>
-                </li>
-                <li v-if="page.props.user.type == 'admin'"
+                    </g>
+                </svg>
+                <Link class="text-yellow-300 hover:text-white pl-4 w-full"
+                    :href="page.props.user.type === 'facilitator' ? '/facilitators' : '/admins'">
+                Dashboard
+                </Link>
+
+                </Link>
+                <Link href="/events" v-if="page.props.user.type == 'facilitator'"
                     class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
-                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"
-                            fill="#bc7634"></path>
-                    </svg>
-                    <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/users">Accounts</Link>
-                </li>
-                <li
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452.986 452.986" fill="#bc7634" width="24"
+                    height="24">
+                    <path
+                        d="M404.344,0H48.642C21.894,0,0,21.873,0,48.664v355.681c0,26.726,21.894,48.642,48.642,48.642h355.702c26.726,0,48.642-21.916,48.642-48.642V48.664C452.986,21.873,431.07,0,404.344,0z M148.429,33.629h156.043v40.337H148.429V33.629z M410.902,406.372H42.041v-293.88h368.86V406.372z">
+                    </path>
+                    <rect x="79.273" y="246.23" width="48.642" height="48.664"></rect>
+                    <rect x="79.273" y="323.26" width="48.642" height="48.642"></rect>
+                    <rect x="160.853" y="169.223" width="48.621" height="48.642"></rect>
+                    <rect x="160.853" y="246.23" width="48.621" height="48.664"></rect>
+                    <rect x="160.853" y="323.26" width="48.621" height="48.642"></rect>
+                    <rect x="242.369" y="169.223" width="48.664" height="48.642"></rect>
+                    <rect x="242.369" y="246.23" width="48.664" height="48.664"></rect>
+                    <rect x="242.369" y="323.26" width="48.664" height="48.642"></rect>
+                    <rect x="323.907" y="169.223" width="48.664" height="48.642"></rect>
+                    <rect x="323.907" y="246.23" width="48.664" height="48.664"></rect>
+                </svg>
+                <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/events">My Events</Link>
+                </Link>
+                <Link href="/users" v-if="page.props.user.type == 'admin'"
                     class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
-                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"
-                            fill="#bc7634"></path>
-                    </svg>
-                    <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/my-account">My Account</Link>
-                </li>
+                <svg viewBox="0 0 24 24" fill="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"
+                        fill="#bc7634"></path>
+                </svg>
+                <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/users">Accounts</Link>
+                </Link>
+                <Link href="/my-account"
+                    class="flex items-center w-full bg-slate-800 hover:bg-slate-700 rounded-md transition duration-200 ease-in-out p-4">
+                <svg viewBox="0 0 24 24" fill="none" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.5 7.063C16.5 10.258 14.57 13 12 13c-2.572 0-4.5-2.742-4.5-5.938C7.5 3.868 9.16 2 12 2s4.5 1.867 4.5 5.063zM4.102 20.142C4.487 20.6 6.145 22 12 22c5.855 0 7.512-1.4 7.898-1.857a.416.416 0 0 0 .09-.317C19.9 18.944 19.106 15 12 15s-7.9 3.944-7.989 4.826a.416.416 0 0 0 .091.317z"
+                        fill="#bc7634"></path>
+                </svg>
+                <Link class="text-yellow-300 hover:text-white pl-4 w-full" href="/my-account">My Account</Link>
+                </Link>
             </ul>
         </aside>
 
@@ -143,7 +144,7 @@
             <!-- Add your main content here -->
             <main class="p-0">
                 <!-- Success Message -->
-                <div  class="fixed left-0 right-0 mb-4 border rounded-md shadow-md border-green-200 bg-green-100 p-2 text-center text-black-100 font-semibold"
+                <div class="fixed left-0 right-0 mb-4 border rounded-md shadow-md border-green-200 bg-green-100 p-2 text-center text-black-100 font-semibold"
                     v-if="successMess && successVisible">
                     {{ successMess }}
                 </div>

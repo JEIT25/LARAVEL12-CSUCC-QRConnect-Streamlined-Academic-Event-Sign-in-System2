@@ -146,7 +146,7 @@
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
                             <select v-model="selectedDate" id="date" class="w-full p-2 border rounded-md">
                                 <option disabled value="">Select Date</option>
-                                <option value="all">All Dates</option>
+                                <option v-if="!(props.event.start_date == props.event.end_date)" value="all">All Dates</option>
                                 <option v-for="date in generateDateRange(event.start_date,event.end_date)" :key="date"
                                     :value="date">
                                     {{ formatDate(date) }}

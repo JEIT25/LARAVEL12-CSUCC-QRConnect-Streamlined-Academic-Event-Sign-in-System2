@@ -9,6 +9,9 @@
                     {{ formatDate(date) }}
                 </option>
             </select>
+            <span class="ml-4 text-gray-600">
+                Total Attendees: {{ filteredAttendeeRecords.length }}
+            </span>
         </div>
 
         <div v-if="filteredAttendeeRecords.length">
@@ -16,6 +19,7 @@
                 <table class="min-w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                         <tr>
+                            <th class="py-3 px-6 text-center">#</th>
                             <th class="py-3 px-6 text-center">Full Name</th>
 
                             <!-- Conditionally display either 'Attendance' or 'Check-In', 'Check-Out' based on event type -->
@@ -31,24 +35,30 @@
                         </tr>
                     </thead>
                     <tbody class="text-gray-600 text-sm text-start">
-                        <tr v-for="attendee_record in filteredAttendeeRecords" :key="attendee_record.attendee_record_id"
+                        <tr v-for="(attendee_record, index) in filteredAttendeeRecords"
+                            :key="attendee_record.attendee_record_id"
                             class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-center">{{ index + 1 }}</td> <!-- Numbering -->
+
                             <td class="py-3 px-6 text-center">{{ attendee_record.master_list_member.full_name }}</td>
 
                             <!-- Conditional for event type -->
                             <td class="py-3 px-6 text-center">
                                 <template v-if="isSpecialEventType(event.type)">
-                                    {{ attendee_record.single_signin ? new Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
+                                    {{ attendee_record.single_signin ? new
+                                        Date(attendee_record.single_signin).toLocaleTimeString() : 'Not Signed-in' }}
                                 </template>
                                 <template v-else>
-                                    {{ attendee_record.check_in ? new Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
+                                    {{ attendee_record.check_in ? new
+                                        Date(attendee_record.check_in).toLocaleTimeString() : 'Not Checked-in' }}
                                 </template>
                             </td>
 
                             <!-- Only display the 'Check-Out' column if it's not a special event type -->
                             <template v-if="!isSpecialEventType(event.type)">
                                 <td class="py-3 px-6 text-center">
-                                    {{ attendee_record.check_out ? new Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
+                                    {{ attendee_record.check_out ? new
+                                        Date(attendee_record.check_out).toLocaleTimeString() : 'Not Checked-out' }}
                                 </td>
                             </template>
 
@@ -56,7 +66,7 @@
                                 <Link
                                     :href="`/events/${event.event_id}/attendees/${attendee_record.attendee_record_id}`"
                                     method="delete" as="button" class="text-red-500 hover:text-red-700">
-                                    Delete
+                                Delete
                                 </Link>
                             </td>
                         </tr>
@@ -134,4 +144,3 @@ const isSpecialEventType = (eventType) => {
     return /exam|class orientation|class attendance/i.test(eventType);
 };
 </script>
-

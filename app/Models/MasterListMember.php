@@ -18,7 +18,7 @@ class MasterListMember extends Model
         return $this->belongsTo(MasterList::class, 'master_list_id');
     }
 
-    public function attendee_record(): HasMany
+    public function attendee_records(): HasMany
     {
         return $this->hasMany(AttendeeRecord::class, "master_list_member_id");
     }

@@ -155,35 +155,45 @@
 
         </div>
 
-        <table class="table">
+        <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 8%;">NAME OF STUDENTS</th>
+                    <th>NAME OF STUDENTS</th>
                     @foreach ($monthsData as $month => $monthData)
-                        <th colspan="{{ count($monthData['dates']) }}" class="month-header">{{ $month }}</th>
+                        <th colspan="{{ count($monthData['dates']) }}" class="text-center">{{ $month }}</th>
                     @endforeach
                 </tr>
                 <tr>
-                    <th></th> <!-- Empty cell for the student name column -->
+                    <th></th>
                     @foreach ($monthsData as $monthData)
                         @foreach ($monthData['dates'] as $date)
-                            <th style="width: 2%;">{{ \Carbon\Carbon::parse($date)->format('m-d') }}</th>
+                            <th class="text-center">{{ \Carbon\Carbon::parse($date)->format('m-d') }}</th>
                         @endforeach
                     @endforeach
                 </tr>
             </thead>
             <tbody>
-                @foreach ($monthsData as $monthData)
-                    @foreach ($monthData['data'] as $studentName => $attendanceRecord)
-                        <tr>
-                            <td">{{ $studentName }}</td>
-                            @foreach ($monthsData as $monthData)
-                                @foreach ($monthData['dates'] as $date)
-                                    <td>{{ isset($attendanceRecord[$date]) ? '1' : '0' }}</td>
-                                @endforeach
+                @php
+                    // Collect all student names from the monthsData array
+                    $allStudents = [];
+                    foreach ($monthsData as $monthData) {
+                        foreach ($monthData['data'] as $studentName => $attendance) {
+                            $allStudents[$studentName] = $studentName;
+                        }
+                    }
+                @endphp
+
+                @foreach ($allStudents as $studentName)
+                    <tr>
+                        <td>{{ $studentName }}</td>
+                        @foreach ($monthsData as $monthData)
+                            @foreach ($monthData['dates'] as $date)
+                                <td class="text-center">
+                                    {{ isset($monthData['data'][$studentName][$date]) ? 1 : 0 }}
+                                </td>
                             @endforeach
-                        </tr>
-                    @endforeach
+                        @endforeach
+                    </tr>
                 @endforeach
             </tbody>
         </table>
