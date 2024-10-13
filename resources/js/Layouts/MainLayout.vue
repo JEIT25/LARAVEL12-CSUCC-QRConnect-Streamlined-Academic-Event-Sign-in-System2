@@ -33,7 +33,7 @@
 
         <!-- Sidebar -->
         <aside v-if="isSidebarOpen && page.props.user"
-            class="z-100 fixed md:relative w-64 overflow-auto bg-slate-950 p-4 pt-10 min-h-screen shadow-md border-r-4 border-yellow-500">
+            class="z-10 fixed md:relative w-64 overflow-auto bg-slate-950 p-4 pt-10 min-h-screen shadow-md border-r-4 border-yellow-500">
             <!-- Administrator Info Section -->
             <div class="flex flex-col items-center ml-2 mt-9 mb-7">
                 <svg fill="#ffd333" height="100px" width="100px" xmlns="http://www.w3.org/2000/svg"

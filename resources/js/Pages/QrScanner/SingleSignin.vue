@@ -109,7 +109,7 @@ onMounted(() => {
         useBarCodeDetectorIfSupported: true,
         willReadFrequently: true,
         showZoomSliderIfSupported: true,
-        defaultZoomValueIfSupported: 5,
+        defaultZoomValueIfSupported: 1,
         rememberLastUsedCamera: true,
         showTorchButtonIfSupported: true
     });
