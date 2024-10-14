@@ -21,7 +21,7 @@
         }
 
         .header img {
-            width: 111%;
+            width: 70%;
             max-height: 70px;
             object-fit: contain;
         }
@@ -83,7 +83,7 @@
             border: 1px solid #000;
             padding: 8px;
             font-size: 9px;
-            text-align: center;
+            text-align: left;
         }
 
         #submitAndDate {

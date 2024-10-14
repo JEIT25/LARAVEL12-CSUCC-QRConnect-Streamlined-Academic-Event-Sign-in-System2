@@ -19,7 +19,7 @@
         }
 
         .header img {
-            width: 70%;
+            width: 60%;
             max-height: 70px;
             object-fit: contain;
         }

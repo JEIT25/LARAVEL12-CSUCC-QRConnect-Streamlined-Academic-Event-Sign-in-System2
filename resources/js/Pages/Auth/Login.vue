@@ -1,7 +1,7 @@
 <template>
   <!-- Main Container -->
   <div class="min-h-screen bg-gradient-to-t from-blue-400 to-orange-100 bg-cover bg-center flex items-stretch justify-between md:px-12 lg:px-24">
-    
+
 
     <!-- Left Section (Login Form) - Full Height and Width -->
     <div class="flex-1 flex items-center justify-left">
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Right Section (Streamlined Student Sign-in System) -->
-    <div class="flex-1 flex items-center justify-center">
+    <div class="flex-1 hidden md:flex items-center justify-center">
       <div class="text-center md:text-left w-full px-8">
         <h2 class="text-yellow-500 text-3xl md:text-5xl font-normal">
           Streamlined Student
