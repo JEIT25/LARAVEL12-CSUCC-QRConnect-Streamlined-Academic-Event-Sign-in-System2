@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Validator;
 
 class EventController extends BaseController
 {
@@ -41,47 +42,63 @@ class EventController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $user = $request->user(); // Get current user from the request
+        $currentDate = now()->toDateString(); // Get the current date
 
-        // Get the current date
-        $currentDate = now()->toDateString();
-
-        // Validate incoming request data
-        $validatedData = $request->validate([
+        // Define validation rules and custom messages
+        $rules = [
             'name' => 'required',
             'description' => 'required',
             'location' => 'required',
-            'start_date' => 'required|date|after_or_equal:' . $currentDate, // Start date must be today or later
-            'end_date' => 'required|date|after_or_equal:start_date', // End date must be after or equal to start date
-            'profile_image' => 'nullable|mimes:jpg,png,jpeg,webp|max:5000', // Validate image type and size
-            'type' => 'required',  // 'type' field is required
-            'other_type' => 'nullable|required_if:type,other', // 'other_type' is required only if 'type' is 'other'
-            'subject' => 'nullable|string',  // Optional subject field
-            'subject_code' => 'nullable|string',  // Optional subject code
-            'semester' => 'nullable|in:1st,2nd', // Adjust the enum values as needed
-            'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
-        ], [
+            'start_date' => 'required|date|after_or_equal:' . $currentDate,
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'profile_image' => 'nullable|mimes:jpg,png,jpeg,webp|max:5000',
+            'type' => 'required',
+            'other_type' => 'nullable|required_if:type,other',
+            'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
+            'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
+            'semester' => 'nullable|in:1st,2nd|required_if:type,exam,class attendance,class orientation',
+            'school_year' => 'required|string',
+        ];
+
+        $messages = [
             'start_date.after_or_equal' => 'The start date cannot be earlier than today.',
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'profile_image.mimes' => 'The file should be in one of the formats: jpg, png, jpeg, webp',
             'other_type.required_if' => 'Please specify the type if "Other" is selected.',
-            'school_year.regex' => 'The school year must be in the format YYYY-YYYY.',
-        ]);
+            'subject.required_if' => 'The subject field is required for exam, class attendance, or class orientation events.',
+            'subject_code.required_if' => 'The subject code is required for exam, class attendance, or class orientation events.',
+            'semester.required_if' => 'The semester is required for exam, class attendance, or class orientation events.',
+        ];
 
+        // Create the validator instance
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return back with errors, old input, and additional data
+            return redirect()->back()
+                ->withErrors($validator) // Add validation errors
+                ->withInput() // Retain old input
+                ->with('failed', 'Some input fields were invalid, try again!'); // Add any custom data
+        }
+
+        // Get the validated data
+        $validatedData = $validator->validated();
+
+        // Validate and split the school year, if provided
         if ($request->school_year) {
-            // Split the school year into start and end years
             [$startYear, $endYear] = explode('-', $validatedData['school_year']);
 
-            // Validate that the current year is greater than or equal to the current year
             if ((int) $startYear < date('Y')) {
-                return redirect()->back()->withErrors(['school_year' => 'The current year of the school year must be the current year or later.']);
+                return redirect()->back()->withErrors(['school_year' => 'The start year of the school year must be the current year or later.'])->withInput();
             }
 
-            // Validate that the end year is greater than or equal to the current year
             if ((int) $endYear <= (int) $startYear) {
-                return redirect()->back()->withErrors(['school_year' => 'The end year of the school year must be greater than the start year.']);
+                return redirect()->back()->withErrors(['school_year' => 'The end year of the school year must be greater than the start year.'])->withInput();
             }
         }
 
@@ -100,9 +117,12 @@ class EventController extends BaseController
         // Create a new Event with the validated data
         $newEvent = $user->events()->create($validatedData);
 
-        return redirect()->route('events.show',['event' => $newEvent->event_id])
+        // Redirect to the event show page with success message
+        return redirect()->route('events.show', ['event' => $newEvent->event_id])
             ->with('success', 'Event created successfully!');
     }
+
+
 
     /**
      * Display the specified resource.

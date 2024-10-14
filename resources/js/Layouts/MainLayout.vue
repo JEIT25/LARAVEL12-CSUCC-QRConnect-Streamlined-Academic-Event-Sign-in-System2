@@ -181,6 +181,7 @@ watch(successMess, (newMessage) => {
         successVisible.value = true;
         setTimeout(() => {
             successVisible.value = false;
+            page.props.messages.success = '';
         }, 3000); // Hide message after 3 seconds
     }
 });
@@ -190,6 +191,7 @@ watch(failedMess, (newMessage) => {
         failedVisible.value = true;
         setTimeout(() => {
             failedVisible.value = false;
+            page.props.messages.failed = '';
         }, 3000); // Hide message after 3 seconds
     }
 });
