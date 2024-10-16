@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('subject')->nullable();
             $table->string('subject_code')->nullable();
+            $table->string('program')->nullable();  // Adding program as a nullable string
+            $table->enum('year_level', [1, 2, 3, 4, 5])->nullable();    // Adding year as a nullable integer
             $table->string('name');
             $table->longText('description')->nullable();
             $table->string('location');

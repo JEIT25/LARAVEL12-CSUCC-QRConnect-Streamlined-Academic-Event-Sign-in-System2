@@ -5,7 +5,7 @@
             <div class="flex items-center justify-between mb-10">
                 <h1 class="text-3xl font-bold text-left">Active Assessment</h1>
                 <Link as="button" method="get" href="/events/create"
-                    class="w-48 bg-amber-500 hover:bg-blue-950 text-gray font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    class="w-48 bg-amber-500 hover:bg-blue-950 hover:text-white text-gray font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Create an event
                 </Link>
             </div>

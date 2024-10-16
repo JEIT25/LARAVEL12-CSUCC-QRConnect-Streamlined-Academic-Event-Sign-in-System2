@@ -45,5 +45,7 @@ class Event extends Model
         'subject_code',
         'semester',
         'school_year',
+        'year_level',
+        'program',
     ];
 }

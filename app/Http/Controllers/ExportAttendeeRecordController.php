@@ -12,8 +12,24 @@ class ExportAttendeeRecordController extends Controller
     // Main function to export attendee records based on the template type
     public function exportAttendeeRecords(Event $event, $template, Request $request)
     {
+
         // Retrieve the selected date from the query parameters
-        $selectedDate = $request->query('date'); //test
+        $selectedDate = $request['date'];
+
+        // Retrieve the selected date from the query parameters
+        $invigilator = $request['invigilator'];
+
+        $start_time = date("g:i A", strtotime($request->start_time)); // Converts to 12-hour format with AM/PM
+        $end_time = date("g:i A", strtotime($request->end_time));     // Converts to 12-hour format with AM/PM
+
+
+        // Load records with related master list member
+        $attendeeRecords = $event->attendee_records()->get();
+
+        // Check if any records were found
+        if ($attendeeRecords->isEmpty()) {
+            return redirect()->back()->with('failed', "No Attendees found yet for the selected date");
+        }
 
         // Export as PDF for class orientation
         if ($template === "general-template") {
@@ -33,10 +49,10 @@ class ExportAttendeeRecordController extends Controller
             return $this->exportClassAttendanceToPdf($event, $selectedDate);
         }
         if ($template === "midterm-exam") {
-            return $this->exportMidtermExamTemplate($event, $selectedDate);
+            return $this->exportMidtermExamTemplate($event, $selectedDate,$invigilator,$start_time,$end_time);
         }
         if ($template === "final-exam") {
-            return $this->exportFinalExamTemplate($event, $selectedDate);
+            return $this->exportFinalExamTemplate($event, $selectedDate,$invigilator, $start_time, $end_time);
         }
 
         // Redirect back if the template is invalid
@@ -191,8 +207,7 @@ class ExportAttendeeRecordController extends Controller
 
         }
 
-
-        return $pdf->download($event->name . '_class_attendance.pdf');
+        return $pdf->stream($event->name . '_class_attendance.pdf');
     }
 
 
@@ -322,7 +337,7 @@ class ExportAttendeeRecordController extends Controller
 
 
 
-    public function exportMidtermExamTemplate(Event $event, $selectedDate)
+    public function exportMidtermExamTemplate(Event $event, $selectedDate, $invigilator, $start_time, $end_time)
     {
         $attendeeRecords = $event->attendee_records();
 
@@ -348,14 +363,17 @@ class ExportAttendeeRecordController extends Controller
             'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
-            'itemsPerPage' => 25,
+            'invigilator' => $invigilator,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'itemsPerPage' => 26,
         ]);
 
         return $pdf->stream($event->name . "_exam_attendees.pdf");
     }
 
 
-    public function exportFinalExamTemplate(Event $event, $selectedDate)
+    public function exportFinalExamTemplate(Event $event, $selectedDate, $invigilator, $start_time, $end_time)
     {
         $attendeeRecords = $event->attendee_records();
 
@@ -381,7 +399,10 @@ class ExportAttendeeRecordController extends Controller
             'event' => $event,
             'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
-            'itemsPerPage' => 25,
+            'invigilator' => $invigilator,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'itemsPerPage' => 26,
         ]);
 
         return $pdf->stream($event->name . "_exam_attendees.pdf");

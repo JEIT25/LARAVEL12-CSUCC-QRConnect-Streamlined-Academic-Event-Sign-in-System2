@@ -24,7 +24,7 @@ class EventController extends BaseController
         return inertia(
             'Event/Index',
             [
-                'events' => Event::where('facilitator_id',$request->user()->user_id)->get()
+                'events' => Event::where('facilitator_id', $request->user()->user_id)->get()
             ]
         );
     }
@@ -60,6 +60,8 @@ class EventController extends BaseController
             'other_type' => 'nullable|required_if:type,other',
             'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
             'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
+            'year_level' => 'required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'program' => 'required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 characters
             'semester' => 'nullable|in:1st,2nd|required_if:type,exam,class attendance,class orientation',
             'school_year' => 'required|string',
         ];
@@ -175,7 +177,7 @@ class EventController extends BaseController
             'name' => 'required',
             'description' => 'required',
             'location' => 'required',
-            'start_date' => 'required|date|after_or_equal:' . $currentDate, // Start date must be today or later
+            'start_date' => 'required|date',// Start date must be today or later
             'end_date' => 'required|date|after_or_equal:start_date', // End date must be after or equal to start date
             'subject' => 'nullable|string',
             'subject_code' => 'nullable|string',
@@ -183,10 +185,12 @@ class EventController extends BaseController
             'other_type' => 'nullable|string|max:255', // Validate other_type if present
             'semester' => 'nullable|in:1st,2nd', // Adjust the enum values as needed
             'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
+            'year_level' => 'required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'program' => 'required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 charactersdit
         ], [
-            'start_date.after_or_equal' => 'The start date cannot be earlier than today.',
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'school_year.regex' => 'The school year must be in the format YYYY-YYYY.',
+            'year.in' => 'The year must be between 1 and 5.',
         ]);
 
         if ($request->school_year) {
@@ -237,6 +241,7 @@ class EventController extends BaseController
         return redirect()->route('events.show', ['event' => $event->event_id])
             ->with('success', 'Event updated successfully!');
     }
+
 
     /**
      * Remove the specified resource from storage.

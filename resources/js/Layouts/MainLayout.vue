@@ -145,14 +145,14 @@
             <main class="p-0">
                 <!-- Success Message -->
                 <div class="fixed left-0 right-0 mb-4 border rounded-md shadow-md border-green-200 bg-green-100 p-2 text-center text-black-100 font-semibold"
-                    v-if="successMess && successVisible">
-                    {{ successMess }}
+                    v-if="successMess">
+                    {{ successMess}}
                 </div>
 
                 <!-- Failure Message -->
                 <div class="mb-4 border rounded-md shadow-md border-red-200 bg-red-100 p-2 text-center text-black-100 font-semibold"
-                    v-if="failedMess && failedVisible">
-                    {{ failedMess }}
+                    v-if="failedMess">
+                    {{ failedMess}}
                 </div>
 
                 <!-- Slot for additional content -->
@@ -171,30 +171,6 @@ import { usePage } from '@inertiajs/vue3'
 const page = usePage()
 const successMess = computed(() => page.props.messages.success)
 const failedMess = computed(() => page.props.messages.failed)
-const successVisible = ref(false);
-const failedVisible = ref(false);
-
-
-// Watch for changes in success and failure messages
-watch(successMess, (newMessage) => {
-    if (newMessage) {
-        successVisible.value = true;
-        setTimeout(() => {
-            successVisible.value = false;
-            page.props.messages.success = '';
-        }, 3000); // Hide message after 3 seconds
-    }
-});
-
-watch(failedMess, (newMessage) => {
-    if (newMessage) {
-        failedVisible.value = true;
-        setTimeout(() => {
-            failedVisible.value = false;
-            page.props.messages.failed = '';
-        }, 3000); // Hide message after 3 seconds
-    }
-});
 
 // Reactive state for toggling sidebar
 const isSidebarOpen = ref(true);

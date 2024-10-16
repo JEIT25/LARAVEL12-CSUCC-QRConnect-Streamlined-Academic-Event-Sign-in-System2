@@ -17,15 +17,6 @@ use App\Http\Controllers\MasterListController;
 //     return inertia('Index/Test', ["data" => "hi"]);
 // });
 
-//Log In Routes
-// Route::get('facilitators/login', function () {
-//     return inertia('Auth/Facilitator/Login');
-// })->name('facilitators.login'); //
-
-// Route::get('students/login', function () {
-//     return inertia('Auth/Student/Login');
-// });
-
 Route::get('login', fn () => inertia('Auth/Login'))//redirect to homepage wtoh anauthorized message
     ->name('login'); //sign in form
 

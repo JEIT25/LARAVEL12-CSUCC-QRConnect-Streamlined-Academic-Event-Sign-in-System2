@@ -5,6 +5,10 @@
             <div class="flex flex-col items-center">
                 <h2 class="text-2xl font-bold mb-4 text-center">Single Sign In for Event {{ props.event.name }}
                 </h2>
+                <p class="text-lg text-left">
+                    <strong>Subject:</strong> {{ props.event.subject }}<br>
+                    <strong>Subject Code:</strong> {{ props.event.subject_code }}
+                </p>
                 <div id="reader" class="w-full max-w-md h-64 bg-gray-200"></div>
             </div>
         </div>

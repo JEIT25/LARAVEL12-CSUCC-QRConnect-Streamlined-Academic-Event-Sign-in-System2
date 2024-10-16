@@ -44,7 +44,17 @@
                     <label class="block text-sm font-medium text-gray-500">Semester</label>
                     <p class="text-gray-700">{{ event.semester }}</p>
                 </div>
+                <!-- Adding Program and Year Level -->
+                <div v-if="event.program">
+                    <label class="block text-sm font-medium text-gray-500">Program</label>
+                    <p class="text-gray-700">{{ event.program }}</p>
+                </div>
+                <div v-if="event.year_level">
+                    <label class="block text-sm font-medium text-gray-500">Year Level</label>
+                    <p class="text-gray-700">{{ event.year_level }}</p>
+                </div>
             </div>
+            
             <!-- Action Buttons -->
             <div v-if="user.type === 'facilitator'" class="relative mb-6 space-y-6"> <!-- Space between sections -->
 
@@ -146,13 +156,37 @@
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
                             <select v-model="selectedDate" id="date" class="w-full p-2 border rounded-md">
                                 <option disabled value="">Select Date</option>
-                                <option v-if="!(props.event.start_date == props.event.end_date)" value="all">All Dates</option>
+                                <option v-if="!(props.event.start_date == props.event.end_date)" value="all">All Dates
+                                </option>
                                 <option v-for="date in generateDateRange(event.start_date,event.end_date)" :key="date"
                                     :value="date">
                                     {{ formatDate(date) }}
                                 </option>
                             </select>
                         </div>
+
+                        <!-- Invigilator Name Field -->
+                        <div class="mb-4" v-if="event.type.includes('exam')">
+                            <label for="invigilator" class="block text-sm font-medium text-gray-700 mb-2">Invigilator
+                                Name</label>
+                            <input v-model.trim="invigilatorName" type="text" id="invigilator"
+                                class="w-full p-2 border rounded-md" placeholder="Enter Invigilator Name">
+                        </div>
+
+                        <!-- Time Selector Fields -->
+                        <div class="mb-4">
+                            <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">Start
+                                Time</label>
+                            <input v-model.trim="startTime" type="time" id="start_time"
+                                class="w-full p-2 border rounded-md" placeholder="Select Start Time">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
+                            <input v-model.trim="endTime" type="time" id="end_time" class="w-full p-2 border rounded-md"
+                                placeholder="Select End Time">
+                        </div>
+
 
                         <!-- Modal Buttons -->
                         <div class="flex justify-end">
@@ -187,6 +221,10 @@ const form = useForm({});
 const showExportModal = ref(false);
 const selectedTemplate = ref(''); // Holds selected template
 const selectedDate = ref(''); // Holds selected date for export
+const invigilatorName = ref(''); // Holds the invigilator name
+const startTime = ref(''); // Holds the start time
+const endTime = ref(''); // Holds the end time
+
 
 // Function to create a master list
 const createMasterList = () => {
@@ -222,9 +260,11 @@ const formatDate = (date) => {
 // Function to handle attendance export
 const exportAttendance = () => {
     if (selectedTemplate.value && selectedDate.value) {
-        // Redirect to the export route, passing the selected template and date
-        window.open(`/export-attendee-records/${props.event.event_id}/${selectedTemplate.value}?date=${selectedDate.value}`,'_blank');
+        const queryParams = `?date=${selectedDate.value}&invigilator=${invigilatorName.value}&start_time=${startTime.value}&end_time=${endTime.value}`;
+        // Redirect to the export route, passing the selected template, date, invigilator, start time, and end time
+        window.open(`/export-attendee-records/${props.event.event_id}/${selectedTemplate.value}${queryParams}`, '_blank');
         showExportModal.value = false; // Close the modal after submission
     }
 };
+
 </script>

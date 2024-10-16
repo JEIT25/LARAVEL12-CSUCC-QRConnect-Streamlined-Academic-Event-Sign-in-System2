@@ -78,6 +78,31 @@
                         </div>
                     </div>
 
+                    <!-- Program -->
+                    <div class="mb-4">
+                        <label for="program" class="block text-sm font-medium text-gray-700">Program</label>
+                        <input v-model.trim="form.program" type="text" id="program" class="input" />
+                        <div class="input-error" v-if="form.errors.program">
+                            {{ form.errors.program }}
+                        </div>
+                    </div>
+
+                    <!-- Year -->
+                    <div class="mb-4">
+                        <label for="year" class="block text-sm font-medium text-gray-700">Year Level</label>
+                        <select v-model="form.year_level" id="year_level" class="input">
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="5">5th Year</option>
+                        </select>
+                        <div class="input-error" v-if="form.errors.year_level">
+                            {{ form.errors.year_level }}
+                        </div>
+                    </div>
+
                     <!-- Subject -->
                     <div class="mb-4">
                         <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
@@ -114,7 +139,8 @@
                     <!-- Other Type -->
                     <div class="mb-4" v-if="form.type === 'other'">
                         <label for="other_type" class="block text-sm font-medium text-gray-700">Other Type</label>
-                        <input v-model.trim="form.other_type" type="text" id="other_type" class="input" placeholder="Specify type" />
+                        <input v-model.trim="form.other_type" type="text" id="other_type" class="input"
+                            placeholder="Specify type" />
                         <div class="input-error" v-if="form.errors.other_type">
                             {{ form.errors.other_type }}
                         </div>
@@ -134,7 +160,8 @@
 
             <!-- Submit Button (Lower Right) -->
             <div class="mt-6 flex justify-end">
-                <button type="submit" class="bg-gray-900 hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <button type="submit"
+                    class="bg-gray-900 hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Save Changes
                 </button>
             </div>
@@ -164,8 +191,11 @@ let form = useForm({
     type: props.event.type || '',
     other_type: props.event.other_type || '',
     profile_image: null,
-    _method: 'PUT' 
+    program: props.event.program || '',
+    year_level: props.event.year_level || '',
+    _method: 'PUT'
 })
+
 
 const addFile = (event) => {
     form.profile_image = event.target.files[0]

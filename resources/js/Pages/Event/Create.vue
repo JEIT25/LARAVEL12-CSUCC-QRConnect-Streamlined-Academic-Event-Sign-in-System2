@@ -18,12 +18,14 @@
             <div class="input-error" v-if="form.errors.type">{{ form.errors.type }}</div>
           </div>
         </div>
+
         <div v-if="form.type === 'other'" class="mb-4">
           <label for="other_type" class="label font-bold">Specify Other Type</label>
           <input v-model.trim="form.other_type" type="text" id="other_type" class="input" />
           <div class="input-error" v-if="form.errors.other_type">{{ form.errors.other_type }}</div>
         </div>
 
+        <!-- Display subject and subject code only for specific types -->
         <div v-if="form.type == 'exam' || form.type == 'class attendance' || form.type == 'class orientation'">
           <div class="flex flex-wrap -mx-2 mb-4">
             <div class="w-full sm:w-1/2 px-2">
@@ -37,8 +39,31 @@
               <div class="input-error" v-if="form.errors.subject_code">{{ form.errors.subject_code }}</div>
             </div>
           </div>
+
+          <!-- New Fields: Year and Program -->
+          <div class="flex flex-wrap -mx-2 mb-4">
+            <div class="w-full sm:w-1/2 px-2">
+              <label for="year" class="label font-bold">Year Level</label>
+              <select v-model="form.year_level" id="year_level" class="input">
+                <option value="">Select Year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+                <option value="5">5th Year</option>
+              </select>
+              <div class="input-error" v-if="form.errors.year_level">{{ form.errors.year_level }}</div>
+            </div>
+
+            <div class="w-full sm:w-1/2 px-2">
+              <label for="program" class="label font-bold">Program</label>
+              <input v-model.trim="form.program" type="text" id="program" class="input" />
+              <div class="input-error" v-if="form.errors.program">{{ form.errors.program }}</div>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <!-- Step 2: Basic Information -->
       <div v-if="step === 2">
@@ -138,6 +163,8 @@ const form = useForm({
   other_type: '',
   subject: '',
   subject_code: '',
+  program: '',
+  year_level: '',
 })
 
 const nextStep = () => {

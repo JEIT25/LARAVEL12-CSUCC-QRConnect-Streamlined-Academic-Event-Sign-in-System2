@@ -46,17 +46,13 @@
         }
 
         .info2-left {
-            margin-right: 50px;
+            margin-right: 80px;
         }
 
         .info2-right {
             margin-left: 80px;
             width: 40%;
             text-align: right;
-        }
-
-        .info2-right p {
-            display: inline-block;
         }
 
         #year {
@@ -86,18 +82,58 @@
             text-align: left;
         }
 
-        #submitAndDate {
+        #bottom-info1,
+        #bottom-info2 {
             font-size: 10px;
             margin-top: 40px;
+        }
+
+        #bottom-info1 {
+            margin-bottom: -50px;
+        }
+
+        #bottom-info2 {
+            margin-bottom: 10px;
+            width: 25%;
             text-align: left;
         }
 
-        #submitAndDate p {
+        #bottom-info1 div {
             display: inline-block;
         }
 
-        #submittedBy {
-            margin-right: 200px;
+
+        #bottom-info1 .left-side {
+            margin-right: 400px;
+            margin-left: -130px;
+            text-align: left;
+        }
+
+        #bottom-info1 .right-side {
+            text-align: left;
+
+        }
+
+        #name {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #prepared-by,
+        #checked-by {
+            line-height: 4px;
+        }
+
+        #invigilator,
+        #faculty,
+        #chairman {
+            line-height: 2px;
+            text-align: center;
+        }
+
+        #chairman {
+            line-height: 2px;
+            text-align: left;
         }
 
         .page-break {
@@ -135,38 +171,46 @@
     </header>
 
     <div class="info1">
-        <p>ATTENDANCE SHEET</p>
-        <p>FINAL EXAM</p>
+        <p>FINAL EXAMINATION ATTENDANCE</p>
+        <p>{{ $event->name }}</p>
+        <p>{{ $event->semester }} Sem. S.Y {{ $event->school_year }}</p>
     </div>
 
     <div class="info2">
         <div class="info2-left">
-            <p>Course: {{$event->subject ?? '______________'}}</p>
-            <p>Code: {{$event->subject_code ?? '_____'}}</p>
-            <p>Instructor: {{ $facilitator->fname . " " . $facilitator->lname ?? '______________' }}</p>
+            <p>Program Year & Section: {{ $event->program }} {{ $event->year }} {{ $event->code }}</p>
+            <p>Time: {{ $start_time }} - {{ $end_time }}</p>
         </div>
         <div class="info2-right">
-            <p class="sem">Sem: {{$event->semester ?? '_____'}} semester</p>
-            <p id="year">S.Y.: {{$event->school_year ?? '_____'}}</p>
+            <p class="sem">Date:
+                {{ $event->start_date == $event->end_date ? $event->start_date : $event->start_date . '-' . $event->end_date }}
+            </p>
+            <p id="year">Room: {{ $event->location }} </p>
         </div>
-        <p id="certify">We certify that the following have taken the exam.</p>
     </div>
 
     @foreach ($attendee_records->chunk($itemsPerPage) as $chunk)
         @if (!$loop->first)
             <div class="page-break"></div>
+            <!-- Static Information -->
+            <header class="header">
+                <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+            </header>
         @endif
 
         <table class="table" style="margin-top: 20px; font-size: 8px;">
             <thead>
                 <tr>
-                    <th style="width: 70%; padding: 2px;">NAME OF STUDENTS</th>
+                    <th style="width: 10%; padding: 2px;">No.</th> <!-- Added No. column -->
+                    <th style="width: 60%; padding: 2px;">NAME OF STUDENTS</th>
                     <th style="width: 30%; padding: 2px;">ATTENDANCE</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($chunk as $attendee_record)
+                @foreach ($chunk as $index => $attendee_record)
                     <tr>
+                        <td style="padding: 2px;">{{ $loop->iteration + $loop->parent->index * $itemsPerPage }}</td>
+                        <!-- Added number -->
                         <td style="padding: 2px;">{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
                         <td style="padding: 2px;">
                             @if ($attendee_record->single_signin)
@@ -196,9 +240,24 @@
         </div>
     @endforeach
 
-    <div id="submitAndDate">
-        <p id="submittedBy">Submitted By: _________________________</p>
-        <p>Date of Submission: _________________________</p>
+    <div id="bottom-info1">
+        <div class="left-side">
+            <p id="prepared-by">Prepared by:</p>
+            <p id="name">{{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
+            <p id="faculty">Faculty</p>
+        </div>
+        <div class="right-side">
+            <p id="checked-by">Checked by:</p>
+            <p id="name">{{ $invigilator }}</p>
+            <p id="invigilator">Invigilator</p>
+        </div>
+    </div>
+
+
+    <div id="bottom-info2">
+        <p id="noted">Noted</p>
+        <p id="name">RONAL A. MONZON, MIT</p>
+        <p id="chairman">Chairman, IT Department</p>
     </div>
 
     <script type="text/php">
