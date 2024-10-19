@@ -5,7 +5,7 @@
             <div class="flex flex-col items-center">
                 <h2 class="text-2xl font-bold mb-4 text-center">Attendance Check In for Event {{ props.event.name }}
                 </h2>
-                <div id="reader" class="w-full max-w-md h-64 bg-gray-200"></div>
+                <div id="reader" class="w-full max-w-md h-auto bg-gray-200"></div>
             </div>
         </div>
 
@@ -13,9 +13,8 @@
         <div class="md:w-1/2 p-5 flex flex-col justify-center items-center">
             <div class="w-full max-w-md">
                 <h1 class="text-2xl font-bold mb-4">SCAN RESULT</h1>
-
                 <div v-if="attendee_record" class="mt-4 bg-white p-4 rounded-lg shadow-md">
-                    <div class="text-center">
+                    <div class="text-center capitalize">
                         <h5 class="text-lg font-semibold mb-2">Attendee Information</h5>
                         <h1 :class="status ? 'bg-green-500' : 'bg-red-500'" v-if="message">
                             {{ message }}

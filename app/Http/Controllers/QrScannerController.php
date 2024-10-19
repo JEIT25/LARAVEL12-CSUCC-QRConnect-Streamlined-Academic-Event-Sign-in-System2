@@ -17,14 +17,12 @@ class QrScannerController extends Controller
         try {
             $today = now()->toDateString(); // Get today's date (YYYY-MM-DD format)
 
-            $existingAttendeeRecord = $event->attendee_records->where('event_id', $event->event_id)
+            // Direct query on the AttendeeRecord model, not on the collection
+            $existingAttendeeRecord = $event->attendee_records
                 ->where('master_list_member_id', $member->master_list_member_id)
-                ->whereRaw('DATE(created_at) = ?', [$today]) // Filter by the date of created_at
-                ->orderBy('created_at', 'desc') // Order by highest to lowest datetime
                 ->first(); // Get the first result
 
-            if ($existingAttendeeRecord) { //check attendee if dont have check-in or check-out for today
-                // If already checked in, return a message saying so
+            if ($existingAttendeeRecord) { // Check if attendee has a record for today
                 if ($existingAttendeeRecord->$type) {
                     return response()->json([
                         'message' => "Member has already $action for this event",
@@ -32,7 +30,7 @@ class QrScannerController extends Controller
                         'attendee_record' => $member,
                         $type => $existingAttendeeRecord->$type,
                     ]);
-                } else { // If existing attendee and did not check in yet for today
+                } else { // Update the record if no check-in/check-out yet for today
                     $existingAttendeeRecord->update([$type => now()]);
 
                     return response()->json([
@@ -44,7 +42,7 @@ class QrScannerController extends Controller
                 }
             }
 
-            // Create a new attendee entry for the event with current date/time as check-in
+            // Create a new attendee entry for the event with the current date/time
             $newAttendeeRecord = $event->attendee_records()->create([
                 "master_list_member_id" => $member->master_list_member_id,
                 $type => now(),
@@ -52,7 +50,7 @@ class QrScannerController extends Controller
 
             return response()->json([
                 'attendee_record' => MasterListMember::find($newAttendeeRecord->master_list_member_id),
-                'message' => 'Check-in successful',
+                'message' => "$action successful",
                 'status' => true,
                 $type => $newAttendeeRecord->$type,
             ]);
@@ -189,7 +187,7 @@ class QrScannerController extends Controller
         ]);
 
         // Query to find member using unique ID
-        $member = MasterListMember::where('unique_id', '=', $validated['qrData'])->first();
+        $member = $event->master_list->master_list_members()->where("unique_id", $validated['qrData'])->first();
 
         // If member is not found, return an error
         if (!$member || $member->master_list_id !== $event->master_list->master_list_id) {
@@ -240,12 +238,13 @@ class QrScannerController extends Controller
         ]);
 
         // Query to find member using unique ID
-        $member = MasterListMember::where('unique_id', '=', $validated['qrData'])->first();
+        $member = $event->master_list->master_list_members()->where("unique_id", $validated['qrData'])->first();
 
         // If member is not found, return an error
         if (!$member || $member->master_list_id !== $event->master_list->master_list_id) {
-            return response()->json(['message' => 'Person not found in Master List!', "status" => false]);
+            return response()->json(['message' => "Person not found in Master List!", "status" => false]);
         }
+
 
         return $this->checkInOrOut($event, $member, "check_out", "check out");
     }

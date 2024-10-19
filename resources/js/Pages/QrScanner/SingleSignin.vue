@@ -18,7 +18,7 @@
             <div class="w-full max-w-md">
                 <h1 class="text-2xl font-bold mb-4">SCANS RESULT</h1>
                 <div v-if="attendee_record" class="md:mt-4 bg-white p-4 rounded-lg shadow-md">
-                    <div class="text-center">
+                    <div class="text-center capitalize">
                         <h5 class="text-lg font-semibold mb-2">Attendee Information</h5>
                         <h1 :class="status ? 'bg-green-500' : 'bg-red-500'" v-if="message">
                             {{ message }}

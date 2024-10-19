@@ -113,7 +113,7 @@
 
 <body>
     <header class="header">
-        <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+        <img src="{{ public_path('assets/images/headers/header3.png') }}" alt="School Logo">
     </header>
 
     <div class="info2">

@@ -4,7 +4,7 @@
 
         <!-- Toggle Button for opening the sidebar -->
         <button v-if="!isSidebarOpen && page.props.user" @click="toggleSidebar"
-            class="md:hidden fixed top-20 left-4  z-50">
+            class="md:hidden fixed top-16 left-4 z-50">
             <!-- Hamburger icon -->
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="34" height="34">
                 <path opacity="0.5"
@@ -12,13 +12,13 @@
                     fill="#1C274C"></path>
                 <path
                     d="M18 8.75H6C5.59 8.75 5.25 8.41 5.25 8C5.25 7.59 5.59 7.25 6 7.25H18C18.41 7.25 18.75 7.59 18.75 8C18.75 8.41 18.41 8.75 18 8.75Z"
-                    fill="#1C274C"></path>
+                    fill="#ffff"></path>
                 <path
                     d="M18 12.75H6C5.59 12.75 5.25 12.41 5.25 12C5.25 11.59 5.59 11.25 6 11.25H18C18.41 11.25 18.75 11.59 18.75 12C18.75 12.41 18.41 12.75 18 12.75Z"
-                    fill="#1C274C"></path>
+                    fill="#ffff"></path>
                 <path
                     d="M18 16.75H6C5.59 16.75 5.25 16.41 5.25 16C5.25 15.59 5.59 15.25 6 15.25H18C18.41 15.25 18.75 15.59 18.75 16C18.75 16.41 18.41 16.75 18 16.75Z"
-                    fill="#1C274C"></path>
+                    fill="#ffff"></path>
             </svg>
         </button>
 
@@ -122,7 +122,8 @@
                     <div class="container mx-auto flex items-center justify-between p-4">
                         <!-- Left-aligned logo and brand name -->
                         <Link class="text-yellow-500 font-bold text-xl flex items-center" href="/">
-                        <img :src="page.props.logoUrl" alt="Logo" width="30" height="24" class="mr-2">
+                        <img :src="page.props.logoUrl" alt="Logo" width="30" height="24"
+                            class="mr-2 bg-white rounded-sm">
                         CSUCC QRConnect
                         </Link>
                         <!-- Right-aligned navigation links -->
@@ -133,7 +134,10 @@
                                         method="delete">Log out</Link>
                                 </li>
                                 <li v-else>
-                                    <Link class="text-yellow-400 hover:text-yellow-200" href="/login">Login</Link>
+                                    <Link v-if="currentPath== '/login'" class="text-yellow-400 hover:text-yellow-200"
+                                        href="/" @click.prevent="navigateTo('/')">Home</Link>
+                                    <Link v-else class=" text-yellow-400 hover:text-yellow-200"
+                                        @click.prevent="navigateTo('/login')" href=" /login">Login</Link>
                                 </li>
                             </ul>
                         </div>
@@ -142,7 +146,7 @@
             </header>
 
             <!-- Add your main content here -->
-            <main class="p-0">
+            <main>
                 <!-- Success Message -->
                 <div class="fixed left-0 right-0 mb-4 border rounded-md shadow-md border-green-200 bg-green-100 p-2 text-center text-black-100 font-semibold"
                     v-if="successMess">
@@ -165,7 +169,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { ref, computed, onMounted, onBeforeUnmount,watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch, onUnmounted } from 'vue';
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage()
@@ -176,6 +180,30 @@ const failedMess = computed(() => page.props.messages.failed)
 const isSidebarOpen = ref(true);
 
 const screenSize = ref(window.innerWidth);
+
+// Create a reactive reference to hold the current path
+const currentPath = ref(window.location.pathname)
+
+// Function to update the current path
+const updatePath = () => {
+    currentPath.value = window.location.pathname
+}
+
+// Function to navigate and change the URL without reloading the page
+const navigateTo = (path) => {
+    window.history.pushState({}, '', path) // Change the URL
+    updatePath() // Manually update the currentPath after navigation
+}
+
+// Set up an event listener to listen for history changes (back/forward navigation)
+onMounted(() => {
+    window.addEventListener('popstate', updatePath)
+})
+
+// Clean up the event listener when the component unmounts
+onUnmounted(() => {
+    window.removeEventListener('popstate', updatePath)
+})
 
 const checkScreenSize = () => {
     // Open sidebar if screen size is medium or larger and user is logged in
@@ -205,5 +233,4 @@ onBeforeUnmount(() => {
 const toggleSidebar = () => {
     isSidebarOpen.value = !isSidebarOpen.value;
 };
-
 </script>

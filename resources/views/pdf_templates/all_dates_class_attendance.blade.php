@@ -19,7 +19,7 @@
         }
 
         .header img {
-            width: 60%;
+            width: 70%;
             max-height: 70px;
             object-fit: contain;
         }
@@ -151,7 +151,7 @@
 
 <body>
     <header class="header">
-        <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+        <img src="{{ public_path('assets/images/headers/header3.png') }}" alt="School Logo">
     </header>
 
     @if (isset($monthsData) && count($monthsData) > 0)

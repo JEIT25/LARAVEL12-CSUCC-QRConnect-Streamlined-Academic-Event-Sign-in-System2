@@ -2,11 +2,11 @@
     <div class="container mx-auto px-4 py-6">
         <div class="bg-gray-100 shadow-lg rounded-lg p-6">
             <!-- Master List Header -->
-            <div class="flex items-center justify-center mb-4">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-4">
                 <h1 class="text-2xl font-bold">{{ props.master_list.name }}</h1>
                 <!-- Delete Master List Button -->
                 <Link :href="`/events/${props.master_list.event_id}/master-lists/${props.master_list.master_list_id}`"
-                    as="button" method="delete" class="text-red-500 text-right hover:text-red-700 ml-52">
+                    as="button" method="delete" class="text-red-500 text-right hover:text-red-700 mt-2 md:mt-0">
                 Delete Master List
                 </Link>
             </div>
@@ -32,7 +32,7 @@
                                 Delete
                                 </Link>
                                 <button @click="showQRCode(member.unique_id, member.full_name)"
-                                    class="btn-primary text-white px-2 py-1 rounded ml-2">
+                                    class="btn-primary text-sm md:text-base text-white px-2 py-1 rounded mt-1 md:mt-0 md:ml-2">
                                     QR Code
                                 </button>
                             </td>
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Add Student Buttons (aligned to the right) -->
-            <div class="flex justify-end space-x-4 mb-4">
+            <div class="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4 mb-4">
                 <button @click="toggleIndividualForm" class="btn-primary text-white px-4 py-2 rounded-lg">
                     Add Individually
                 </button>
@@ -69,21 +69,27 @@
             </div>
 
             <!-- Add Students by Bulk -->
-            <div v-if="showBulkForm" class="mt-6">
-                <form @submit.prevent="addStudentsBulk">
+            <div v-if="showBulkForm" class="mt-6 p-4 bg-white rounded-lg shadow-md">
+                <form @submit.prevent="addStudentsBulk" class="space-y-4">
                     <textarea v-model="bulkInput" placeholder="Enter here one member per line
 Format: UniqueId(student id, etc.), Full Name
-Example: , 2022-7890, Josh M. Ghad
-                    " class="border border-gray-300 w-full h-32 p-4 rounded-lg mb-4" required></textarea>
-                    <input type="file" @change="handleFileUpload" class="mb-4" />
-                    <select v-model="selectedSheet" @change="handleSheetChange" class="mb-4">
+Example: , 2022-7890, Josh M. Ghad"
+                        class="border border-gray-300 w-full h-32 p-4 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-slate-500"
+                        required></textarea>
+                    <input type="file" @change="handleFileUpload"
+                        class="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 mb-4" />
+                    <select v-model="selectedSheet" @change="handleSheetChange"
+                        class="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 mb-4">
+                        <option value="" disable>Select Sheet</option>
                         <option v-for="sheet in sheets" :key="sheet" :value="sheet">{{ sheet }}</option>
                     </select>
-                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    <button type="submit"
+                        class="w-full btn-primary">
                         Add Students by Bulk
                     </button>
                 </form>
             </div>
+
 
             <!-- QR Code Pop-up -->
             <div v-if="showQRCodeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -111,6 +117,7 @@ Example: , 2022-7890, Josh M. Ghad
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { useForm, Link } from '@inertiajs/vue3';
@@ -286,6 +293,6 @@ const downloadAllQRCodesAsPDF = async () => {
         currentY += qrCodeSpacing;
     }
 
-    pdf.save(`${props.master_list.name } - QRCodes.pdf`);
+    pdf.save(`${props.master_list.name} - QRCodes.pdf`);
 };
 </script>

@@ -18,6 +18,15 @@
     @apply bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-center
   }
 
+  /*Scanner styles */
+  #html5-qrcode-button-camera-permission, #html5-qrcode-button-camera-start, #html5-qrcode-button-camera-stop  {
+    @apply m-2 bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-center
+  }
+
+  #reader__dashboard_section div:nth-child(2){
+    @apply hidden
+  }
+
   /* Global reset */
 * {
     box-sizing: border-box;

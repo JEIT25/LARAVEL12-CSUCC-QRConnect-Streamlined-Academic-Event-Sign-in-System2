@@ -21,7 +21,7 @@
         }
 
         .header img {
-            width: 70%;
+            width: 100%;
             max-height: 70px;
             object-fit: contain;
         }
@@ -136,7 +136,7 @@
 
         <!-- Header on every page -->
         <header class="header">
-            <img src="{{ public_path('assets/images/headers/header.png') }}" alt="School Logo">
+            <img src="{{ public_path('assets/images/headers/header2.png') }}" alt="School Logo">
         </header>
 
         @if ($loop->first)

@@ -15,11 +15,11 @@
                 <h1 class="text-blue-900 text-4xl md:text-6xl lg:text-7xl font-bold mt-4 md:mt-2">
                     Sign-in System
                 </h1>
-                <p class="mt-4 text-sm md:text-base text-gray-700">
+                <p class="mt-4 text-sm text-justify md:text-base p-6 md:p-0 text-white md:text-gray-700">
                     A cutting-edge solution designed to simplify and optimize the process
                     of attendance for various academic activities. With a focus on
                     efficiency and user-friendliness, our system offers a seamless
-                    experience for facilitators ,guest and attendeees alike.
+                    experience for facilitators, and attendeees alike.
                 </p>
             </div>
         </div>
