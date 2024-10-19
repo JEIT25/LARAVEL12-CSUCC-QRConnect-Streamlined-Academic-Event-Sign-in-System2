@@ -72,7 +72,8 @@ class ExportAttendeeRecordController extends Controller
         // Load records with related master list member
         $attendeeRecords = $attendeeRecords
             ->with('master_list_member')
-            ->orderBy('check_in', 'asc') // Sort by check_in in ascending order
+            ->join('master_list_members', 'attendee_records.master_list_member_id', '=', 'master_list_members.master_list_member_id')
+            ->orderBy('master_list_members.full_name', 'asc') // Sort by full_name in ascending order
             ->get();
 
         // Check if any records were found

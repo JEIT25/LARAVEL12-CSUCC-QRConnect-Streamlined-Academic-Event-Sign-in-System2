@@ -54,7 +54,7 @@
                     <p class="text-gray-700">{{ event.year_level }}</p>
                 </div>
             </div>
-            
+
             <!-- Action Buttons -->
             <div v-if="user.type === 'facilitator'" class="relative mb-6 space-y-6"> <!-- Space between sections -->
 
@@ -174,14 +174,18 @@
                         </div>
 
                         <!-- Time Selector Fields -->
-                        <div class="mb-4">
+                        <div v-if="props.event.type.includes('exam') || props.event.type.includes('class attendance')
+                        || props.event.type.includes('class orientation') "
+                            class="mb-4">
                             <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">Start
                                 Time</label>
                             <input v-model.trim="startTime" type="time" id="start_time"
                                 class="w-full p-2 border rounded-md" placeholder="Select Start Time">
                         </div>
 
-                        <div class="mb-4">
+                        <div v-if="props.event.type.includes('exam') || props.event.type.includes('class attendance')
+                            || props.event.type.includes('class orientation')"
+                            class="mb-4">
                             <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
                             <input v-model.trim="endTime" type="time" id="end_time" class="w-full p-2 border rounded-md"
                                 placeholder="Select End Time">

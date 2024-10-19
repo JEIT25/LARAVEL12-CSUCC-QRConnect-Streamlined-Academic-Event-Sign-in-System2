@@ -16,13 +16,15 @@
                 <table class="min-w-full bg-white border border-gray-300 rounded-lg">
                     <thead>
                         <tr class="bg-gray-200 text-gray-700">
+                            <th class="py-2 px-4 border-b">#</th> <!-- Column for row numbers -->
                             <th class="py-2 px-4 border-b">Name</th>
                             <th class="py-2 px-4 border-b">Unique ID</th>
                             <th class="py-2 px-4 border-b">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="member in props.master_list_members" :key="member.master_list_member_id">
+                        <tr v-for="(member, index) in props.master_list_members" :key="member.master_list_member_id">
+                            <td class="py-2 px-4 border-b text-center">{{ index + 1 }}</td> <!-- Display row number -->
                             <td class="py-2 px-4 border-b text-center">{{ member.full_name }}</td>
                             <td class="py-2 px-4 border-b text-center">{{ member.unique_id }}</td>
                             <td class="py-2 px-4 border-b text-center">
@@ -71,7 +73,7 @@
             <!-- Add Students by Bulk -->
             <div v-if="showBulkForm" class="mt-6 p-4 bg-white rounded-lg shadow-md">
                 <form @submit.prevent="addStudentsBulk" class="space-y-4">
-                    <textarea v-model="bulkInput" placeholder="Enter here one member per line
+                    <textarea v-model.trim="bulkInput" placeholder="Enter here one member per line
 Format: UniqueId(student id, etc.), Full Name
 Example: , 2022-7890, Josh M. Ghad"
                         class="border border-gray-300 w-full h-32 p-4 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-slate-500"
@@ -83,8 +85,7 @@ Example: , 2022-7890, Josh M. Ghad"
                         <option value="" disable>Select Sheet</option>
                         <option v-for="sheet in sheets" :key="sheet" :value="sheet">{{ sheet }}</option>
                     </select>
-                    <button type="submit"
-                        class="w-full btn-primary">
+                    <button type="submit" class="w-full btn-primary">
                         Add Students by Bulk
                     </button>
                 </form>
@@ -200,9 +201,9 @@ const handleSheetChange = () => {
             bulkInput.value = jsonData
                 .slice(1) // Skip the first row (header row)
                 .map(row => {
-                    const id = row[0] ? row[0] : ""; // Handle ID Number
-                    const firstName = row[2] ? row[2] : ""; // Handle FirstName
-                    const lastName = row[1] ? row[1] : ""; // Handle LastName
+                    const id = row[0] ? row[0].trim(): ""; // Handle ID Number
+                    const firstName = row[2] ? row[2].trim() : ""; // Handle FirstName
+                    const lastName = row[1] ? row[1].trim(): ""; // Handle LastName
 
                     // Only concatenate if values exist
                     const fullName = `${firstName} ${lastName}`.trim();

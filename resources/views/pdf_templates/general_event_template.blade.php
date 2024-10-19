@@ -96,6 +96,10 @@
             display: inline-block;
         }
 
+        #lined {
+            text-decoration: underline;
+        }
+
         #submittedBy {
             margin-right: 200px;
         }
@@ -143,12 +147,19 @@
             <div class="info1">
                 <p>ATTENDANCE SHEET</p>
                 <p>{{ $event->name }} Event</p>
+                @if ($event->year_level || $event->program)
+                    <p>{{ $event->program }} {{ $event->year_level }}</p>
+                @endif
             </div>
 
             <div class="info2">
                 <div class="info2-left">
-                    <p>Start Date: {{ $event->start_date ?? '_____' }}</p>
-                    <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
+                    @if ($event->start_date != $event->end_date)
+                        <p>Start Date: {{ $event->start_date }}</p>
+                        <p>End Date: {{ $event->end_date }}</p>
+                    @else
+                        <p>Event Date: {{ $event->start_date ?? '_____' }}</p>
+                    @endif
                 </div>
                 <p id="certify">We certify that the following have attended the event.</p>
             </div>
@@ -157,6 +168,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th style="width: 5%;">No.</th>
                     <th style="width: 30%;">NAME OF STUDENTS</th>
                     <th style="width: 15%;">Check-In</th>
                     <th style="width: 15%;">Check-Out</th>
@@ -164,8 +176,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($chunk as $attendee_record)
+                @foreach ($chunk as $index => $attendee_record)
+                    <!-- Added $index to track row number -->
                     <tr>
+                        <td>{{ $index + 1 }}</td> <!-- Display row number -->
                         <td>{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
                         <td>
                             {{ $attendee_record->check_in ? \Carbon\Carbon::parse($attendee_record->check_in)->format('h:i A') : '-' }}
@@ -180,6 +194,14 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
+
+        @if ($loop->last)
+            <div id="submitAndDate">
+                <p id="submittedBy">Submitted By: <span id="lined">{{ $facilitator->fname . ' ' . $facilitator->lname }}</span></p>
+                <p>Date of Submission: <span id="lined">{{ \Carbon\Carbon::now()->format('F j, Y') }}</span></p>
+            </div>
+        @endif
 
         <div class="footer">
             <table style="width: 100%; margin-top: 40px;">
@@ -195,10 +217,6 @@
             </table>
         </div>
     @endforeach
-    <div id="submitAndDate">
-        <p id="submittedBy">Submitted By: _________________________</p>
-        <p>Date of Submission: _________________________</p>
-    </div>
 
 
     <script type="text/php">

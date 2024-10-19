@@ -147,7 +147,7 @@
         <div class="info2-left">
             <p>Course: {{ $event->subject ?? '______________' }}</p>
             <p>Code: {{ $event->subject_code ?? '_____' }}</p>
-            <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
+            <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname}}</p>
         </div>
         <div class="info2-right">
             <p id="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>

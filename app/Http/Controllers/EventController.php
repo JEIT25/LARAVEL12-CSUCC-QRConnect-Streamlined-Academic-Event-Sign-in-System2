@@ -48,6 +48,7 @@ class EventController extends BaseController
         $user = $request->user(); // Get current user from the request
         $currentDate = now()->toDateString(); // Get the current date
 
+
         // Define validation rules and custom messages
         $rules = [
             'name' => 'required',
@@ -60,8 +61,8 @@ class EventController extends BaseController
             'other_type' => 'nullable|required_if:type,other',
             'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
             'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
-            'year_level' => 'required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
-            'program' => 'required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 characters
+            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 characters
             'semester' => 'nullable|in:1st,2nd|required_if:type,exam,class attendance,class orientation',
             'school_year' => 'required|string',
         ];
@@ -102,11 +103,6 @@ class EventController extends BaseController
             if ((int) $endYear <= (int) $startYear) {
                 return redirect()->back()->withErrors(['school_year' => 'The end year of the school year must be greater than the start year.'])->withInput();
             }
-        }
-
-        // Handle 'other_type'
-        if ($validatedData['type'] === 'other' && !empty($validatedData['other_type'])) {
-            $validatedData['type'] = $validatedData['other_type']; // Overwrite 'type' with 'other_type'
         }
 
         // Handle the profile image if it's present
