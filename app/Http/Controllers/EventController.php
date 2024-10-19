@@ -181,8 +181,8 @@ class EventController extends BaseController
             'other_type' => 'nullable|string|max:255', // Validate other_type if present
             'semester' => 'nullable|in:1st,2nd', // Adjust the enum values as needed
             'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
-            'year_level' => 'required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
-            'program' => 'required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 charactersdit
+            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 charactersdit
         ], [
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'school_year.regex' => 'The school year must be in the format YYYY-YYYY.',
