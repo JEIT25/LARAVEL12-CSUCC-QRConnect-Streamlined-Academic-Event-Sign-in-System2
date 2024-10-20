@@ -45,6 +45,7 @@
 
         .info2-left {
             margin-right: 50px;
+            text-align: left;
         }
 
         .info2-right {
@@ -157,13 +158,13 @@
     @if (isset($monthsData) && count($monthsData) > 0)
         <div class="info2">
             <div class="info2-left">
-                <p id="subject">Course: {{ $event->subject ?? '______________' }}</p>
-                <p id="code">Code: {{ $event->subject_code ?? '______________' }}</p>
-                <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname ?? '______________' }}</p>
+                <p id="subject">Course: {{ $event->subject}}</p>
+                <p id="code">Code: {{ $event->subject_code}}</p>
+                <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname}}</p>
             </div>
             <div class="info2-right">
-                <p class="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
-                <p id="year">S.Y.: {{ $event->school_year ?? '______________' }}</p>
+                <p class="sem">Sem: {{ $event->semester}} semester</p>
+                <p id="year">S.Y.: {{ $event->school_year}}</p>
             </div>
         </div>
 

@@ -10,7 +10,8 @@
                     <!-- Name -->
                     <div class="mb-4">
                         <label for="name" class="label">Name</label>
-                        <input v-model.trim="form.name" type="text" id="name" class="input" placeholder="" />
+                        <input v-model.trim="form.name" type="text" id="name" class="input" placeholder=""
+                            maxlength="20" />
                         <div class="input-error" v-if="form.errors.name">
                             {{ form.errors.name }}
                         </div>
@@ -19,7 +20,8 @@
                     <!-- Description -->
                     <div class="mb-4">
                         <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea v-model.trim="form.description" id="description" class="input" rows="4"></textarea>
+                        <textarea v-model.trim="form.description" id="description" class="input" rows="4"
+                            maxlength="50"></textarea>
                         <div class="input-error" v-if="form.errors.description">
                             {{ form.errors.description }}
                         </div>
@@ -42,7 +44,7 @@
                     <div class="mb-4">
                         <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
                         <input v-model.trim="form.location" type="text" id="location" class="input"
-                            placeholder="City, Barangay, Street" />
+                            placeholder="Room, Building, etc." maxlength="50" />
                         <div class="input-error" v-if="form.errors.location">
                             {{ form.errors.location }}
                         </div>
@@ -81,7 +83,13 @@
                     <!-- Program -->
                     <div class="mb-4">
                         <label for="program" class="block text-sm font-medium text-gray-700">Program</label>
-                        <input v-model.trim="form.program" type="text" id="program" class="input" />
+                        <select v-model="form.program" id="program" class="input">
+                            <option value="">Select Program</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSEE">BSEE</option>
+                            <option value="BSCpE">BSCpE</option>
+                            <option value="EET">EET</option>
+                        </select>
                         <div class="input-error" v-if="form.errors.program">
                             {{ form.errors.program }}
                         </div>
@@ -96,7 +104,6 @@
                             <option value="2">2nd Year</option>
                             <option value="3">3rd Year</option>
                             <option value="4">4th Year</option>
-                            <option value="5">5th Year</option>
                         </select>
                         <div class="input-error" v-if="form.errors.year_level">
                             {{ form.errors.year_level }}
@@ -106,7 +113,7 @@
                     <!-- Subject -->
                     <div class="mb-4">
                         <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
-                        <input v-model.trim="form.subject" type="text" id="subject" class="input" />
+                        <input v-model.trim="form.subject" type="text" id="subject" class="input" maxlength="50" />
                         <div class="input-error" v-if="form.errors.subject">
                             {{ form.errors.subject }}
                         </div>
@@ -115,7 +122,8 @@
                     <!-- Subject Code -->
                     <div class="mb-4">
                         <label for="subject_code" class="block text-sm font-medium text-gray-700">Subject Code</label>
-                        <input v-model.trim="form.subject_code" type="text" id="subject_code" class="input" />
+                        <input v-model.trim="form.subject_code" type="text" id="subject_code" class="input"
+                            maxlength="10" />
                         <div class="input-error" v-if="form.errors.subject_code">
                             {{ form.errors.subject_code }}
                         </div>
@@ -140,7 +148,7 @@
                     <div class="mb-4" v-if="form.type === 'other'">
                         <label for="other_type" class="block text-sm font-medium text-gray-700">Other Type</label>
                         <input v-model.trim="form.other_type" type="text" id="other_type" class="input"
-                            placeholder="Specify type" />
+                            placeholder="Specify type" maxlength="20" />
                         <div class="input-error" v-if="form.errors.other_type">
                             {{ form.errors.other_type }}
                         </div>

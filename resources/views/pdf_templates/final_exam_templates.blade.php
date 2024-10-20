@@ -178,7 +178,7 @@
 
     <div class="info2">
         <div class="info2-left">
-            <p>Program Year & Section: {{ $event->program }} {{ $event->year }} {{ $event->code }}</p>
+            <p>Program Year & Section: {{ $event->program }} {{ $event->year_level }} {{ $event->subject_code }}</p>
             <p>Time: {{ $start_time }} - {{ $end_time }}</p>
         </div>
         <div class="info2-right">

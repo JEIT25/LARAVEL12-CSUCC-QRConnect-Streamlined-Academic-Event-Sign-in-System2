@@ -8,18 +8,18 @@ use Illuminate\Http\Request;
 
 class MasterListController extends Controller
 {
-
-    public function show(Event $event, MasterList $master_list,Request $request)
+    public function show(Event $event, MasterList $master_list, Request $request)
     {
-        if ($request->user()->cannot('view', [Masterlist::class, $master_list])) { //check if user can create masterlist for this event
-            abort(403); //only owner of master_list can view the masterlist
+        if ($request->user()->cannot('view', [Masterlist::class, $master_list])) {
+            // Check if the user can view the master list for this event
+            abort(403); // Only the owner of master_list can view it
         }
 
         return inertia(
             "MasterList/Show",
             [
                 "master_list" => $event->master_list,
-                "master_list_members" => $event->master_list->master_list_members()->get() ?? [], //query master_list_records along with its perspective users , if null return emty array
+                "master_list_members" => $event->master_list->master_list_members()->orderBy('full_name')->get() ?? [], // Sort alphabetically by name
             ]
         );
     }

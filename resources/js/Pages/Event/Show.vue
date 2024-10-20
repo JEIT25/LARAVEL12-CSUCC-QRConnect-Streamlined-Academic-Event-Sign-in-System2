@@ -170,27 +170,24 @@
                             <label for="invigilator" class="block text-sm font-medium text-gray-700 mb-2">Invigilator
                                 Name</label>
                             <input v-model.trim="invigilatorName" type="text" id="invigilator"
-                                class="w-full p-2 border rounded-md" placeholder="Enter Invigilator Name">
+                                class="w-full p-2 border rounded-md" placeholder="Enter Invigilator Name" required>
                         </div>
 
                         <!-- Time Selector Fields -->
-                        <div v-if="props.event.type.includes('exam') || props.event.type.includes('class attendance')
-                        || props.event.type.includes('class orientation') "
+                        <div v-if="props.event.type.includes('exam')"
                             class="mb-4">
                             <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">Start
                                 Time</label>
                             <input v-model.trim="startTime" type="time" id="start_time"
-                                class="w-full p-2 border rounded-md" placeholder="Select Start Time">
+                                class="w-full p-2 border rounded-md" placeholder="Select Start Time" required>
                         </div>
 
-                        <div v-if="props.event.type.includes('exam') || props.event.type.includes('class attendance')
-                            || props.event.type.includes('class orientation')"
+                        <div v-if="props.event.type.includes('exam')"
                             class="mb-4">
                             <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">End Time</label>
                             <input v-model.trim="endTime" type="time" id="end_time" class="w-full p-2 border rounded-md"
-                                placeholder="Select End Time">
+                                placeholder="Select End Time" required>
                         </div>
-
 
                         <!-- Modal Buttons -->
                         <div class="flex justify-end">
@@ -226,8 +223,8 @@ const showExportModal = ref(false);
 const selectedTemplate = ref(''); // Holds selected template
 const selectedDate = ref(''); // Holds selected date for export
 const invigilatorName = ref(''); // Holds the invigilator name
-const startTime = ref(''); // Holds the start time
-const endTime = ref(''); // Holds the end time
+const startTime = ref(null); // Holds the start time
+const endTime = ref(null); // Holds the end time
 
 
 // Function to create a master list

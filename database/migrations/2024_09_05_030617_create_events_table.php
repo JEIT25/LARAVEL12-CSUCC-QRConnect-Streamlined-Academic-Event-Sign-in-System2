@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('subject')->nullable();
             $table->string('subject_code')->nullable();
             $table->string('program')->nullable();  // Adding program as a nullable string
-            $table->enum('year_level', [1, 2, 3, 4, 5])->nullable();    // Adding year as a nullable integer
+            $table->enum('year_level', [1, 2, 3, 4])->nullable();    // Adding year as a nullable integer
             $table->string('name');
             $table->longText('description')->nullable();
             $table->string('location');
             $table->string('profile_image')->nullable();
-            $table->enum('semester', ["1st", "2nd"])->nullable();
+            $table->enum('semester', ["1st", "2nd"]);
             $table->string('school_year')->nullable();
             $table->date('start_date');
             $table->date('end_date');

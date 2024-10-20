@@ -18,6 +18,12 @@
                     <!-- Darker blue background for the description -->
                     <p>{{ truncateText(event.description, 100) }}</p>
                 </div>
+                <p v-if="event.program || event.year_level" class="text-sm text-gray-300">
+                    <strong>Program & Year Level:</strong> {{ event.program }} {{ event.year_level }}
+                </p>
+                <p v-if="event.subject||event.subject_code" class="text-sm text-gray-300">
+                    <strong>Subject & Code:</strong> {{ event.subject }} {{ event.subject_code }}
+                </p>
                 <p class="text-sm text-gray-300">
                     <strong>Location:</strong> {{ event.location }}
                 </p>

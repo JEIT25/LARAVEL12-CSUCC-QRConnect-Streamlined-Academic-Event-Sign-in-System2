@@ -12,7 +12,7 @@ class EventController extends BaseController
 {
     use AuthorizesRequests;
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource.-
      */
 
     public function __construct()
@@ -61,9 +61,9 @@ class EventController extends BaseController
             'other_type' => 'nullable|required_if:type,other',
             'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
             'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
-            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
             'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 characters
-            'semester' => 'nullable|in:1st,2nd|required_if:type,exam,class attendance,class orientation',
+            'semester' => 'required|in:1st,2nd',
             'school_year' => 'required|string',
         ];
 
@@ -179,14 +179,14 @@ class EventController extends BaseController
             'subject_code' => 'nullable|string',
             'type' => 'required', // Validate type
             'other_type' => 'nullable|string|max:255', // Validate other_type if present
-            'semester' => 'nullable|in:1st,2nd', // Adjust the enum values as needed
+            'semester' => 'required|in:1st,2nd',
             'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
-            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4,5', // Validate year as enum with values 1 to 5
+            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
             'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 charactersdit
         ], [
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'school_year.regex' => 'The school year must be in the format YYYY-YYYY.',
-            'year.in' => 'The year must be between 1 and 5.',
+            'year_level.in' => 'The year must be between 1 and 4.',
         ]);
 
         if ($request->school_year) {

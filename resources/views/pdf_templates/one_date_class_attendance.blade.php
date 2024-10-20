@@ -44,12 +44,13 @@
         }
 
         .info2-left {
-            margin-right: 50px;
+            text-align: left;
+            margin-right: 12px;
         }
 
         .info2-right {
-            margin-left: 80px;
-            width: 40%;
+            margin-left: 42px;
+            width: 20%;
             text-align: right;
         }
 
