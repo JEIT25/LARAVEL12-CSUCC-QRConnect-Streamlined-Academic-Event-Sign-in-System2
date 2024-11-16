@@ -55,6 +55,10 @@ class ExportAttendeeRecordController extends Controller
             return $this->exportFinalExamTemplate($event, $selectedDate,$invigilator, $start_time, $end_time);
         }
 
+        if ($template === "return-output") {
+            return $this->exportReturnOuputToPDF($event, $selectedDate);
+        }
+
         // Redirect back if the template is invalid
         return redirect()->back()->with('failed', "Invalid template");
     }
@@ -123,6 +127,43 @@ class ExportAttendeeRecordController extends Controller
 
         // Load the PDF view with necessary data
         $pdf = Pdf::loadView('pdf_templates/class_orientation', [
+            'event' => $event,
+            'attendee_records' => $uniqueAttendeeRecords,
+            'facilitator' => $event->owner,
+            'itemsPerPage' => 25, // Number of records per page
+        ]);
+
+        // Stream the generated PDF for download
+        return $pdf->stream(filename: $event->name . "_class_orientation_attendance_list.pdf");
+    }
+    public function exportReturnOuputToPDF(Event $event, $selectedDate)
+    {
+        // Fetch attendee records with check-in and check-out not null
+        $attendeeRecords = $event->attendee_records()
+            ->whereNotNull('single_signin');
+
+        // Filter by selected date if provided and not 'all'
+        if ($selectedDate && $selectedDate !== 'all') {
+            $attendeeRecords = $attendeeRecords->whereDate('single_signin', $selectedDate);
+        }
+
+        // Load records with related master list member
+        $attendeeRecords = $attendeeRecords->with('master_list_member')->get();
+
+
+
+        // Check if any records were found
+        if ($attendeeRecords->isEmpty()) {
+            return redirect()->back()->with('failed', "No Attendees found yet for the selected date");
+        }
+
+        // Get unique attendee records to avoid redundancy in full names
+        $uniqueAttendeeRecords = $attendeeRecords->unique(function ($record) {
+            return $record->master_list_member->full_name;
+        });
+
+        // Load the PDF view with necessary data
+        $pdf = Pdf::loadView('pdf_templates/return_output', [
             'event' => $event,
             'attendee_records' => $uniqueAttendeeRecords,
             'facilitator' => $event->owner,

@@ -200,10 +200,11 @@ const handleSheetChange = () => {
 
             bulkInput.value = jsonData
                 .slice(1) // Skip the first row (header row)
+                .filter(row => row && row.length > 0) // Ensure the row is not empty or invalid
                 .map(row => {
-                    const id = row[0] ? row[0].trim(): ""; // Handle ID Number
+                    const id = row[0] ? row[0].trim() : ""; // Handle ID Number
                     const firstName = row[2] ? row[2].trim() : ""; // Handle FirstName
-                    const lastName = row[1] ? row[1].trim(): ""; // Handle LastName
+                    const lastName = row[1] ? row[1].trim() : ""; // Handle LastName
 
                     // Only concatenate if values exist
                     const fullName = `${firstName} ${lastName}`.trim();

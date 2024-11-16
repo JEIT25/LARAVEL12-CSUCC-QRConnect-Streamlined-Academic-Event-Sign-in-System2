@@ -136,16 +136,17 @@
                                 <option value="" disabled>Select a template</option>
                                 <option v-if="event.type.includes('class orientation')" value="class-orientation">Class
                                     Orientation</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance-excel">
+                                <option v-if="event.type.includes('lecture')|| event.type.includes('lecture')" value="class-attendance-excel">
                                     Class
                                     Attendance Excel</option>
-                                <option v-if="event.type.includes('class attendance')" value="class-attendance-pdf">
+                                <option v-if="event.type.includes('lecture') || event.type.includes('lecture')" value="class-attendance-pdf">
                                     Class
                                     Attendance PDF</option>
                                 <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
                                 <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
+                                <option v-if="event.type.includes('return output')" value="return-output">Return Output PDF</option>
                                 <option
-                                    v-if="!event.type.includes('class attendance') && !event.type.includes('class orientation') && !event.type.includes('exam')"
+                                    v-if="event.type.includes('other') && !event.type.includes('class orientation') && !event.type.includes('exam')"
                                     value="general-template">Event
                                     Attendance (Check-in & Checkout)</option>
                             </select>

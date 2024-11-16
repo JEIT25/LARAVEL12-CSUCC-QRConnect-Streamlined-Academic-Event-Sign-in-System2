@@ -84,7 +84,7 @@
         <div class="flex flex-wrap -mx-2 mb-4">
           <div class="w-full sm:w-1/2 px-2">
             <label for="name" class="label font-bold">Name</label>
-            <input v-model.trim="form.name" type="text" id="name" class="input" maxlength="30" />
+            <input v-model.trim="form.name" type="text" id="name" class="input" maxlength="50" />
             <div class="input-error" v-if="form.errors.name">{{ form.errors.name }}</div>
           </div>
           <div class="w-full sm:w-1/2 px-2">

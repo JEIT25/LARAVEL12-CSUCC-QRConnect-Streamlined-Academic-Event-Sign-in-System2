@@ -90,7 +90,7 @@
 
         #submitAndDate {
             font-size: 10px;
-            margin-top: 40px;
+            margin-top: 50px;
             text-align: left;
         }
 
@@ -137,8 +137,8 @@
     </header>
 
     <div class="info1">
-        <p>MONITORING SHEET</p>
-        <p>CLASS ORIENTATION</p>
+        <p>RECORD SHEET</p>
+        <p>RETURN STUDENTS' OUTPUT</p>
     </div>
 
     <div class="info2">
@@ -151,7 +151,7 @@
             <p id="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
             <p id="year">S.Y.: {{ $event->school_year ?? '_____' }}</p>
         </div>
-        <p id="certify">We certify that the following was discussed with us at the start of the semester.</p>
+        <p id="certify">We certify that we received the following documents below.</p>
     </div>
 
     @php
@@ -166,23 +166,15 @@
         <table class="table" style="margin-top: 20px; font-size: 8px;">
             <thead>
                 <tr>
-                    <th style="width: 65%; padding: 2px;">NAME OF STUDENTS</th>
-                    <th style="width: 10%; padding: 2px;">Vision, Mission & Goals</th>
-                    <th style="width: 10%; padding: 2px;">Syllabus</th>
-                    <th style="width: 10%; padding: 2px;">Classroom Policies</th>
-                    <th style="width: 10%; padding: 2px;">Grading System</th>
-                    <th style="width: 10%; padding: 2px;">Requirements</th>
+                    <th style="width: 50%; padding: 5px;">NAME OF STUDENTS</th>
+                    <th style="width: 15%; padding: 5px; fomt-weight: bold;">{{$event->name}}</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($chunk as $attendee_record)
                     <tr>
                         <td style="padding: 2px;">{{$rowNumber++}}.{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
-                        <td style="padding: 2px;">&#10003;</td>
-                        <td style="padding: 2px;">&#10003;</td>
-                        <td style="padding: 2px;">&#10003;</td>
-                        <td style="padding: 2px;">&#10003;</td>
-                        <td style="padding: 2px;">&#10003;</td>
+                        <td style="padding: 2px; text-align: center;">&#10003;</td>
                     </tr>
                 @endforeach
             </tbody>

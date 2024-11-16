@@ -145,6 +145,6 @@ const formatDate = (date) => {
 
 // Function to check if the event type is one of the special types
 const isSpecialEventType = (eventType) => {
-    return /exam|class orientation|class attendance/i.test(eventType);
+    return /lecture|class orientation|quiz|laboratory|return output|exam/i.test(eventType);
 };
 </script>
