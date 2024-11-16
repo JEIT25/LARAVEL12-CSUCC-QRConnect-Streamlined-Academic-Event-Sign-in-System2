@@ -29,6 +29,7 @@
             font-weight: bold;
             font-size: 12px;
             line-height: 3px;
+            text-transform:capitalize;
         }
 
         .info2 {
@@ -169,8 +170,7 @@
         </div>
 
         <div class="info1">
-            <p>Class Attendance</p>
-
+             <p>{{$event->type}} Attendance</p>
         </div>
 
         <table class="table table-bordered">

@@ -67,10 +67,11 @@
         }
 
         .table {
-            width:80%;
+            width: 80%;
             border-collapse: collapse;
             font-size: 10px;
             margin: 0 auto;
+            margin-top: 5px;
         }
 
         .table th,
@@ -80,8 +81,19 @@
             text-align: left;
         }
 
-        .table th {
-            background-color: #f2f2f2;
+        #submitAndDate {
+            font-size: 10px;
+            margin-top: 50px;
+            text-align: left;
+            margin-right: 50px;
+        }
+
+        #submitAndDate p {
+            display: inline-block;
+        }
+
+        #submittedBy {
+            margin-right: 240px;
         }
 
         .footer {
@@ -130,14 +142,14 @@
     </div>
 
     <div class="info1">
-        <p>Class Attendance for {{ \Carbon\Carbon::parse($selectedDate)->format('F d, Y') }}</p>
+        <p><span style="text-transform:capitalize;">{{$event->type}}</span> Attendance for {{ \Carbon\Carbon::parse($selectedDate)->format('F d, Y') }}</p>
     </div>
 
     <table class="table">
         <thead>
             <tr>
                 <th>NAME OF STUDENTS</th>
-                <th>Attendance</th>
+                <th>Single Sign-in</th>
             </tr>
         </thead>
         <tbody>
@@ -167,6 +179,12 @@
                 </td>
             </tr>
         </table>
+    </div>
+
+
+    <div id="submitAndDate">
+        <p id="submittedBy">Submitted By: _________________________</p>
+        <p>Date of Submission: _________________________</p>
     </div>
 
     <script type="text/php">

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen"> <!-- Ensure full height with gray background -->
+    <div class="flex justify-center items-center min-h-screen capital"> <!-- Ensure full height with gray background -->
         <!-- set default photo of the event -->
         <div class="p-10 w-full max-w-6xl"> <!-- Wrapper for padding and width -->
             <!-- Event Image -->
@@ -15,7 +15,7 @@
                 <p class="text-sm text-gray-500 mb-4 text-left mt-5">{{ event.description }}</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 capitalize">
                 <div>
                     <label class="block text-sm font-medium text-gray-500">Start Date</label>
                     <p class="text-gray-700">{{ new Date(event.start_date).toLocaleDateString() }}</p>
@@ -136,17 +136,16 @@
                                 <option value="" disabled>Select a template</option>
                                 <option v-if="event.type.includes('class orientation')" value="class-orientation">Class
                                     Orientation</option>
-                                <option v-if="event.type.includes('lecture')|| event.type.includes('lecture')" value="class-attendance-excel">
+                                <option v-if="event.type.includes('lecture') || event.type.includes('quiz') || event.type.includes('laboratory')" value="class-attendance-excel">
                                     Class
                                     Attendance Excel</option>
-                                <option v-if="event.type.includes('lecture') || event.type.includes('lecture')" value="class-attendance-pdf">
-                                    Class
+                                <option v-if="event.type.includes('lecture') || event.type.includes('quiz') || event.type.includes('laboratory')" value="class-attendance-pdf">
                                     Attendance PDF</option>
                                 <option v-if="event.type.includes('exam')" value="midterm-exam">Midterm Exam</option>
                                 <option v-if="event.type.includes('exam')" value="final-exam">Final Exam</option>
                                 <option v-if="event.type.includes('return output')" value="return-output">Return Output PDF</option>
                                 <option
-                                    v-if="event.type.includes('other') && !event.type.includes('class orientation') && !event.type.includes('exam')"
+                                    v-if="event.type.includes('other')"
                                     value="general-template">Event
                                     Attendance (Check-in & Checkout)</option>
                             </select>

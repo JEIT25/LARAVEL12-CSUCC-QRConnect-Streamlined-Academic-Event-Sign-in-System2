@@ -230,7 +230,6 @@ class ExportAttendeeRecordController extends Controller
             return redirect()->back()->with('failed', 'No attendance records found for the selected date range.');
         }
 
-
         if ($selectedDate !== 'all') {
             // Generate the PDF with the specific date layout in long bond paper size
             $pdf = PDF::loadView('pdf_templates.one_date_class_attendance', [
