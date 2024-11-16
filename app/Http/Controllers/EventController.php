@@ -58,7 +58,6 @@ class EventController extends BaseController
             'end_date' => 'required|date|after_or_equal:start_date',
             'profile_image' => 'nullable|mimes:jpg,png,jpeg,webp|max:5000',
             'type' => 'required',
-            'other_type' => 'nullable|required_if:type,other',
             'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
             'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
             'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
@@ -71,7 +70,6 @@ class EventController extends BaseController
             'start_date.after_or_equal' => 'The start date cannot be earlier than today.',
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'profile_image.mimes' => 'The file should be in one of the formats: jpg, png, jpeg, webp',
-            'other_type.required_if' => 'Please specify the type if "Other" is selected.',
             'subject.required_if' => 'The subject field is required for exam, class attendance, or class orientation events.',
             'subject_code.required_if' => 'The subject code is required for exam, class attendance, or class orientation events.',
             'semester.required_if' => 'The semester is required for exam, class attendance, or class orientation events.',
@@ -94,14 +92,29 @@ class EventController extends BaseController
 
         // Validate and split the school year, if provided
         if ($request->school_year) {
-            [$startYear, $endYear] = explode('-', $validatedData['school_year']);
+            // Check if the school year is in the correct format
+            if (strpos($validatedData['school_year'], '-') !== false) {
+                // Split the school year into startYear and endYear
+                [$startYear, $endYear] = explode('-', $validatedData['school_year']);
 
-            if ((int) $startYear < date('Y')) {
-                return redirect()->back()->withErrors(['school_year' => 'The start year of the school year must be the current year or later.'])->withInput();
-            }
+                // Validate the start year
+                if ((int) $startYear < date('Y')) {
+                    return redirect()->back()->withErrors([
+                        'school_year' => 'The start year of the school year must be the current year or later.'
+                    ])->withInput();
+                }
 
-            if ((int) $endYear <= (int) $startYear) {
-                return redirect()->back()->withErrors(['school_year' => 'The end year of the school year must be greater than the start year.'])->withInput();
+                // Validate the end year
+                if ((int) $endYear <= (int) $startYear) {
+                    return redirect()->back()->withErrors([
+                        'school_year' => 'The end year of the school year must be greater than the start year.'
+                    ])->withInput();
+                }
+            } else {
+                // Handle invalid format of school year
+                return redirect()->back()->withErrors([
+                    'school_year' => 'Invalid school year format. Expected format: YYYY-YYYY.'
+                ])->withInput();
             }
         }
 
@@ -178,7 +191,6 @@ class EventController extends BaseController
             'subject' => 'nullable|string',
             'subject_code' => 'nullable|string',
             'type' => 'required', // Validate type
-            'other_type' => 'nullable|string|max:255', // Validate other_type if present
             'semester' => 'required|in:1st,2nd',
             'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
             'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5

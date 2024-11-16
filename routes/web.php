@@ -23,7 +23,7 @@ Route::get('login', fn () => inertia('Auth/Login'))//redirect to homepage wtoh a
 Route::post('login',[AuthController::class,'store'])
 ->name('login.store');
 
-Route::get('my-account', fn() => inertia('Auth/Show'))//redirect to homepage wtoh anauthorized message
+Route::get('my-account', fn() => inertia('Auth/Show',['profile_pict' => asset('assets/images/user/user-profile.png')]))//redirect to homepage wtoh anauthorized message
     ->name('my-account') //sign in form
     ->middleware('auth');
 

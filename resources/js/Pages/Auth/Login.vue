@@ -29,10 +29,10 @@
     <div class="flex-1 flex items-center justify-center md:shrink-0 md:mt-0 p-0">
       <div class="text-center md:text-left w-full px-1 md:px-8">
         <h2 class="text-yellow-500 text-2xl md:text-5xl font-normal">
-          Streamlined Student
+          Streamlined Event
         </h2>
-        <h1 class="text-blue-900 text-3xl md:text-6xl lg:text-7xl font-bold mt-2">
-          Sign-in System
+        <h1 class="text-blue-900 text-2xl md:text-5xl lg:text-6xl font-bold mt-2">
+          Attendance System
         </h1>
         <p class="mt-4 text-sm md:text-base text-justify text-gray-700 hidden md:block">
           A cutting-edge solution designed to simplify and optimize the process

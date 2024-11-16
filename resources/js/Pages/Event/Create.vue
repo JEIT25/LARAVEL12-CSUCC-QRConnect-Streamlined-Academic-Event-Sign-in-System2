@@ -10,19 +10,13 @@
             <label for="type" class="label font-bold">What Type of Event?</label>
             <select v-model="form.type" id="type" class="input">
               <option value="">Select Event Type</option>
-              <option value="class attendance">Class Attendance</option>
-              <option value="class orientation">Class Orientation</option>
-              <option value="exam">Exam</option>
-              <option value="other">Other</option>
+              <option value="lecture">Lecture (Single Sign-in)</option>
+              <option value="quiz">Quiz (Single Sign-in)</option>
+              <option value="laboratory">Laboratory (Single Sign-in)</option>
+              <option value="exam">Exam (Single Sign-in)</option>
+              <option value="other">Other (Check-in & Check-out)</option>
             </select>
             <div class="input-error" v-if="form.errors.type">{{ form.errors.type }}</div>
-          </div>
-
-          <!-- Specify Other Type if 'Other' is selected -->
-          <div v-if="form.type === 'other'" class="w-full sm:w-1/2 px-2">
-            <label for="other_type" class="label font-bold">Specify Other Type</label>
-            <input v-model.trim="form.other_type" type="text" id="other_type" class="input" maxlength="20" />
-            <div class="input-error" v-if="form.errors.other_type">{{ form.errors.other_type }}</div>
           </div>
         </div>
 
@@ -93,7 +87,8 @@
           </div>
           <div class="w-full sm:w-1/2 px-2">
             <label for="location" class="label font-bold">Location</label>
-            <input v-model.trim="form.location" type="text" id="location" class="input" maxlength="50" />
+            <input v-model.trim="form.location" type="text" id="location" placeholder="Room No. / Building Name / etc."
+              class="input" maxlength="50" />
             <div class="input-error" v-if="form.errors.location">{{ form.errors.location }}</div>
           </div>
         </div>

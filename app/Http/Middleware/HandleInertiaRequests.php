@@ -48,6 +48,9 @@ class HandleInertiaRequests extends Middleware
                     'fname' => $request->user()->fname,
                     'lname' => $request->user()->lname,
                     'type' => $request->user()->type,
+                    'birth_date' => $request->user()->birth_date,
+                    'acc_status' => $request->user()->acc_status,
+                    'created_at' => $request->user()->created_at,
                 ] : null //else if false , return null value, user is null not authenticated
             ]);
         }

@@ -143,16 +143,6 @@
                             {{ form.errors.type }}
                         </div>
                     </div>
-
-                    <!-- Other Type -->
-                    <div class="mb-4" v-if="form.type === 'other'">
-                        <label for="other_type" class="block text-sm font-medium text-gray-700">Other Type</label>
-                        <input v-model.trim="form.other_type" type="text" id="other_type" class="input"
-                            placeholder="Specify type" maxlength="20" />
-                        <div class="input-error" v-if="form.errors.other_type">
-                            {{ form.errors.other_type }}
-                        </div>
-                    </div>
                 </div>
             </div>
 
