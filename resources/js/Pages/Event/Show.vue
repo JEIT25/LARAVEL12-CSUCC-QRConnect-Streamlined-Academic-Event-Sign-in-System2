@@ -99,17 +99,17 @@
                             <h3 class="text-lg font-bold mb-2 text-gray-800 text-center">Attendance Actions</h3>
                             <!-- Title for this section -->
                             <Link
-                                v-if="!event.type.includes('exam') && !event.type.includes('class attendance') && !event.type.includes('class orientation')"
+                                v-if="event.type.includes('other')"
                                 :href="`/events/${event.event_id}/qrscanner/checkin`" class="btn-primary" as="button">
                             Check-In
                             </Link>
                             <Link
-                                v-if="!event.type.includes('exam') && !event.type.includes('class attendance') && !event.type.includes('class orientation')"
+                                v-if="event.type.includes('other')"
                                 :href="`/events/${event.event_id}/qrscanner/checkout`" class="btn-primary" as="button">
                             Check-Out
                             </Link>
                             <Link
-                                v-if="event.type.includes('exam') || event.type.includes('class attendance') || event.type.includes('class orientation')"
+                                v-if="!event.type.includes('other')"
                                 :href="`/events/${event.event_id}/qrscanner/single-signin`" class="btn-primary"
                                 as="button" method="get">
                             Single Sign-in

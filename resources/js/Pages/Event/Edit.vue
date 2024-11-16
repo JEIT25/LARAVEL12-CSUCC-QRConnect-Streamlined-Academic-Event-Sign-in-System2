@@ -133,10 +133,13 @@
                     <div class="mb-4">
                         <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
                         <select v-model="form.type" id="type" class="input">
-                            <option value="">Select Type</option>
-                            <option value="class attendance">Class Attendance</option>
+                            <option value="">Select Event Type</option>
+                            <option value="lecture">Lecture</option>
                             <option value="class orientation">Class Orientation</option>
+                            <option value="quiz">Quiz</option>
+                            <option value="laboratory">Laboratory</option>
                             <option value="exam">Exam</option>
+                            <option value="return output">Return Output</option>
                             <option value="other">Other</option>
                         </select>
                         <div class="input-error" v-if="form.errors.type">

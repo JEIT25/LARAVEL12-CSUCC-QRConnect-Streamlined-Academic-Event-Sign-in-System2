@@ -48,7 +48,6 @@ class EventController extends BaseController
         $user = $request->user(); // Get current user from the request
         $currentDate = now()->toDateString(); // Get the current date
 
-
         // Define validation rules and custom messages
         $rules = [
             'name' => 'required',
@@ -58,10 +57,10 @@ class EventController extends BaseController
             'end_date' => 'required|date|after_or_equal:start_date',
             'profile_image' => 'nullable|mimes:jpg,png,jpeg,webp|max:5000',
             'type' => 'required',
-            'subject' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
-            'subject_code' => 'nullable|string|required_if:type,exam,class attendance,class orientation',
-            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
-            'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 characters
+            'subject' => 'nullable|string|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation',
+            'subject_code' => 'nullable|string|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation',
+            'year_level' => 'nullable|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
+            'program' => 'nullable|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation|string|max:6', // Validate program as a text input with a max length of 255 characters
             'semester' => 'required|in:1st,2nd',
             'school_year' => 'required|string',
         ];
@@ -70,9 +69,8 @@ class EventController extends BaseController
             'start_date.after_or_equal' => 'The start date cannot be earlier than today.',
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'profile_image.mimes' => 'The file should be in one of the formats: jpg, png, jpeg, webp',
-            'subject.required_if' => 'The subject field is required for exam, class attendance, or class orientation events.',
-            'subject_code.required_if' => 'The subject code is required for exam, class attendance, or class orientation events.',
-            'semester.required_if' => 'The semester is required for exam, class attendance, or class orientation events.',
+            'subject.required_if' => 'The subject field is required for events like lecture, class orientation, quiz, laboratory, return output, or exam.',
+            'subject_code.required_if' => 'The subject code is required for events like lecture, class orientation, quiz, laboratory, return output, or exam.',
         ];
 
         // Create the validator instance
@@ -188,13 +186,13 @@ class EventController extends BaseController
             'location' => 'required',
             'start_date' => 'required|date',// Start date must be today or later
             'end_date' => 'required|date|after_or_equal:start_date', // End date must be after or equal to start date
-            'subject' => 'nullable|string',
-            'subject_code' => 'nullable|string',
+            'subject' => 'nullable|string|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation',
+            'subject_code' => 'nullable|string|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation',
             'type' => 'required', // Validate type
             'semester' => 'required|in:1st,2nd',
             'school_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/', // Validate format YYYY-YYYY
-            'year_level' => 'nullable|required_if:type,exam,class attendance,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
-            'program' => 'nullable|required_if:type,exam,class attendance,class orientation|string|max:255', // Validate program as a text input with a max length of 255 charactersdit
+            'year_level' => 'nullable|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation|in:1,2,3,4', // Validate year as enum with values 1 to 5
+            'program' => 'nullable|required_if:type,lecture,class orientation,quiz,laboratory,return output,exam,class orientation|string|max:6', // Validate program as a text input with a max length of 255 charactersdit
         ], [
             'end_date.after_or_equal' => 'The end date cannot be earlier than the start date.',
             'school_year.regex' => 'The school year must be in the format YYYY-YYYY.',

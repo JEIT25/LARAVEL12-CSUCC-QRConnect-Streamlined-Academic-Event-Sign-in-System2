@@ -11,9 +11,11 @@
             <select v-model="form.type" id="type" class="input">
               <option value="">Select Event Type</option>
               <option value="lecture">Lecture (Single Sign-in)</option>
+              <option value="class orientation">Class Orientation (Single Sign-in)</option>
               <option value="quiz">Quiz (Single Sign-in)</option>
               <option value="laboratory">Laboratory (Single Sign-in)</option>
               <option value="exam">Exam (Single Sign-in)</option>
+              <option value="return output">Return Output</option>
               <option value="other">Other (Check-in & Check-out)</option>
             </select>
             <div class="input-error" v-if="form.errors.type">{{ form.errors.type }}</div>
@@ -35,7 +37,7 @@
 
         <!-- Subject, Subject Code, Program, Year Level (for specific types or student-only events) -->
         <div
-          v-if="form.type == 'exam' || form.type == 'class attendance' || form.type == 'class orientation' || isStudentOnly === 'yes'">
+          v-if="form.type != 'other' || isStudentOnly === 'yes'">
           <div class="flex flex-wrap -mx-2 mb-4">
             <div class="w-full sm:w-1/2 px-2">
               <label for="subject" class="label font-bold">Subject</label>

@@ -66,6 +66,13 @@ class QrScannerController extends Controller
     public function singleSigninPost(Event $event, Request $request)
     {
         try {
+            if (
+                $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
+                !preg_match('/\b(lecture|class orientation|quiz|laboratory|return output|exam)\b/i', $event->type)
+            ) {
+                abort(403);
+            }
+
             $today = now()->toDateString(); // Get today's date (YYYY-MM-DD format)
 
             // Validate received QR data
@@ -127,10 +134,13 @@ class QrScannerController extends Controller
     {
         if (
             $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
-            //This will match the words "exam," "class orientation," and "class attendance" regardless of whether they appear alone or as part of a longer string.
-            !preg_match('/\b(exam|class orientation|class attendance)\b/i', $event->type)
+            !preg_match('/\b(lecture|class orientation|quiz|laboratory|return output|exam)\b/i', $event->type)
         ) {
             abort(403);
+        }
+
+        if (!$event->master_list) {
+            return redirect()->back()->with('failed', 'Please Create a Master List First!');
         }
 
         // Get the current date (formatted to 'Y-m-d' to ignore time)
@@ -153,12 +163,18 @@ class QrScannerController extends Controller
     {
         if (
             $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
-            //This will match the words "exam," "class orientation," and "class attendance" regardless of whether they appear alone or as part of a longer string.
-            preg_match('/\b(exam|class orientation|class attendance)\b/i', $event->type)
-        ) {
+            !preg_match('/\b(other)\b/i', $event->type)        ) {
             abort(403);
         }
 
+
+        // if (!$event->master_list) {
+        //     return redirect()->back()->with('success', 'OPEN FOR COMMISSIONS');
+        // }
+
+        if(!$event->master_list) {
+            return redirect()->back()->with('failed', 'Please Create a Master List First!');
+        }
 
         // Get the current date (formatted to 'Y-m-d' to ignore time)
         $currentDate = Carbon::now('Asia/Manila')->toDateString();
@@ -177,8 +193,15 @@ class QrScannerController extends Controller
 
     public function checkinPost(Event $event, Request $request)
     {
-        if ($request->user()->cannot('create', [AttendeeRecord::class, $event])) {
+        if (
+            $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
+            !preg_match('/\b(other)\b/i', $event->type)
+        ) {
             abort(403);
+        }
+
+        if (!$event->master_list) {
+            return redirect()->back()->with('failed', 'Please Create a Master List First!');
         }
 
         // Validate received QR data
@@ -201,15 +224,14 @@ class QrScannerController extends Controller
     {
         if (
             $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
-            //This will match the words "exam," "class orientation," and "class attendance" regardless of whether they appear alone or as part of a longer string.
-            preg_match('/\b(exam|class orientation|class attendance)\b/i', $event->type)
+            !preg_match('/\b(other)\b/i', $event->type)
         ) {
             abort(403);
         }
-        if ($request->user()->cannot('create', [AttendeeRecord::class, $event])) {
-            abort(403);
-        }
 
+        if (!$event->master_list) {
+            return redirect()->back()->with('failed', 'Please Create a Master List First!');
+        }
 
         // Get the current date (formatted to 'Y-m-d' to ignore time)
         $currentDate = Carbon::now('Asia/Manila')->toDateString();
@@ -228,7 +250,10 @@ class QrScannerController extends Controller
 
     public function checkoutPost(Event $event, Request $request)
     {
-        if ($request->user()->cannot('create', [AttendeeRecord::class, $event])) {
+        if (
+            $request->user()->cannot('create', [AttendeeRecord::class, $event]) ||
+            !preg_match('/\b(other)\b/i', $event->type)
+        ) {
             abort(403);
         }
 
