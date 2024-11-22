@@ -11,6 +11,23 @@ class Event extends Model
 {
     use HasFactory;
 
+    /**
+     * Resolve the route binding for the model.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    // public function resolveRouteBinding($value, $field = 'event_id')
+    // {
+    //     // Customize how the model is resolved
+    //     if($value == null) {
+    //         $value = 0;
+    //     }
+
+    //     return $this->where($field, $value?? 0)->firstOrFail();
+    // }
+
     protected $primaryKey = 'event_id';  // Update this line to use user_id instead of id
 
     public function owner(): BelongsTo

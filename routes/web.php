@@ -51,9 +51,15 @@ Route::resource('events', EventController::class)
     ->middleware('auth');
 //
 
+
 //Route for exporting attendee_records based on template
-Route::get('/export-attendee-records/{event}/{template}',[ExportAttendeeRecordController::class,'ExportAttendeeRecords'])
-->name('attendee-records.export')
+Route::post('/export-attendee-records/return-outputs', [ExportAttendeeRecordController::class, 'exportReturnOuputsToPDF'])
+    ->name('attendee-records.export.return_outputs')
+    ->middleware('auth');
+
+//Route for exporting attendee_records based on template
+Route::get('/export-attendee-records/{event}/{template}', [ExportAttendeeRecordController::class, 'ExportAttendeeRecords'])
+    ->name('attendee-records.export')
     ->middleware('auth');
 
 //Admin routes

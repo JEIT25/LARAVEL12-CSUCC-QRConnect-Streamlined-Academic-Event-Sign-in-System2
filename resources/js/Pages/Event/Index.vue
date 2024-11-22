@@ -1,10 +1,11 @@
 <template>
     <div class="min-h-screen"> <!-- Gray background extended to the entire screen -->
         <div class="container mx-auto px-4 py-6">
+
             <div v-if="showReturnOutputsModal"
                 class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-y-auto">
                 <div
-                    class="bg-white p-6 rounded shadow-lg max-w-3xl w-full text-center overflow-auto max-h-screen relative">
+                    class="bg-white p-6 rounded shadow-lg max-w-6xl w-full text-center overflow-auto max-h-screen relative">
 
                     <!-- Close Button -->
                     <button @click="showReturnOutputsModal = false"
@@ -13,7 +14,7 @@
                     </button>
 
                     <!-- Search and Added Events Sections -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full min-h-screen">
 
                         <!-- Left Column: Search Results -->
                         <div>
@@ -21,6 +22,26 @@
                                 <h1 class="text-xl font-semibold mb-4">Search for Events</h1>
                                 <input id="search" v-model="searchQuery" class="w-full p-2 border rounded"
                                     placeholder="Search for return output events..." />
+                            </div>
+
+                            <div class="border-b border-gray-300 pb-4 mb-6">
+                                <h1 class="text-xl font-semibold mb-4">Select Date Range</h1>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Start Date -->
+                                    <div>
+                                        <label for="searchStartDate"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="date" id="searchStartDate" v-model="searchStartDate"
+                                            class="w-full p-2 border rounded text-sm" />
+                                    </div>
+                                    <!-- End Date -->
+                                    <div>
+                                        <label for="searchEndDate"
+                                            class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="date" id="searchEndDate" v-model="searchEndDate"
+                                            class="w-full p-2 border rounded text-sm" />
+                                    </div>
+                                </div>
                             </div>
 
                             <h2 class="text-lg font-semibold mt-6">Search Results</h2>
@@ -32,7 +53,7 @@
                                         }}</span>
 
                                     <!-- Action Buttons -->
-                                    <div class="flex flex-col flex-wrap gap-2 md:gap-4 ">
+                                    <div class="flex flex-col flex-wrap gap-2 md:gap-4">
                                         <button @click="setCurrentEvt(event)"
                                             class="px-4 py-2 bg-blue-500 text-white rounded text-sm md:text-base hover:bg-blue-600">
                                             Details
@@ -45,7 +66,6 @@
                                 </li>
                             </ul>
 
-
                             <!-- Submit Button -->
                             <button @click="submitReturnOutputForm"
                                 class="mt-4 w-full px-4 py-2 bg-green-600 text-white text-lg font-semibold rounded hover:bg-green-700">
@@ -56,73 +76,70 @@
                         <!-- Right Column: Added Events -->
                         <div>
                             <h1 class="text-xl font-semibold mt-8 mb-4">Added Events</h1>
+                            <div class="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                                <!-- Quizzes Section -->
+                                <div class="border-t border-gray-300 pt-4">
+                                    <h2 class="text-lg font-semibold mt-6 mb-4">Quizzes ({{ numOfQuizEvts }})</h2>
+                                    <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
+                                        <li v-for="event in quizzes" :key="event.event_id"
+                                            class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
+                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <div class="flex space-x-2">
+                                                <button @click="setCurrentEvt(event)"
+                                                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
+                                                    Details
+                                                </button>
+                                                <button @click="deleteOneEvtReport(event)"
+                                                    class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
 
-                            <!-- Quizzes Section -->
-                            <div class="border-t border-gray-300 pt-4">
-                                <h2 class="text-lg font-semibold mt-6 mb-4">Quizzes ({{ numOfQuizEvts }})</h2>
-                                <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                    <li v-for="event in quizzes" :key="event.event_id"
-                                        class="p-4 border rounded bg-gray-100 flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 md:space-x-4">
-                                        <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
-                                        <div
-                                            class="flex flex-wrap md:flex-nowrap space-x-0 space-y-2 md:space-y-0 md:space-x-2">
-                                            <button @click="setCurrentEvt(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
-                                                Details
-                                            </button>
-                                            <button @click="deleteOneEvtReport(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </li>
-                                </ul>
+                                <!-- Laboratories Section -->
+                                <div class="border-t border-gray-300 pt-4">
+                                    <h2 class="text-lg font-semibold mt-6 mb-4">Laboratories ({{ numOfLabEvts }})</h2>
+                                    <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
+                                        <li v-for="event in laboratories" :key="event.event_id"
+                                            class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
+                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <div class="flex space-x-2">
+                                                <button @click="setCurrentEvt(event)"
+                                                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
+                                                    Details
+                                                </button>
+                                                <button @click="deleteOneEvtReport(event)"
+                                                    class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Exams Section -->
+                                <div class="border-t border-gray-300 pt-4">
+                                    <h2 class="text-lg font-semibold mt-6 mb-4">Exams ({{ numOfExamEvts }})</h2>
+                                    <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
+                                        <li v-for="event in exams" :key="event.event_id"
+                                            class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
+                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <div class="flex space-x-2">
+                                                <button @click="setCurrentEvt(event)"
+                                                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
+                                                    Details
+                                                </button>
+                                                <button @click="deleteOneEvtReport(event)"
+                                                    class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-
-                            <!-- Laboratories Section -->
-                            <div class="border-t border-gray-300 pt-4">
-                                <h2 class="text-lg font-semibold mt-6 mb-4">Laboratories ({{ numOfLabEvts }})</h2>
-                                <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                    <li v-for="event in laboratories" :key="event.event_id"
-                                        class="p-4 border rounded bg-gray-100 flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 md:space-x-4">
-                                        <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
-                                        <div
-                                            class="flex flex-wrap md:flex-nowrap space-x-0 space-y-2 md:space-y-0 md:space-x-2">
-                                            <button @click="setCurrentEvt(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
-                                                Details
-                                            </button>
-                                            <button @click="deleteOneEvtReport(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Exams Section -->
-                            <div class="border-t border-gray-300 pt-4">
-                                <h2 class="text-lg font-semibold mt-6 mb-4">Exams ({{ numOfExamEvts }})</h2>
-                                <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                    <li v-for="event in exams" :key="event.event_id"
-                                        class="p-4 border rounded bg-gray-100 flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 md:space-x-4">
-                                        <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
-                                        <div
-                                            class="flex flex-wrap md:flex-nowrap space-x-0 space-y-2 md:space-y-0 md:space-x-2">
-                                            <button @click="setCurrentEvt(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
-                                                Details
-                                            </button>
-                                            <button @click="deleteOneEvtReport(event)"
-                                                class="w-full md:w-auto px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-all">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
                         </div>
                     </div>
 
@@ -152,7 +169,7 @@
                                     <p class="text-lg"><strong class="font-semibold text-gray-900">Description:</strong>
                                         {{ currentEvtToShow.description.toLowerCase() }}</p>
                                     <p class="text-lg"><strong class="font-semibold text-gray-900">Location:</strong> {{
-    currentEvtToShow.location.toLowerCase() }}</p>
+                                        currentEvtToShow.location.toLowerCase() }}</p>
                                     <p class="text-lg"><strong class="font-semibold text-gray-900">Start Date:</strong>
                                         {{ currentEvtToShow.start_date }}</p>
                                     <p class="text-lg"><strong class="font-semibold text-gray-900">End Date:</strong>
@@ -167,9 +184,9 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
+
 
 
 
@@ -245,12 +262,11 @@ let currentEvtToShow = ref(null);
 let showEvtDetailsModal = ref(false);
 let limitReached = ref(false)
 let maxReturnOutputMes = ref('')
+// Search Query
+const searchQuery = ref("");
+const searchEndDate = ref("")
+const searchStartDate = ref("")
 
-
-// Initialize form with the computed property
-const returnOutputForm = useForm({
-    events: []
-});
 
 // Watch `evtsAdded` and update the form dynamically
 watch(
@@ -263,36 +279,65 @@ watch(
 
 // Filtered lists for each type (singular and plural)
 const quizzes = computed(() =>
-    evtsAdded.value.filter((event) =>
+    returnOutputForm.quiz = evtsAdded.value.filter((event) =>
         event.name.toLowerCase().includes('quiz') || event.name.toLowerCase().includes('quizzes')
     )
 );
 
 const laboratories = computed(() =>
-    evtsAdded.value.filter((event) =>
+    returnOutputForm.lab = evtsAdded.value.filter((event) =>
         event.name.toLowerCase().includes('laboratory') || event.name.toLowerCase().includes('laboratories')
     )
 );
 
 const exams = computed(() =>
-    evtsAdded.value.filter((event) =>
+    returnOutputForm.exam = evtsAdded.value.filter((event) =>
         event.name.toLowerCase().includes('exam') || event.name.toLowerCase().includes('exams')
     )
 );
 
-// Search Query
-const searchQuery = ref("");
+
+// Initialize form with the computed property
+const returnOutputForm = useForm({
+    events: [],
+    quiz: [],
+    lab: [],
+    exam: [],
+    start_date: computed(() => {
+        return searchStartDate.value
+    }),
+    end_date: computed(() => {
+        return searchEndDate.value
+    }),
+});
 
 // Filtered Events Computation
 const filteredEvents = computed(() => {
     return props.events
         .filter((event) =>
-            event.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+            event.type === 'return output'
         )
-        .filter((event) =>
-            event.type == 'return output'
-        );
+        .filter((event) => {
+            return event.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        })
+        .filter((event) => {
+            if (searchStartDate.value != '') {
+                // Convert event.start_date to YYYY-MM-DD format
+                const formattedStartDate = new Date(event.start_date).toISOString().split('T')[0];
+                return formattedStartDate === searchStartDate.value;
+            }
+            return true
+        })
+        .filter((event) => {
+            if (searchEndDate.value != '') {
+                // Convert event.start_date to YYYY-MM-DD format
+                const formattedStartDate = new Date(event.end_date).toISOString().split('T')[0];
+                return formattedStartDate === searchEndDate.value;
+            }
+            return true
+        })
 });
+
 
 // Event handlers
 const setReturnOuputModal = () => {
@@ -372,7 +417,7 @@ const deleteOneEvtReport = (event) => {
 
 // Submit Form Handler using form.post()
 const submitReturnOutputForm = () => {
-    returnOutputForm.post('/test');
+    returnOutputForm.post('/export-attendee-records/return-outputs');
 };
 
 </script>

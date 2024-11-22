@@ -6,6 +6,8 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
+
 
 class ExportAttendeeRecordController extends Controller
 {
@@ -49,13 +51,17 @@ class ExportAttendeeRecordController extends Controller
             return $this->exportClassAttendanceToPdf($event, $selectedDate);
         }
         if ($template === "midterm-exam") {
-            return $this->exportMidtermExamTemplate($event, $selectedDate,$invigilator,$start_time,$end_time);
+            return $this->exportMidtermExamTemplate($event, $selectedDate, $invigilator, $start_time, $end_time);
         }
         if ($template === "final-exam") {
-            return $this->exportFinalExamTemplate($event, $selectedDate,$invigilator, $start_time, $end_time);
+            return $this->exportFinalExamTemplate($event, $selectedDate, $invigilator, $start_time, $end_time);
         }
 
         if ($template === "return-output") {
+            return $this->exportReturnOuputToPDF($event, $selectedDate);
+        }
+
+        if ($template === "return-outputs") {
             return $this->exportReturnOuputToPDF($event, $selectedDate);
         }
 
@@ -171,7 +177,61 @@ class ExportAttendeeRecordController extends Controller
         ]);
 
         // Stream the generated PDF for download
-        return $pdf->stream(filename: $event->name . "_class_orientation_attendance_list.pdf");
+        return $pdf->stream(filename: $event->name . "return_output.pdf");
+    }
+
+    public function exportReturnOuputsToPDF(Request $request)
+    {
+
+        dd($request->get('start_date'));
+        //request datas
+        $events = $request->get('events');
+        $quizzes = $request->get('quiz');
+        $laboratories = $request->get('lab');
+        $exams = $request->get('exam');
+
+        //arrays to store query results
+
+        // Check if any events was passed
+        if ($events == []) {
+            return redirect()->back()->with('failed', "No Return Type Events Added");
+        }
+
+        $newArray = [];
+
+        foreach ($quizzes as $quiz) {
+            // Join master_list_members and attendee_records
+            $membersWithAttendance = DB::table('master_list_members')
+                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
+                ->where('attendee_records.event_id', $quiz['event_id'])
+                ->select('master_list_members.full_name', 'attendee_records.single_signin')
+                ->get();
+
+            // Append the results to the new array
+            $newArray[] = [
+                'event' => $quiz,
+                'attendee_records' => $membersWithAttendance,
+            ];
+        }
+
+        dd($newArray);
+
+        // unique(function ($record) {
+        //     return $record->master_list_member->full_name;
+        // });
+
+        // dd($uniqueEvents);
+
+        // Load the PDF view with necessary data
+        $pdf = Pdf::loadView('pdf_templates/return_output', [
+            'events' => $events,
+            'attendee_records' => $uniqueEvents,
+            'facilitator' => $request->user(),
+            'itemsPerPage' => 25, // Number of records per page
+        ]);
+
+        // Stream the generated PDF for download
+        return $pdf->stream(filename: $events->name . "_class_orientation_attendance_list.pdf");
     }
 
     public function exportClassAttendanceToPdf(Event $event, $selectedDate)
