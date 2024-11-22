@@ -62,10 +62,6 @@ class ExportAttendeeRecordController extends Controller
             return $this->exportReturnOuputToPDF($event, $selectedDate);
         }
 
-        if ($template === "return-outputs") {
-            return $this->exportReturnOuputToPDF($event, $selectedDate);
-        }
-
         // Redirect back if the template is invalid
         return redirect()->back()->with('failed', "Invalid template");
     }
@@ -182,8 +178,23 @@ class ExportAttendeeRecordController extends Controller
     }
     public function exportReturnOuputsToPDF(Request $request)
     {
+        try {
+            $validatedData = $request->validate([
+                // Validate main arrays
+                'events' => 'nullable|array',
+                'quiz' => 'nullable|array',
+                'lab' => 'nullable|array',
+                'exam' => 'nullable|array',
 
-        dd($request);
+                // Validate attendanceDate
+                'attendanceDate' => 'required|date',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Redirect back with validation errors
+            return back()->with('failed', $e->validator->errors()->first());
+        }
+
+
         // Request data
         $events = $request->get('events');
         $quizzes = $request->get('quiz');
@@ -208,6 +219,7 @@ class ExportAttendeeRecordController extends Controller
             $membersWithAttendance = DB::table('master_list_members')
                 ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
                 ->where('attendee_records.event_id', $quiz['event_id'])
+                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
                 ->select('master_list_members.full_name', 'attendee_records.single_signin')
                 ->get();
 
@@ -223,6 +235,7 @@ class ExportAttendeeRecordController extends Controller
             $membersWithAttendance = DB::table('master_list_members')
                 ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
                 ->where('attendee_records.event_id', $laboratory['event_id'])
+                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
                 ->select('master_list_members.full_name', 'attendee_records.single_signin')
                 ->get();
 
@@ -238,6 +251,7 @@ class ExportAttendeeRecordController extends Controller
             $membersWithAttendance = DB::table('master_list_members')
                 ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
                 ->where('attendee_records.event_id', $exam['event_id'])
+                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
                 ->select('master_list_members.full_name', 'attendee_records.single_signin')
                 ->get();
 

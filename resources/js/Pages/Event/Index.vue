@@ -256,14 +256,16 @@
 
 
 <script setup>
-import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue'
+import { Link, useForm } from '@inertiajs/vue3';
+import { ref, computed, watch, useAttrs } from 'vue'
 
 const props = defineProps({
     events: Array,
-    filename: ''
+    filename: '',
 });
 
+// Access the attrs object
+const attrs = useAttrs();
 let numOfQuizEvts = ref(0);
 let numOfLabEvts = ref(0);
 let numOfExamEvts = ref(0);
@@ -278,7 +280,6 @@ const searchQuery = ref("");
 const searchEndDate = ref("")
 const searchStartDate = ref("")
 const attendanceDate = ref("")
-
 
 // Watch `evtsAdded` and update the form dynamically
 watch(
@@ -462,10 +463,12 @@ const submitReturnOutputForm = () => {
                 window.location.href = `/download-pdf?name=${encodeURIComponent(filename)}`;
             } else {
                 console.error("Filename not returned in the response.");
+                setReturnOuputModal()
             }
         },
         onError: (errors) => {
             console.error("Error generating PDF:", errors);
+            setReturnOuputModal()
         },
     });
 };
