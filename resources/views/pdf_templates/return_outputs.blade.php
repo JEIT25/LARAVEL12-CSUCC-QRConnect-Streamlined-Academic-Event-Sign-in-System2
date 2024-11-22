@@ -127,7 +127,6 @@
     <header class="header">
         <img src="{{ public_path('assets/images/headers/header2.png') }}" alt="School Logo">
     </header>
-
     <div class="info1">
         <p>RECORD SHEET</p>
         <p>RETURNED STUDENTS' OUTPUTS</p>
@@ -135,12 +134,12 @@
 
     <div class="info2">
         <div class="info2-left">
-            <p>Course: {{ $event->subject ?? '______________' }}</p>
-            <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
+            {{-- <p>Course: {{ $event->subject ?? '______________' }}</p>
+            <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p> --}}
         </div>
         <div class="info2-right">
-            <p>Sem: {{ $event->semester ?? '1st' }}</p>
-            <p>S.Y.: {{ $event->school_year ?? '2023-2024' }}</p>
+            {{-- <p>Sem: {{ $event->semester ?? '1st' }}</p>
+            <p>S.Y.: {{ $event->school_year ?? '2023-2024' }}</p> --}}
         </div>
         <p id="certify">We certify that we received the following documents below.</p>
     </div>
@@ -158,12 +157,15 @@
                 <th>Q2</th>
                 <th>Q3</th>
                 <th>Q4</th>
+                <th>Q5</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($attendee_records as $attendee_record)
+            @foreach ($quizzes as $quiz)
+
+            @foreach ($quiz['attendee_records'] as $attendee_record )
                 <tr>
-                    <td style="text-align: left;">{{ $loop->iteration }}. {{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
+                    <td style="text-align: left;">{{ $loop->iteration }}. {{ $attendee_record->full_name}}</td>
                     <td>&#10003;</td>
                     <td>&#10003;</td>
                     <td>&#10003;</td>
@@ -171,6 +173,8 @@
                     <td>&#10003;</td>
                     <td>&#10003;</td>
                 </tr>
+            @endforeach
+
             @endforeach
         </tbody>
     </table>

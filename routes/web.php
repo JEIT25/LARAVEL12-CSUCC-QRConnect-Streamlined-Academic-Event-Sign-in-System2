@@ -56,6 +56,7 @@ Route::resource('events', EventController::class)
 Route::post('/export-attendee-records/return-outputs', [ExportAttendeeRecordController::class, 'exportReturnOuputsToPDF'])
     ->name('attendee-records.export.return_outputs')
     ->middleware('auth');
+Route::get('/download-pdf', [ExportAttendeeRecordController::class, 'downloadPDF'])->name('download_pdf');
 
 //Route for exporting attendee_records based on template
 Route::get('/export-attendee-records/{event}/{template}', [ExportAttendeeRecordController::class, 'ExportAttendeeRecords'])

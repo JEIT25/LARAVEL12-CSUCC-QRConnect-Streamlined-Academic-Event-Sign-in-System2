@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 class ExportAttendeeRecordController extends Controller
@@ -179,25 +180,28 @@ class ExportAttendeeRecordController extends Controller
         // Stream the generated PDF for download
         return $pdf->stream(filename: $event->name . "return_output.pdf");
     }
-
     public function exportReturnOuputsToPDF(Request $request)
     {
 
-        dd($request->get('start_date'));
-        //request datas
+        dd($request);
+        // Request data
         $events = $request->get('events');
         $quizzes = $request->get('quiz');
         $laboratories = $request->get('lab');
         $exams = $request->get('exam');
+        $quizArray = [];
+        $laboratoryArray = [];
+        $examArray = [];
 
-        //arrays to store query results
-
-        // Check if any events was passed
-        if ($events == []) {
+        // Check if any events were passed
+        if (empty($events)) {
             return redirect()->back()->with('failed', "No Return Type Events Added");
         }
 
-        $newArray = [];
+
+
+        // Generate a unique filename
+        $filename = uniqid() . 'return_outputs.pdf';
 
         foreach ($quizzes as $quiz) {
             // Join master_list_members and attendee_records
@@ -208,31 +212,84 @@ class ExportAttendeeRecordController extends Controller
                 ->get();
 
             // Append the results to the new array
-            $newArray[] = [
+            $quizArray[] = [
                 'event' => $quiz,
                 'attendee_records' => $membersWithAttendance,
             ];
         }
 
-        dd($newArray);
+        foreach ($laboratories as $laboratory) {
+            // Join master_list_members and attendee_records
+            $membersWithAttendance = DB::table('master_list_members')
+                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
+                ->where('attendee_records.event_id', $laboratory['event_id'])
+                ->select('master_list_members.full_name', 'attendee_records.single_signin')
+                ->get();
 
-        // unique(function ($record) {
-        //     return $record->master_list_member->full_name;
-        // });
+            // Append the results to the new array
+            $laboratoryArray[] = [
+                'event' => $laboratory,
+                'attendee_records' => $membersWithAttendance,
+            ];
+        }
 
-        // dd($uniqueEvents);
+        foreach ($exams as $exam) {
+            // Join master_list_members and attendee_records
+            $membersWithAttendance = DB::table('master_list_members')
+                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
+                ->where('attendee_records.event_id', $exam['event_id'])
+                ->select('master_list_members.full_name', 'attendee_records.single_signin')
+                ->get();
+
+            // Append the results to the new array
+            $examArray[] = [
+                'event' => $exam,
+                'attendee_records' => $membersWithAttendance,
+            ];
+        }
 
         // Load the PDF view with necessary data
-        $pdf = Pdf::loadView('pdf_templates/return_output', [
-            'events' => $events,
-            'attendee_records' => $uniqueEvents,
+        $pdf = Pdf::loadView('pdf_templates/return_outputs', [
+            'quizzes' => $quizArray,
+            'laboratories' => $laboratoryArray,
+            'exams' => $examArray,
             'facilitator' => $request->user(),
             'itemsPerPage' => 25, // Number of records per page
         ]);
 
-        // Stream the generated PDF for download
-        return $pdf->stream(filename: $events->name . "_class_orientation_attendance_list.pdf");
+        // Define the folder path
+        $folderPath = storage_path('app/public/pdfs');
+
+        // Check if the folder exists; if not, create it
+        if (!is_dir($folderPath)) {
+            mkdir($folderPath, 0755, true); // Create the folder with appropriate permissions
+        }
+
+        // Save the PDF to the folder
+        $path = 'public/pdfs/' . $filename;
+        Storage::put($path, $pdf->output());
+
+        // Return the filename to the frontend
+        return redirect()->route('events.index')->with('filename',$filename);
     }
+
+
+    public function downloadPDF(Request $request)
+    {
+        $filename = $request->query('name');
+
+        // Check if the file exists in the storage directory
+        $path = 'public/pdfs/' . $filename;
+
+        if (!Storage::exists($path)) {
+            return redirect()->back()->with('failed', "The requested PDF file does not exist.");
+        }
+
+        // Serve the file for download
+        return response()->download(storage_path('app/' . $path))->deleteFileAfterSend(true);
+    }
+
+
 
     public function exportClassAttendanceToPdf(Event $event, $selectedDate)
     {

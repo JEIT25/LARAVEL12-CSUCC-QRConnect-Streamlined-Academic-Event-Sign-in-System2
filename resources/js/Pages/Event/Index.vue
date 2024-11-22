@@ -25,7 +25,7 @@
                             </div>
 
                             <div class="border-b border-gray-300 pb-4 mb-6">
-                                <h1 class="text-xl font-semibold mb-4">Select Date Range</h1>
+                                <h1 class="text-xl font-semibold mb-4">Select Event Date Range</h1>
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- Start Date -->
                                     <div>
@@ -39,6 +39,19 @@
                                         <label for="searchEndDate"
                                             class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
                                         <input type="date" id="searchEndDate" v-model="searchEndDate"
+                                            class="w-full p-2 border rounded text-sm" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-b border-gray-300 pb-4 mb-6">
+                                <h1 class="text-xl font-semibold mb-4">Select Attendance Date</h1>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <!-- Start Date -->
+                                    <div>
+                                        <label for="attendanceDate"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Attendance Date</label>
+                                        <input type="date" id="attendanceDate" v-model="attendanceDate"
                                             class="w-full p-2 border rounded text-sm" />
                                     </div>
                                 </div>
@@ -81,9 +94,11 @@
                                 <div class="border-t border-gray-300 pt-4">
                                     <h2 class="text-lg font-semibold mt-6 mb-4">Quizzes ({{ numOfQuizEvts }})</h2>
                                     <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                        <li v-for="event in quizzes" :key="event.event_id"
+                                        <li v-for="(event,index) in quizzes" :key="event.event_id"
                                             class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
-                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <span class="font-medium text-gray-700 flex-1"> <span
+                                                    class="text-black font-bold">{{ 1 + index }}.</span> {{ event.name
+                                                }}</span>
                                             <div class="flex space-x-2">
                                                 <button @click="setCurrentEvt(event)"
                                                     class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
@@ -102,9 +117,11 @@
                                 <div class="border-t border-gray-300 pt-4">
                                     <h2 class="text-lg font-semibold mt-6 mb-4">Laboratories ({{ numOfLabEvts }})</h2>
                                     <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                        <li v-for="event in laboratories" :key="event.event_id"
+                                        <li v-for="(event,index) in laboratories" :key="event.event_id"
                                             class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
-                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <span class="font-medium text-gray-700 flex-1"><span
+                                                    class="text-black font-bold">{{ 1 + index }}.</span> {{ event.name
+                                                }}</span>
                                             <div class="flex space-x-2">
                                                 <button @click="setCurrentEvt(event)"
                                                     class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
@@ -123,9 +140,11 @@
                                 <div class="border-t border-gray-300 pt-4">
                                     <h2 class="text-lg font-semibold mt-6 mb-4">Exams ({{ numOfExamEvts }})</h2>
                                     <ul class="space-y-4 max-h-48 overflow-y-auto border-b border-gray-300 pb-4">
-                                        <li v-for="event in exams" :key="event.event_id"
+                                        <li v-for="(event,index) in exams" :key="event.event_id"
                                             class="p-4 border rounded bg-gray-100 flex flex-row justify-between items-center space-x-4">
-                                            <span class="font-medium text-gray-700 flex-1">{{ event.name }}</span>
+                                            <span class="font-medium text-gray-700 flex-1"><span
+                                                    class="text-black font-bold">{{ 1 + index }}.</span> {{ event.name
+                                                }}</span>
                                             <div class="flex space-x-2">
                                                 <button @click="setCurrentEvt(event)"
                                                     class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-all">
@@ -237,21 +256,13 @@
 
 
 <script setup>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
-    events: Array
+    events: Array,
+    filename: ''
 });
-
-
-// Method to truncate text
-function truncateText(text, maxLength) {
-    if (text.length > maxLength) {
-        return text.substring(0, maxLength) + '...';
-    }
-    return text;
-}
 
 let numOfQuizEvts = ref(0);
 let numOfLabEvts = ref(0);
@@ -266,6 +277,7 @@ let maxReturnOutputMes = ref('')
 const searchQuery = ref("");
 const searchEndDate = ref("")
 const searchStartDate = ref("")
+const attendanceDate = ref("")
 
 
 // Watch `evtsAdded` and update the form dynamically
@@ -276,6 +288,15 @@ watch(
     },
     { deep: true } // Ensure deep watch for array changes
 );
+
+
+// Method to truncate text
+function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+    }
+    return text;
+}
 
 // Filtered lists for each type (singular and plural)
 const quizzes = computed(() =>
@@ -296,6 +317,28 @@ const exams = computed(() =>
     )
 );
 
+// Computed property for attendance_date with validation
+const attendance_date = computed(() => {
+    const date = attendanceDate.value;
+
+    if (!date || !searchStartDate.value || !searchEndDate.value) {
+        return date;
+    }
+
+    // Check if attendanceDate is within the range
+    const isWithinRange =
+        new Date(date) >= new Date(searchStartDate.value) &&
+        new Date(date) <= new Date(searchEndDate.value);
+
+    if (!isWithinRange) {
+        limitReached.value = true;
+        maxReturnOutputMes.value =
+            'Selected Attendance Date is not within the Selected Event Date Range';
+        attendanceDate.value = ''
+    }
+
+    return date;
+});
 
 // Initialize form with the computed property
 const returnOutputForm = useForm({
@@ -303,12 +346,7 @@ const returnOutputForm = useForm({
     quiz: [],
     lab: [],
     exam: [],
-    start_date: computed(() => {
-        return searchStartDate.value
-    }),
-    end_date: computed(() => {
-        return searchEndDate.value
-    }),
+    attendanceDate: attendance_date
 });
 
 // Filtered Events Computation
@@ -376,7 +414,6 @@ const addToReport = (event) => {
     evtsAdded.value.push(event);
 };
 
-
 const setCurrentEvt = (event) => {
     currentEvtToShow.value = event;
     showEvtDetailsModal.value = true;
@@ -417,8 +454,22 @@ const deleteOneEvtReport = (event) => {
 
 // Submit Form Handler using form.post()
 const submitReturnOutputForm = () => {
-    returnOutputForm.post('/export-attendee-records/return-outputs');
+    returnOutputForm.post('/export-attendee-records/return-outputs', {
+        onSuccess: (response) => {
+            if (response.props?.filename) {
+                // Redirect to the GET route to download the PDF
+                const filename = response.props.filename;
+                window.location.href = `/download-pdf?name=${encodeURIComponent(filename)}`;
+            } else {
+                console.error("Filename not returned in the response.");
+            }
+        },
+        onError: (errors) => {
+            console.error("Error generating PDF:", errors);
+        },
+    });
 };
+
 
 </script>
 
