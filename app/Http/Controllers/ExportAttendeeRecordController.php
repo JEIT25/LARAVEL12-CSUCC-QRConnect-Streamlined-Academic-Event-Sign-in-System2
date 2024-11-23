@@ -180,112 +180,110 @@ class ExportAttendeeRecordController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                // Validate main arrays
                 'events' => 'nullable|array',
-                'quiz' => 'nullable|array',
-                'lab' => 'nullable|array',
-                'exam' => 'nullable|array',
-
-                // Validate attendanceDate
+                'quiz' => 'nullable|array|min:1|max:5',
+                'lab' => 'nullable|array|min:1|max:5',
+                'exam' => 'nullable|array|min:1|max:2',
                 'attendanceDate' => 'required|date',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Redirect back with validation errors
             return back()->with('failed', $e->validator->errors()->first());
         }
 
+        $attendanceDate = $request->get('attendanceDate');
+        $quizzes = $this->fetchRecords($request->get('quiz'), $attendanceDate);
+        $laboratories = $this->fetchRecords($request->get('lab'), $attendanceDate);
+        $exams = $this->fetchRecords($request->get('exam'), $attendanceDate);
 
-        // Request data
-        $events = $request->get('events');
-        $quizzes = $request->get('quiz');
-        $laboratories = $request->get('lab');
-        $exams = $request->get('exam');
-        $quizArray = [];
-        $laboratoryArray = [];
-        $examArray = [];
+        // Combine all unique attendees
+        $allAttendees = collect($quizzes)
+            ->concat($laboratories)
+            ->concat($exams)
+            ->flatMap(fn($record) => $record['attendee_records'])
+            ->pluck('full_name')
+            ->unique()
+            ->sort()
+            ->values();
 
-        // Check if any events were passed
-        if (empty($events)) {
-            return redirect()->back()->with('failed', "No Return Type Events Added");
-        }
-
-
-
-        // Generate a unique filename
-        $filename = uniqid() . 'return_outputs.pdf';
-
-        foreach ($quizzes as $quiz) {
-            // Join master_list_members and attendee_records
-            $membersWithAttendance = DB::table('master_list_members')
-                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
-                ->where('attendee_records.event_id', $quiz['event_id'])
-                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
-                ->select('master_list_members.full_name', 'attendee_records.single_signin')
-                ->get();
-
-            // Append the results to the new array
-            $quizArray[] = [
-                'event' => $quiz,
-                'attendee_records' => $membersWithAttendance,
+        // Prepare data for rendering
+        $combinedRecords = $allAttendees->map(function ($attendeeName) use ($quizzes, $laboratories, $exams) {
+            return [
+                'name' => $attendeeName,
+                'quizzes' => $this->getEventStatus($attendeeName, $quizzes),
+                'laboratories' => $this->getEventStatus($attendeeName, $laboratories),
+                'exams' => $this->getEventStatus($attendeeName, $exams),
             ];
+        });
+
+        if ($combinedRecords->isEmpty()) {
+            return redirect()->back()->with('failed', "No data available for the given attendance date.");
         }
 
-        foreach ($laboratories as $laboratory) {
-            // Join master_list_members and attendee_records
-            $membersWithAttendance = DB::table('master_list_members')
-                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
-                ->where('attendee_records.event_id', $laboratory['event_id'])
-                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
-                ->select('master_list_members.full_name', 'attendee_records.single_signin')
-                ->get();
-
-            // Append the results to the new array
-            $laboratoryArray[] = [
-                'event' => $laboratory,
-                'attendee_records' => $membersWithAttendance,
-            ];
-        }
-
-        foreach ($exams as $exam) {
-            // Join master_list_members and attendee_records
-            $membersWithAttendance = DB::table('master_list_members')
-                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
-                ->where('attendee_records.event_id', $exam['event_id'])
-                ->whereDate('attendee_records.single_signin', $request->get('attendanceDate'))
-                ->select('master_list_members.full_name', 'attendee_records.single_signin')
-                ->get();
-
-            // Append the results to the new array
-            $examArray[] = [
-                'event' => $exam,
-                'attendee_records' => $membersWithAttendance,
-            ];
-        }
-
-        // Load the PDF view with necessary data
-        $pdf = Pdf::loadView('pdf_templates/return_outputs', [
-            'quizzes' => $quizArray,
-            'laboratories' => $laboratoryArray,
-            'exams' => $examArray,
+        $pdf = Pdf::loadView('pdf_templates.return_outputs', [
+            'records' => $combinedRecords,
             'facilitator' => $request->user(),
+            'attendanceDate' => $attendanceDate,
+            'numQuizzes' => count($quizzes),
+            'numLaboratories' => count($laboratories),
+            'numExams' => count($exams),
             'itemsPerPage' => 25, // Number of records per page
         ]);
 
-        // Define the folder path
+
+        $filename = uniqid('return_outputs_') . '.pdf';
         $folderPath = storage_path('app/public/pdfs');
 
-        // Check if the folder exists; if not, create it
         if (!is_dir($folderPath)) {
-            mkdir($folderPath, 0755, true); // Create the folder with appropriate permissions
+            mkdir($folderPath, 0755, true);
         }
 
-        // Save the PDF to the folder
-        $path = 'public/pdfs/' . $filename;
-        Storage::put($path, $pdf->output());
+        Storage::put("public/pdfs/{$filename}", $pdf->output());
 
-        // Return the filename to the frontend
-        return redirect()->route('events.index')->with('filename',$filename);
+        return redirect()->route('events.index', ['filename' => $filename]);
     }
+
+    /**
+     * Get event status for a specific attendee across all events.
+     */
+    protected function getEventStatus(string $attendeeName, array $events): array
+    {
+        return collect($events)->map(function ($event) use ($attendeeName) {
+            $attendee = collect($event['attendee_records'])->firstWhere('full_name', $attendeeName);
+
+            return $attendee && $attendee->single_signin ? '✔' : '✘';
+        })->toArray();
+    }
+
+
+    /**
+     * Fetch records based on event data and attendance date.
+     */
+    protected function fetchRecords(?array $eventArray, string $attendanceDate): array
+    {
+        if (!$eventArray) {
+            return [];
+        }
+
+        $records = [];
+        foreach ($eventArray as $event) {
+            $membersWithAttendance = DB::table('master_list_members')
+                ->join('attendee_records', 'master_list_members.master_list_member_id', '=', 'attendee_records.master_list_member_id')
+                ->where('attendee_records.event_id', $event['event_id'])
+                ->whereDate('attendee_records.single_signin', $attendanceDate)
+                ->orWhereNull('attendee_records.single_signin') // Include records without sign-in
+                ->select('master_list_members.full_name', 'attendee_records.single_signin')
+                ->get();
+
+            $records[] = [
+                'event' => $event,
+                'attendee_records' => $membersWithAttendance,
+            ];
+        }
+
+        return $records;
+    }
+
+
 
 
     public function downloadPDF(Request $request)
@@ -296,7 +294,7 @@ class ExportAttendeeRecordController extends Controller
         $path = 'public/pdfs/' . $filename;
 
         if (!Storage::exists($path)) {
-            return redirect()->back()->with('failed', "The requested PDF file does not exist.");
+            return redirect()->route('events.index')->with('failed', "The requested PDF file does not exist.");
         }
 
         // Serve the file for download

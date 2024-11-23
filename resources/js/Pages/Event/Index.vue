@@ -25,7 +25,7 @@
                             </div>
 
                             <div class="border-b border-gray-300 pb-4 mb-6">
-                                <h1 class="text-xl font-semibold mb-4">Select Event Date Range</h1>
+                                <h1 class="text-xl font-semibold mb-4">Fitler Event by Date Range</h1>
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- Start Date -->
                                     <div>
@@ -257,15 +257,12 @@
 
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref, computed, watch, useAttrs } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
     events: Array,
-    filename: '',
 });
 
-// Access the attrs object
-const attrs = useAttrs();
 let numOfQuizEvts = ref(0);
 let numOfLabEvts = ref(0);
 let numOfExamEvts = ref(0);
@@ -308,7 +305,7 @@ const quizzes = computed(() =>
 
 const laboratories = computed(() =>
     returnOutputForm.lab = evtsAdded.value.filter((event) =>
-        event.name.toLowerCase().includes('laboratory') || event.name.toLowerCase().includes('laboratories')
+        event.name.toLowerCase().includes('lab')  || event.name.toLowerCase().includes('laboratory') || event.name.toLowerCase().includes('laboratories')
     )
 );
 
@@ -393,7 +390,7 @@ const addToReport = (event) => {
         numOfQuizEvts.value++;
     }
 
-    if (event.name.toLowerCase().includes('laboratory') || event.name.toLowerCase().includes('laboratories')) {
+    if (event.name.toLowerCase().includes('laboratory') || event.name.toLowerCase().includes('lab') || event.name.toLowerCase().includes('laboratories')) {
         if (numOfLabEvts.value >= 5) {
             limitReached.value = true;
             maxReturnOutputMes.value = 'You cannot add any more laboratory events'
@@ -419,6 +416,12 @@ const setCurrentEvt = (event) => {
     currentEvtToShow.value = event;
     showEvtDetailsModal.value = true;
 };
+
+const getFileName = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const filename = urlParams.get('filename'); // Captures ?filename=your_file_name
+    return filename;
+}
 
 const deleteOneEvtReport = (event) => {
     const index = evtsAdded.value.findIndex((evt) => evt.event_id === event.event_id);
@@ -456,10 +459,10 @@ const deleteOneEvtReport = (event) => {
 // Submit Form Handler using form.post()
 const submitReturnOutputForm = () => {
     returnOutputForm.post('/export-attendee-records/return-outputs', {
-        onSuccess: (response) => {
-            if (response.props?.filename) {
+        onSuccess: () => {
+            if (getFileName()) {
                 // Redirect to the GET route to download the PDF
-                const filename = response.props.filename;
+                const filename = getFileName();
                 window.location.href = `/download-pdf?name=${encodeURIComponent(filename)}`;
             } else {
                 console.error("Filename not returned in the response.");

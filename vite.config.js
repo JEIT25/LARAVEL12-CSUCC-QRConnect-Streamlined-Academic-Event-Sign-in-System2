@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     // server: { //this config is for running locally in the same wifi
-    //     host: '192.168.1.7', //configure ip address evrytime network is change
+    //     host: '192.168.1.3', //configure ip address evrytime network is change
     //     port: 5173,
     //     https: false,
     // },

@@ -15,7 +15,7 @@
               <option value="quiz">Quiz (Single Sign-in)</option>
               <option value="laboratory">Laboratory (Single Sign-in)</option>
               <option value="exam">Exam (Single Sign-in)</option>
-              <option value="return output">Return Output</option>
+              <option value="return output">Return Output (Single-Signin)</option>
               <option value="other">Other (Check-in & Check-out)</option>
             </select>
             <div class="input-error" v-if="form.errors.type">{{ form.errors.type }}</div>
