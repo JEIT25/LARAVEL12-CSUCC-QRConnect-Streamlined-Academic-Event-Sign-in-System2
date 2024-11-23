@@ -18,6 +18,14 @@
     @apply bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-center transition-colors duration-200 ease-in-out
   }
 
+    .btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md text-center transition-colors duration-200 ease-in-out
+  }
+
+    .btn-error {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md text-center transition-colors duration-200 ease-in-out
+  }
+
   /*Scanner styles */
   #html5-qrcode-button-camera-permission, #html5-qrcode-button-camera-start, #html5-qrcode-button-camera-stop  {
     @apply m-2 bg-gray-900 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-center

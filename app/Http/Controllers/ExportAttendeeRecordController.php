@@ -222,6 +222,9 @@ class ExportAttendeeRecordController extends Controller
         $pdf = Pdf::loadView('pdf_templates.return_outputs', [
             'records' => $combinedRecords,
             'facilitator' => $request->user(),
+            'subject' => $request->get('subject'),
+            'semester' => $request->get('semester'),
+            'school_year' => $request->get('school_year'),
             'attendanceDate' => $attendanceDate,
             'numQuizzes' => count($quizzes),
             'numLaboratories' => count($laboratories),

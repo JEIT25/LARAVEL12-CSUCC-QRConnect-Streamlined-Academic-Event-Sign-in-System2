@@ -146,12 +146,12 @@
     </div>
     <div class="info2">
         <div class="info2-left">
-            <p>Course: IT109 - System Integration and Architecture</p>
+            <p>Course: {{$subject}}</p>
             <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
         </div>
         <div class="info2-right">
-            <p id="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
-            <p id="year">S.Y.: {{ $event->school_year ?? '_____' }}</p>
+            <p id="sem">Sem: {{ $semester}}st semester</p>
+            <p id="year">S.Y.: {{ $school_year ?? '_____' }}</p>
         </div>
         <p id="certify">We certify that we received the following documents below.</p>
     </div>
