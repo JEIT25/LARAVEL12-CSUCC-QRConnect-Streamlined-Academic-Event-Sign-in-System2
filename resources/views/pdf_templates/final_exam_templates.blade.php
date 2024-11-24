@@ -216,7 +216,7 @@
                             @if ($attendee_record->single_signin)
                                 {{ \Carbon\Carbon::parse($attendee_record->single_signin)->format('Y-m-d g:i A') }}
                             @else
-                                <!-- Leave blank if not checked in -->
+                                '✘'
                             @endif
                         </td>
                     </tr>

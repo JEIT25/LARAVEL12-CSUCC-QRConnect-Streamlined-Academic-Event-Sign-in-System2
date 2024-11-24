@@ -11,21 +11,23 @@
             padding: 0;
             text-align: center;
             position: relative;
+            min-height: 100vh;
         }
 
         header {
             height: 100px;
             background: #fff;
+            z-index: 1000;
         }
 
         .header img {
-            width: 70%;
+            width: 100%;
             max-height: 70px;
             object-fit: contain;
         }
 
         .info1 {
-            margin: 10px 0 20px 0;
+            margin: 10px 0 30px 0;
             font-weight: bold;
             font-size: 12px;
             line-height: 3px;
@@ -34,7 +36,7 @@
         .info2 {
             font-size: 10px;
             margin-top: 10px;
-            text-align: center;
+            text-align: left;
         }
 
         .info2-left,
@@ -44,40 +46,45 @@
         }
 
         .info2-left {
-            text-align: left;
-            margin-right: 12px;
+            margin-right: 50px;
         }
 
         .info2-right {
-            margin-left: 42px;
-            width: 20%;
+            margin-left: 250px;
+            margin-top: -43px;
+            width: 40%;
             text-align: right;
         }
 
-        #subject {
-            margin-right: 25px;
+        .info2-right p {
+            display: inline-block;
         }
 
-        #year {
-            margin-right: 8px;
+        #year,
+        #id {
+            margin-left: 50px;
         }
 
-        #code {
-            margin-right: 22px;
+        .info2 p {
+            margin: 0;
+        }
+
+        #certify {
+            margin-top: 20px;
+            width: 100%;
         }
 
         .table {
-            width: 80%;
+            width: 100%;
             border-collapse: collapse;
-            font-size: 10px;
-            margin: 0 auto;
-            margin-top: 5px;
+            margin-top: 20px;
         }
 
         .table th,
         .table td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 8px;
+            font-size: 9px;
             text-align: left;
         }
 
@@ -85,7 +92,6 @@
             font-size: 10px;
             margin-top: 50px;
             text-align: left;
-            margin-right: 50px;
         }
 
         #submitAndDate p {
@@ -93,33 +99,33 @@
         }
 
         #submittedBy {
-            margin-right: 240px;
+            margin-right: 200px;
+        }
+
+        .page-break {
+            page-break-before: always;
         }
 
         .footer {
-            font-size: 10px;
-            text-align: left;
-            width: 100%;
             position: fixed;
             bottom: 0;
+            width: 100%;
+            font-size: 10px;
+            text-align: left;
         }
 
         .footer img {
             height: 50px;
-            vertical-align: middle;
-            min-width: 15%;
-        }
-
-        .footer table {
-            width: 35%;
-        }
-
-        .footer td {
+            margin-right: 10px;
+            display: inline-block;
             vertical-align: middle;
         }
 
-        #email {
-            line-height: 3px;
+        .footer p {
+            display: block;
+            margin: 0;
+            line-height: 1.5;
+            vertical-align: middle;
         }
     </style>
 </head>

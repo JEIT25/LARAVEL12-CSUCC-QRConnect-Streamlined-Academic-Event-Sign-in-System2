@@ -182,10 +182,10 @@
                         <td>{{ $index + 1 }}</td> <!-- Display row number -->
                         <td>{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
                         <td>
-                            {{ $attendee_record->check_in ? \Carbon\Carbon::parse($attendee_record->check_in)->format('h:i A') : '-' }}
+                            {{ $attendee_record->check_in ? \Carbon\Carbon::parse($attendee_record->check_in)->format('h:i A') : '✘' }}
                         </td>
                         <td>
-                            {{ $attendee_record->check_out ? \Carbon\Carbon::parse($attendee_record->check_out)->format('h:i A') : '-' }}
+                            {{ $attendee_record->check_out ? \Carbon\Carbon::parse($attendee_record->check_out)->format('h:i A') : '✘' }}
                         </td>
                         <td>
                             {{ $attendee_record->created_at->format('Y-m-d') }}

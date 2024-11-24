@@ -50,8 +50,8 @@
         }
 
         .info2-right {
-            margin-left: 230px;
-            margin-top: -43px;
+            margin-left: 260px;
+            margin-top: -59px;
             width: 40%;
             text-align: right;
         }
@@ -85,6 +85,11 @@
             border: 1px solid #000;
             padding: 8px;
             font-size: 9px;
+            text-align: left;
+        }
+
+        .table td {
+            font-size: 10px;
             text-align: left;
         }
 
@@ -146,6 +151,9 @@
             <p>Course: {{ $event->subject ?? '______________' }}</p>
             <p>Code: {{ $event->subject_code ?? '_____' }}</p>
             <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
+            @if ($selectedDate != 'all')
+                <p>Date Recieved: {{ $selectedDate }}</p>
+            @endif
         </div>
         <div class="info2-right">
             <p id="sem">Sem: {{ $event->semester ?? '_____' }} semester</p>
@@ -166,15 +174,26 @@
         <table class="table" style="margin-top: 20px; font-size: 8px;">
             <thead>
                 <tr>
-                    <th style="width: 50%; padding: 5px;">NAME OF STUDENTS</th>
-                    <th style="width: 15%; padding: 5px; fomt-weight: bold;">{{$event->name}}</th>
+                    <th style="width: 30%; padding: 5px;">NAME OF STUDENTS</th>
+                    <th style="width: 15%; padding: 5px; font-weight: bold; text-transform: uppercase;">
+                        {{ $event->name }}</th>
+                    @if ($selectedDate == 'all')
+                        <th style="width: 15%; padding: 5px; font-weight: bold;">DATE RECIEVED</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
                 @foreach ($chunk as $attendee_record)
                     <tr>
-                        <td style="padding: 2px;">{{$rowNumber++}}.{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
-                        <td style="padding: 2px; text-align: center;">&#10003;</td>
+                        <td style="padding: 2px;">
+                            {{ $rowNumber++ }}.{{ $attendee_record->master_list_member->full_name ?? 'N/A' }}</td>
+                        <td style="padding: 3px;">{{ $attendee_record->single_signin ? '✔' : '✘' }}
+                        </td>
+                        @if ($selectedDate == 'all')
+                            <td style="padding: 2px;">
+                                {{ \Carbon\Carbon::parse($attendee_record->single_signin)->format('m/d/Y h:i A') }}
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>
@@ -198,8 +217,8 @@
 
 
     <div id="submitAndDate">
-        <p id="submittedBy">Submitted By: _________________________</p>
-        <p>Date of Submission: _________________________</p>
+        <p id="submittedBy">Submitted By: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
+        <p>Date of Submission: {{ \Carbon\Carbon::now()->format('m/d/Y') }}</p>
     </div>
 
     <script type="text/php">

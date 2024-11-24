@@ -73,7 +73,7 @@ class ExportAttendeeRecordController extends Controller
 
         // Filter by selected date if provided and not 'all'
         if ($selectedDate && $selectedDate !== 'all') {
-            $attendeeRecords = $attendeeRecords->whereDate('check_in', $selectedDate);
+            $attendeeRecords = $attendeeRecords->whereDate('attendee_records.created_at', $selectedDate);
         }
 
         // Load records with related master list member
@@ -154,21 +154,17 @@ class ExportAttendeeRecordController extends Controller
         $attendeeRecords = $attendeeRecords->with('master_list_member')->get();
 
 
-
         // Check if any records were found
         if ($attendeeRecords->isEmpty()) {
             return redirect()->back()->with('failed', "No Attendees found yet for the selected date");
         }
 
-        // Get unique attendee records to avoid redundancy in full names
-        $uniqueAttendeeRecords = $attendeeRecords->unique(function ($record) {
-            return $record->master_list_member->full_name;
-        });
 
         // Load the PDF view with necessary data
         $pdf = Pdf::loadView('pdf_templates/return_output', [
             'event' => $event,
-            'attendee_records' => $uniqueAttendeeRecords,
+            'selectedDate' => $selectedDate,
+            'attendee_records' => $attendeeRecords,
             'facilitator' => $event->owner,
             'itemsPerPage' => 25, // Number of records per page
         ]);
