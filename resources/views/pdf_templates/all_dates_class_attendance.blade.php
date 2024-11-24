@@ -13,13 +13,22 @@
             position: relative;
         }
 
+        @page {
+            margin: 120px 30px 60px;
+            /* Top space for the header */
+        }
+
         header {
+            position: fixed;
+            top: -100px; /* Position the header above the content */
+            left: 0;
+            right: 0;
             height: 100px;
-            background: #fff;
+            text-align: center;
         }
 
         .header img {
-            width: 70%;
+            width: 60%;
             max-height: 70px;
             object-fit: contain;
         }
@@ -29,7 +38,7 @@
             font-weight: bold;
             font-size: 12px;
             line-height: 3px;
-            text-transform:capitalize;
+            text-transform: capitalize;
         }
 
         .info2 {
@@ -55,8 +64,9 @@
             text-align: right;
         }
 
-        #subject, {
-            margin-right: 25px;
+        #subject,
+        {
+        margin-right: 25px;
         }
 
         #year {
@@ -159,18 +169,18 @@
     @if (isset($monthsData) && count($monthsData) > 0)
         <div class="info2">
             <div class="info2-left">
-                <p id="subject">Course: {{ $event->subject}}</p>
-                <p id="code">Code: {{ $event->subject_code}}</p>
-                <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname}}</p>
+                <p id="subject">Course: {{ $event->subject }}</p>
+                <p id="code">Code: {{ $event->subject_code }}</p>
+                <p>Instructor: {{ $facilitator->fname . ' ' . $facilitator->lname }}</p>
             </div>
             <div class="info2-right">
-                <p class="sem">Sem: {{ $event->semester}} semester</p>
-                <p id="year">S.Y.: {{ $event->school_year}}</p>
+                <p class="sem">Sem: {{ $event->semester }} semester</p>
+                <p id="year">S.Y.: {{ $event->school_year }}</p>
             </div>
         </div>
 
         <div class="info1">
-             <p>{{$event->type}} Attendance</p>
+            <p>{{ $event->type }} Attendance</p>
         </div>
 
         <table class="table table-bordered">

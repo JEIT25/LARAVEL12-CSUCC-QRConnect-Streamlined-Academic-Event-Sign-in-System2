@@ -14,14 +14,22 @@
             min-height: 100vh;
         }
 
+        @page {
+            margin: 120px 30px 60px;
+            /* Top space for the header */
+        }
+
         header {
+            position: fixed;
+            top: -100px; /* Position the header above the content */
+            left: 0;
+            right: 0;
             height: 100px;
-            background: #fff;
-            z-index: 1000;
+            text-align: center;
         }
 
         .header img {
-            width: 100%;
+            width: 60%;
             max-height: 70px;
             object-fit: contain;
         }
