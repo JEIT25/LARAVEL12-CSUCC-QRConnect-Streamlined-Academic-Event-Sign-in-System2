@@ -50,8 +50,8 @@
                                     <select id="semester" v-model="selectedSemester"
                                         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                                         <option value=""></option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
+                                        <option value="1st">1</option>
+                                        <option value="2nd">2</option>
                                     </select>
                                 </div>
 
@@ -85,7 +85,7 @@
                                 <!-- Event Type Checkboxes -->
                                 <div class="col-span-full">
                                     <p class="text-sm font-medium text-gray-700 mb-2">Event Type</p>
-                                    <div class="flex flex-wrap gap-4">
+                                    <div class="flex flex-wrap gap-4 items-center justify-center">
                                         <div>
                                             <input type="checkbox" id="lab" class="mr-2" v-model="labCheck" />
                                             <label for="lab" class="text-sm">Lab</label>
@@ -489,7 +489,7 @@ const filteredEvents = computed(() => {
         })
 
         .filter((event) => {
-            return event.school_year == selectedSubject.selectedSchoolYear || event.semester == selectedSubject.selectedSemester || event.subject == selectedSubject.value
+            return (event.school_year == selectedSchoolYear.value) && (event.semester == selectedSemester.value) && (event.subject == selectedSubject.value)
         })
 
     // Handle no events found

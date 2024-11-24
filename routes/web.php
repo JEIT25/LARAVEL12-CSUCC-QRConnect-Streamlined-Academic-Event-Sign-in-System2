@@ -4,7 +4,6 @@ use App\Http\Controllers\AttendeeRecordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExportAttendeeRecordController;
 use App\Http\Controllers\MasterListMemberController;
-use App\Http\Controllers\QrCodeGeneratorController;
 use App\Http\Controllers\QrScannerController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -13,12 +12,11 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FacilitatorController;
 use App\Http\Controllers\MasterListController;
 
-use Illuminate\Http\Request;
+// Route::post('test', function (Request $request) {
+//     dd($request->all());
+// });
 
-Route::post('test', function (Request $request) {
-    dd($request->all());
-});
-
+//User authentication routes
 Route::get('login', fn () => inertia('Auth/Login'))//redirect to homepage wtoh anauthorized message
     ->name('login'); //sign in form
 
@@ -80,8 +78,7 @@ Route::resource('facilitators', FacilitatorController::class)
     ->only('index')
     ->middleware('auth');
 
-
-//Attendee Routes
+//Attendee Records Routes
 Route::get('/events/{event}/attendees', [AttendeeRecordController::class, 'index'])
     ->name('attendees.index')
     ->middleware('auth');
@@ -137,9 +134,4 @@ Route::get('/events/{event}/qrscanner/checkout', [QrScannerController::class, 'c
 Route::post('/events/{event}/qrscanner/checkout', [QrScannerController::class, 'checkoutPost'])
     ->name('qrscanner.checkout.post')
     ->middleware('auth');
-//
-
-//QR Generator Routes
-// Route::get('qr-generator/result/{user}', [QrCodeGeneratorController::class, 'show'])
-//     ->name('qr-generator.show');
 //

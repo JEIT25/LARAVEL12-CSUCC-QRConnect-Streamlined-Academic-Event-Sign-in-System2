@@ -134,7 +134,7 @@
                                         method="delete">Log out</Link>
                                 </li>
                                 <li v-else>
-                                    <Link v-if="currentPath== '/login'" class="text-yellow-400 hover:text-yellow-200"
+                                    <Link v-if="currentPath == '/login'" class="text-yellow-400 hover:text-yellow-200"
                                         href="/" @click.prevent="navigateTo('/')">Home</Link>
                                     <Link v-else class=" text-yellow-400 hover:text-yellow-200"
                                         @click.prevent="navigateTo('/login')" href=" /login">Login</Link>
@@ -150,19 +150,41 @@
                 <!-- Success Message -->
                 <div class="fixed left-0 right-0 mb-4 border rounded-md shadow-md border-green-200 bg-green-100 p-2 text-center text-black-100 font-semibold"
                     v-if="successMess">
-                    {{ successMess}}
+                    {{ successMess }}
                 </div>
 
                 <!-- Failure Message -->
                 <div class="mb-4 border rounded-md shadow-md border-red-200 bg-red-100 p-2 text-center text-black-100 font-semibold"
                     v-if="failedMess">
-                    {{ failedMess}}
+                    {{ failedMess }}
                 </div>
 
                 <!-- Slot for additional content -->
                 <slot></slot>
-            </main>
 
+                <footer class="bg-slate-950 text-yellow-300 p-6">
+                    <div
+                        class="container mx-auto flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0">
+                        <!-- Logo and Title -->
+                        <div class="text-center md:text-left">
+                            <Link
+                                class="text-yellow-500 font-bold text-lg md:text-md flex items-center justify-center md:justify-start"
+                                href="/">
+                            <img :src="page.props.logoUrl" alt="Logo" width="30" height="24"
+                                class="mr-2 bg-white rounded-sm">
+                            CSUCC QRConnect
+                            </Link>
+                        </div>
+
+                        <!-- Copyright Text -->
+                        <p class="text-sm md:text-md text-center md:text-right">
+                            Copyright All Right Reserved &copy; 2024
+                        </p>
+
+                    </div>
+                </footer>
+
+            </main>
         </div>
     </div>
 </template>

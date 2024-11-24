@@ -49,7 +49,7 @@
             <!-- Button -->
             <div class="mt-4 sm:mt-6 mx-auto">
                 <button @click="openModal"
-                    class="bg-yellow-500 text-white text-sm sm:text-base py-2 px-4 rounded-md shadow hover:bg-yellow-400 transition">
+                    class="bg-yellow-500 text-white font-bold text-sm sm:text-base py-2 px-4 rounded-md shadow hover:bg-yellow-400 transition">
                     Change Password
                 </button>
             </div>
@@ -111,11 +111,11 @@
                     <!-- Submit and Cancel Buttons -->
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="bg-yellow-500 text-white py-2 px-4 rounded-md text-sm sm:text-base shadow hover:bg-yellow-400 transition">
+                            class="btn-success">
                             Submit
                         </button>
                         <button type="button" @click="closeModal"
-                            class="ml-4 bg-gray-500 text-white py-2 px-4 rounded-md text-sm sm:text-base shadow hover:bg-gray-400 transition">
+                            class="ml-4 btn-error">
                             Cancel
                         </button>
                     </div>
