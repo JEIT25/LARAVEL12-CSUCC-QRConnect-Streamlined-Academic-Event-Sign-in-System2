@@ -163,7 +163,7 @@
                 <slot></slot>
 
             </main>
-            <footer class="bg-slate-950 text-yellow-300 p-6 relative bottom-0 w-full">
+            <footer class="bg-slate-950 text-yellow-300 p-6 relative bottom-0 w-full mt-20">
                 <div
                     class="container mx-auto flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0">
                     <!-- Logo and Title -->

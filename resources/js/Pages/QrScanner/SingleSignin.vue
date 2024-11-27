@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col-reverse md:flex-row md:h-screen">
         <!-- Left side: QR scanner -->
-        <div class="md:w-1/2 flex justify-center items-center border-r-4 border-slate-500 p-4">
+        <div class="md:w-1/2 flex justify-center items-center border-slate-500 p-4">
             <div class="flex flex-col items-center">
                 <h2 class="text-2xl font-bold mb-4 text-center">Single Sign In for Event {{ props.event.name }}
                 </h2>
