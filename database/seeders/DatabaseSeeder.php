@@ -8,6 +8,7 @@ use App\Models\Event;
 use Illuminate\Database\Seeder;
 use App\Models\MasterList;
 use App\Models\MasterListStudent;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,12 +23,20 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'ryan.cuarez@csucc.edu.ph',
         //     'fname' => 'Ryan',
         //     'lname' => "Cuarez"
+        // ]); //if no password specfied default is "password"
+
+
+        // User::factory()->create([
+        //     'type' => 'admin',
+        //     'email' => 'admin@example.com',
+        //     'password' => Hash::make('password')
+        // ]);
+        // User::factory()->create([
+        //     'type' => 'admin',
+        //     'email' => 'admin@example.com',
+        //     'password' => Hash::make('password')
         // ]);
 
-         //User::factory()->create([
-          //'type' => 'admin',
-          //'email' => 'admin@example.com',
-        //]);
 
 
         // Event::factory()->create(
