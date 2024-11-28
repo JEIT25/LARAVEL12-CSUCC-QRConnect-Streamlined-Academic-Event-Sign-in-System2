@@ -24,10 +24,10 @@ class DatabaseSeeder extends Seeder
         //     'lname' => "Cuarez"
         // ]);
 
-        // User::factory()->create([
-        //     'type' => 'admin',
-        //     'email' => 'admin@example.com',
-        // ]);
+         //User::factory()->create([
+          //'type' => 'admin',
+          //'email' => 'admin@example.com',
+        //]);
 
 
         // Event::factory()->create(
