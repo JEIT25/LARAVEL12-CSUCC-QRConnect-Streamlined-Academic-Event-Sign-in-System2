@@ -67,7 +67,7 @@ class UserController extends BaseController
             'valid_id' => null // Default to null for user type facilitator
         ]);
 
-        return redirect()->route('homepage')->with('success', 'User account created successfully.');
+        return redirect()->route('users.index')->with('success', 'User account created successfully.');
     }
 
 

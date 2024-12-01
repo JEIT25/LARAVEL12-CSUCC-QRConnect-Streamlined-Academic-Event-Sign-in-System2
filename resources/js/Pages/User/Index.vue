@@ -4,8 +4,8 @@
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold">Facilitator Accounts</h1>
             <!-- Inertia Link to Create Facilitator Account -->
-            <Link class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="/users/create">
-            Create Facilitator Account
+            <Link class="btn-primary" href="/users/create">
+            Create Account
             </Link>
         </div>
 

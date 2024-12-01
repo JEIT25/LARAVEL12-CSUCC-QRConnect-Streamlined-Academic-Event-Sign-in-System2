@@ -12,10 +12,6 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FacilitatorController;
 use App\Http\Controllers\MasterListController;
 
-// Route::post('test', function (Request $request) {
-//     dd($request->all());
-// });
-
 //User authentication routes
 Route::get('login', fn () => inertia('Auth/Login'))//redirect to homepage wtoh anauthorized message
     ->name('login'); //sign in form

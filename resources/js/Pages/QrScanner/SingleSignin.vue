@@ -1,16 +1,19 @@
 <template>
-    <div class="flex flex-col-reverse md:flex-row md:h-screen">
+    <div class="flex flex-col-reverse md:flex-row md:h-30">
         <!-- Left side: QR scanner -->
         <div class="md:w-1/2 flex justify-center items-center border-slate-500 p-4">
             <div class="flex flex-col items-center">
                 <h2 class="text-2xl font-bold mb-4 text-center">Single Sign In for Event {{ props.event.name }}
                 </h2>
                 <p class="text-lg text-left">
-                    <strong v-if="props.event.program || props.event.year_level">Program & Year:</strong> {{ props.event.program }} {{ props.event.year_level}}<br>
+                    <strong v-if="props.event.program || props.event.year_level">Program & Year:</strong> {{
+                    props.event.program }} {{ props.event.year_level}}<br>
                     <strong v-if="props.event.subject">Subject:</strong> {{ props.event.subject }}<br>
                     <strong v-if="props.event.subject_code">Code:</strong> {{ props.event.subject_code }}
                 </p>
-                <div id="reader" class="w-full max-w-md h-64 bg-gray-200"></div>
+                <div id="reader" class="w-full max-w-md h-64 bg-gray-200">
+                    <video id="qr-video" style="width: 100%;"></video>
+                </div>
             </div>
         </div>
 
@@ -47,6 +50,13 @@
         <source src="../../scanner/scan-sound.mp3" type="audio/mpeg">
     </audio>
 </template>
+
+<style scoped>
+    #qr-video {
+        height: 250px;
+        width: 100%;
+    }
+</style>
 
 <script setup>
 import { ref, onMounted,onBeforeUnmount, } from 'vue';
