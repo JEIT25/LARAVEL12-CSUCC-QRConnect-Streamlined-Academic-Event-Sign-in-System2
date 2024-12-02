@@ -50,8 +50,8 @@
                                     <select id="semester" v-model="selectedSemester"
                                         class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                                         <option value=""></option>
-                                        <option value="1st">1</option>
-                                        <option value="2nd">2</option>
+                                        <option value="1st">1st</option>
+                                        <option value="2nd">2nd</option>
                                     </select>
                                 </div>
 
