@@ -1,12 +1,22 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import fs from 'fs';
+import path from 'path';
 
 export default defineConfig({
     // server: { //this config is for running locally in the same wifi
-    //     host: '192.168.1.3', //configure ip address evrytime network is change
+    //     host: '0.0.0.0', //configure ip address evrytime network is change
     //     port: 5173,
-    //     https: false,
+    //     https: {
+    //         key: fs.readFileSync(path.resolve(__dirname, 'ssl/private-key.key')),
+    //         cert: fs.readFileSync(path.resolve(__dirname, 'ssl/certificate.crt')),
+    //     },
+    // },
+    // host: {
+    //     host: '0.0.0.0',  // Allow connections from any IP
+    //     port: 5173,       // You can change this to any port you prefer
+    //     strictPort: true, // Ensure that Vite will fail if the port is already taken
     // },
     plugins: [
         laravel(['resources/js/app.js']),

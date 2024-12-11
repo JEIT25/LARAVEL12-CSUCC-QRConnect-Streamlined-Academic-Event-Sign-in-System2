@@ -254,13 +254,52 @@ const closeQRCode = () => {
     showQRCodeModal.value = false;
 };
 
-// Download QR Code as PDF
-const downloadQRCode = () => {
-    const pdf = new jsPDF();
-    pdf.text(`QR Code for: ${selectedMember.value}`, 10, 10);
-    pdf.addImage(selectedUniqueId.value, 'PNG', 10, 20, 50, 50);
-    pdf.save(`${selectedMember.value}-QRCode.pdf`);
+// Function to generate QR code data URL
+const generateQRCode = async (uniqueId) => {
+    try {
+        // Generate QR code as base64 data URL
+        return await QRCode.toDataURL(uniqueId);  // Returns base64 string
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+    }
 };
+
+// Download QR Code as PDF
+const downloadQRCode = async () => {
+    const uniqueId = selectedUniqueId.value;  // Unique ID of the member
+    const memberName = selectedMember.value;  // Name of the selected member
+
+    // Generate the QR code image as base64 string
+    const qrCodeDataUrl = await generateQRCode(uniqueId);
+
+    // Create a PDF document with A4 size (smaller size than default)
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
+
+    // Set the font size to a larger value for the text
+    pdf.setFontSize(20);  // Increased font size to 20 (or any value you prefer)
+
+    // Calculate the width of the text and center it horizontally
+    const textWidth = pdf.getTextWidth(`QR Code for: ${memberName}`);
+    const pageWidth = pdf.internal.pageSize.width;
+    const xPositionText = (pageWidth - textWidth) / 2;
+
+    // Add text (centered) with larger font size
+    pdf.text(`QR Code for: ${memberName}`, xPositionText, 20);
+
+    // Increase the size of the QR code image (make it larger)
+    const qrWidth = 100; // Increase width of the image
+    const qrHeight = 100; // Increase height of the image
+
+    // Calculate the horizontal position for the QR code (centered)
+    const xPositionQR = (pageWidth - qrWidth) / 2;
+
+    // Add the QR code image to the PDF (centered horizontally)
+    pdf.addImage(qrCodeDataUrl, 'PNG', xPositionQR, 30, qrWidth, qrHeight);
+
+    // Save the PDF with the name of the member
+    pdf.save(`${memberName}-QRCode.pdf`);
+};
+
 
 // Download all QR Codes as PDF
 const downloadAllQRCodesAsPDF = async () => {
