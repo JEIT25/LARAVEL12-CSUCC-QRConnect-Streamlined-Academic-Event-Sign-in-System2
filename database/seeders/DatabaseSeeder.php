@@ -26,11 +26,11 @@ class DatabaseSeeder extends Seeder
         // ]); //if no password specfied default is "password"
 
 
-        // User::factory()->create([
-        //     'type' => 'admin',
-        //     'email' => 'admin@example.com',
-        //     'password' => Hash::make('password')
-        // ]);
+        User::factory()->create([
+             'type' => 'admin',
+             'email' => 'admin2@example.com',
+             'password' => Hash::make('password')
+         ]);
         // User::factory()->create([
         //     'type' => 'admin',
         //     'email' => 'admin@example.com',
