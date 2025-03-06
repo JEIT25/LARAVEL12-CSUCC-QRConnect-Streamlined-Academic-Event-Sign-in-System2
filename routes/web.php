@@ -61,7 +61,6 @@ Route::get('/export-attendee-records/{event}/{template}', [ExportAttendeeRecordC
 Route::resource('admins',AdminController::class)
 ->only('index')
 ->middleware('auth')
-->name('admins.index');
 
 //User Routes for admin access only
 Route::resource('users', UserController::class)
