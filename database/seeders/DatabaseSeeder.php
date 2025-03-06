@@ -18,12 +18,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        // User::factory()->create([
-        //     'type' => 'facilitator',
-        //     'email' => 'ryan.cuarez@csucc.edu.ph',
-        //     'fname' => 'Ryan',
-        //     'lname' => "Cuarez"
-        // ]); //if no password specfied default is "password"
+         User::factory()->create([
+            'type' => 'facilitator',
+            'email' => 'jerold.ash@gmail.com',
+            'fname' => 'Jerold',
+            'lname' => "Ash"
+        ]); //if no password specfied default is "password"
 
 
         User::factory()->create([
